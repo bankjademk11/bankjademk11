@@ -1,0 +1,101 @@
+import React from 'react';
+import CategoryFilter from '../myfoods/CategoryFilter'; // Reusing CategoryFilter component
+
+const VoteSelection = ({
+  foodItems,
+  adminVoteSelections,
+  toggleAdminVoteSelection,
+  handleStartVoting,
+  dailyMenuStatus,
+  showMessage,
+  selectedAdminCategory,
+  setSelectedAdminCategory,
+}) => {
+  const filteredAdminFoodItems = foodItems.filter(food => {
+    if (selectedAdminCategory === 'ทั้งหมด') {
+      return true;
+    }
+    return food.tags.includes(selectedAdminCategory);
+  });
+
+  return (
+    <>
+      {/* Selected Items for Voting Display */}
+      <div className="mb-6 p-4 border rounded-lg bg-teal-50">
+        <h3 className="mb-2 text-xl font-semibold text-teal-800">เมนูที่เลือกสำหรับโหวต ({adminVoteSelections.length}/5):</h3>
+        {adminVoteSelections.length === 0 ? (
+          <p className="text-gray-600">ยังไม่ได้เลือกเมนู</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {adminVoteSelections.map(food => (
+              <span key={food.id} className="flex items-center px-3 py-1 bg-teal-200 text-teal-800 rounded-full text-sm font-medium">
+                {food.name}
+                <button
+                  onClick={() => toggleAdminVoteSelection(food)}
+                  className="ml-2 text-teal-700 hover:text-red-700 font-bold"
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <button
+          onClick={handleStartVoting}
+          disabled={adminVoteSelections.length !== 5 || dailyMenuStatus === 'voting'}
+          className="mt-4 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-teal-600 shadow-lg rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+        >
+          {dailyMenuStatus === 'voting' ? 'กำลังโหวต...' : 'เริ่มการโหวต'}
+        </button>
+      </div>
+
+      {/* All Food Items for Selection with Category Filter */}
+      <div className="mb-6">
+        <h3 className="mb-4 text-xl font-semibold text-gray-700">เลือกเมนูจากรายการทั้งหมด:</h3>
+        {/* Admin Category Filter - Reusing CategoryFilter component */}
+        <CategoryFilter
+          selectedCategory={selectedAdminCategory}
+          setSelectedCategory={setSelectedAdminCategory}
+          label="กรองตามหมวดหมู่:"
+          idPrefix="admin"
+        />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-h-96 overflow-y-auto p-2 border rounded-lg bg-gray-50">
+          {filteredAdminFoodItems.map((food) => {
+            const isSelected = adminVoteSelections.some(item => item.id === food.id);
+            const isDisabled = adminVoteSelections.length >= 5 && !isSelected;
+            return (
+              <div
+                key={food.id}
+                className={`p-3 border rounded-lg flex items-center justify-between ${
+                  isSelected ? 'bg-teal-100 border-teal-400' : 'bg-white border-gray-200'
+                } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="flex items-center">
+                  <img
+                    src={food.image}
+                    alt={food.name}
+                    className="w-12 h-12 object-cover rounded-md mr-3"
+                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+                  />
+                  <span className="font-medium text-gray-800">{food.name}</span>
+                </div>
+                <button
+                  onClick={() => toggleAdminVoteSelection(food)}
+                  disabled={isDisabled}
+                  className={`px-4 py-2 rounded-lg text-white font-semibold transition ${
+                    isSelected ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {isSelected ? 'ลบออก' : 'เพิ่มเข้าโหวต'}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default VoteSelection;
