@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import routing components
 import {
   Header,
   Navigation,
@@ -10,6 +11,7 @@ import {
   DailyWinner,
   AdminDashboard,
 } from './components'; // Importing from the index.js barrel file
+import DailyReportDetail from './components/admin/DailyReportDetail'; // Import DailyReportDetail
 
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -405,86 +407,95 @@ const App = () => {
   });
 
   return (
-    <div className="min-h-screen p-4 text-gray-800 bg-gradient-to-br from-emerald-50 to-teal-100 font-inter">
-      <Header userId={userId} />
-      <MessageDisplay message={message} />
-      <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
+    <BrowserRouter>
+      <div className="min-h-screen p-4 text-gray-800 bg-gradient-to-br from-emerald-50 to-teal-100 font-inter">
+        <Header userId={userId} />
+        <MessageDisplay message={message} />
+        <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
 
-      {currentPage === 'my_foods' && (
-        <>
-          <FoodForm
-            foodName={foodName}
-            setFoodName={setFoodName}
-            foodImage={foodImage}
-            setFoodImage={setFoodImage}
-            foodTags={foodTags}
-            setFoodTags={setFoodTags}
-            editingFoodId={editingFoodId}
-            handleAddOrUpdateFood={handleAddOrUpdateFood}
-            setEditingFoodId={setEditingFoodId}
-            showMessage={showMessage}
-          />
-          <CategoryFilter
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-            label="กรองตามหมวดหมู่:"
-          />
-          <FoodList
-            filteredFoodItems={filteredFoodItems}
-            handleEditFood={handleEditFood}
-            handleDeleteFood={handleDeleteFood}
-            BACKEND_URL={BACKEND_URL}
-          />
-        </>
-      )}
+        <Routes>
+          <Route path="/" element={(
+            <>
+              {currentPage === 'my_foods' && (
+                <>
+                  <FoodForm
+                    foodName={foodName}
+                    setFoodName={setFoodName}
+                    foodImage={foodImage}
+                    setFoodImage={setFoodImage}
+                    foodTags={foodTags}
+                    setFoodTags={setFoodTags}
+                    editingFoodId={editingFoodId}
+                    handleAddOrUpdateFood={handleAddOrUpdateFood}
+                    setEditingFoodId={setEditingFoodId}
+                    showMessage={showMessage}
+                  />
+                  <CategoryFilter
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    label="กรองตามหมวดหมู่:"
+                  />
+                  <FoodList
+                    filteredFoodItems={filteredFoodItems}
+                    handleEditFood={handleEditFood}
+                    handleDeleteFood={handleDeleteFood}
+                    BACKEND_URL={BACKEND_URL}
+                  />
+                </>
+              )}
 
-      {currentPage === 'vote' && (
-        <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
-          <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">เมนูประจำวัน</h2>
-          {dailyMenu.status === 'voting' ? (
-            <VotingSection
-              dailyMenu={dailyMenu}
-              userId={userId}
-              handleVote={handleVote}
-              handleReviewSubmit={handleReviewSubmit}
-              foodItems={foodItems}
-            />
-          ) : (
-            <DailyWinner
-              winningFood={winningFood}
-              dailyMenuStatus={dailyMenu.status}
-              handleReviewSubmit={handleReviewSubmit}
-              userId={userId}
-              foodItems={foodItems}
-            />
-          )}
-        </section>
-      )}
+              {currentPage === 'vote' && (
+                <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+                  <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">เมนูประจำวัน</h2>
+                  {dailyMenu.status === 'voting' ? (
+                    <VotingSection
+                      dailyMenu={dailyMenu}
+                      userId={userId}
+                      handleVote={handleVote}
+                      handleReviewSubmit={handleReviewSubmit}
+                      foodItems={foodItems}
+                    />
+                  ) : (
+                    <DailyWinner
+                      winningFood={winningFood}
+                      dailyMenuStatus={dailyMenu.status}
+                      handleReviewSubmit={handleReviewSubmit}
+                      userId={userId}
+                      foodItems={foodItems}
+                    />
+                  )}
+                </section>
+              )}
 
-      {currentPage === 'admin' && (
-        <AdminDashboard
-          isAdmin={isAdmin}
-          adminPasswordInput={adminPasswordInput}
-          setAdminPasswordInput={setAdminPasswordInput}
-          handleAdminLogin={handleAdminLogin}
-          handleAdminLogout={handleAdminLogout}
-          foodItems={foodItems}
-          adminVoteSelections={adminVoteSelections}
-          setAdminVoteSelections={setAdminVoteSelections}
-          toggleAdminVoteSelection={toggleAdminVoteSelection}
-          handleStartVoting={handleStartVoting}
-          dailyMenu={dailyMenu} // Pass the full dailyMenu object
-          handleCloseVoting={handleCloseVoting}
-          adminDirectSelectFoodId={adminDirectSelectFoodId}
-          setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-          handleAdminSetFood={handleAdminSetFood}
-          showMessage={showMessage}
-          selectedAdminCategory={selectedAdminCategory}
-          setSelectedAdminCategory={setSelectedAdminCategory}
-          BACKEND_URL={BACKEND_URL}
-        />
-      )}
-    </div>
+              {currentPage === 'admin' && (
+                <AdminDashboard
+                  isAdmin={isAdmin}
+                  adminPasswordInput={adminPasswordInput}
+                  setAdminPasswordInput={setAdminPasswordInput}
+                  handleAdminLogin={handleAdminLogin}
+                  handleAdminLogout={handleAdminLogout}
+                  foodItems={foodItems}
+                  adminVoteSelections={adminVoteSelections}
+                  setAdminVoteSelections={setAdminVoteSelections}
+                  toggleAdminVoteSelection={toggleAdminVoteSelection}
+                  handleStartVoting={handleStartVoting}
+                  dailyMenu={dailyMenu} // Pass the full dailyMenu object
+                  handleCloseVoting={handleCloseVoting}
+                  adminDirectSelectFoodId={adminDirectSelectFoodId}
+                  setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
+                  handleAdminSetFood={handleAdminSetFood}
+                  showMessage={showMessage}
+                  selectedAdminCategory={selectedAdminCategory}
+                  setSelectedAdminCategory={setSelectedAdminCategory}
+                  BACKEND_URL={BACKEND_URL}
+                />
+              )}
+            </>
+          )} />
+          <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 };
 
