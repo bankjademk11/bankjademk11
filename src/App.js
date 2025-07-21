@@ -54,7 +54,7 @@ const App = () => {
     };
 
     fetchFoodItems();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, [BACKEND_URL]); // Added BACKEND_URL to dependency array
 
   // State for the daily menu/voting status (public, stored in localStorage)
   const [dailyMenu, setDailyMenu] = useState(() => {
