@@ -263,6 +263,38 @@ const App = () => {
       timestamp: new Date().toISOString(),
     }));
     showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningItem ? winningItem.name : 'ไม่มี'}`, 'success');
+
+    // Save daily results to backend
+    try {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const totalVotes = dailyMenu.voteOptions.reduce((sum, option) => sum + option.votes, 0);
+      const voteDetails = dailyMenu.voteOptions.reduce((acc, option) => {
+        acc[option.foodItemId] = option.votes;
+        return acc;
+      }, {});
+
+      const response = await fetch(`${BACKEND_URL}/api/daily-results`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          date: today,
+          winningFoodId: winningItem ? winningItem.foodItemId : null,
+          winningFoodName: winningItem ? winningItem.name : null,
+          totalVotes: totalVotes,
+          voteDetails: voteDetails,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log('Daily results saved:', await response.json());
+    } catch (error) {
+      console.error('Error saving daily results:', error);
+      showMessage('เกิดข้อผิดพลาดในการบันทึกผลโหวตประจำวัน', 'error');
+    }
   };
 
   const handleAdminSetFood = () => {
