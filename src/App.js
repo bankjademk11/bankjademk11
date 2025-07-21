@@ -401,6 +401,7 @@ const App = () => {
             filteredFoodItems={filteredFoodItems}
             handleEditFood={handleEditFood}
             handleDeleteFood={handleDeleteFood}
+            BACKEND_URL={BACKEND_URL}
           />
         </>
       )}
