@@ -147,6 +147,29 @@ app.post('/api/daily-results', async (req, res) => {
   }
 });
 
+// GET daily reports
+app.get('/api/reports/daily', async (req, res) => {
+  const { month, year } = req.query;
+  try {
+    let query = 'SELECT * FROM daily_results';
+    const params = [];
+    if (month && year) {
+      query += ' WHERE EXTRACT(MONTH FROM date) = $1 AND EXTRACT(YEAR FROM date) = $2';
+      params.push(month, year);
+    } else if (year) {
+      query += ' WHERE EXTRACT(YEAR FROM date) = $1';
+      params.push(year);
+    }
+    query += ' ORDER BY date DESC';
+
+    const result = await pool.query(query, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching daily reports:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
