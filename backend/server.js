@@ -67,6 +67,23 @@ pool.query(`
   console.error('Error ensuring food reviews table:', err.stack);
 });
 
+// Create daily_results table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS daily_results (
+    id SERIAL PRIMARY KEY,
+    date DATE UNIQUE NOT NULL,
+    winning_food_id INTEGER REFERENCES foods(id) ON DELETE SET NULL,
+    winning_food_name VARCHAR(255),
+    total_votes INTEGER DEFAULT 0,
+    vote_details JSONB, -- Stores details like { foodId: votes, ... }
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  );
+`).then(() => {
+  console.log('Daily results table ensured.');
+}).catch(err => {
+  console.error('Error ensuring daily results table:', err.stack);
+});
+
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {
   const { id } = req.params; // food_id
