@@ -408,7 +408,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen p-4 text-gray-800 bg-gradient-to-br from-emerald-50 to-teal-100 font-inter">
+      <div className="min-h-screen p-4 text-gray-800 bg-food-bg bg-cover bg-center bg-fixed font-inter">
         <Header userId={userId} />
         <MessageDisplay message={message} />
         <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
