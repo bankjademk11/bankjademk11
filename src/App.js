@@ -481,6 +481,7 @@ const App = () => {
           showMessage={showMessage}
           selectedAdminCategory={selectedAdminCategory}
           setSelectedAdminCategory={setSelectedAdminCategory}
+          BACKEND_URL={BACKEND_URL}
         />
       )}
     </div>
