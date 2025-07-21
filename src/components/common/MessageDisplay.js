@@ -5,7 +5,7 @@ const MessageDisplay = ({ message }) => {
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-xl text-white font-semibold transition-all duration-300 transform ${
+      className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-2xl text-white font-semibold transition-all duration-300 transform ${
         message.type === 'success' ? 'bg-green-500' :
         message.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
       }`}
