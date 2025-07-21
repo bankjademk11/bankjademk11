@@ -59,7 +59,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
   }, [BACKEND_URL, selectedMonth, selectedYear, showMessage]);
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-md">
+    <div className="p-6 bg-white rounded-xl shadow-lg">
       <h3 className="text-2xl font-bold text-center text-teal-700 mb-6">รายงานผลโหวตประจำวัน</h3>
 
       <div className="flex justify-center space-x-4 mb-6">
@@ -100,7 +100,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
           {reports.map(report => (
             <div
               key={report.id}
-              className="bg-gray-50 p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-100 transition"
+              className="bg-gray-50 p-4 rounded-xl shadow-lg cursor-pointer hover:bg-gray-100 transition"
               onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
             >
               <p className="text-lg font-semibold text-teal-800">วันที่: {new Date(report.date).toLocaleDateString()}</p>

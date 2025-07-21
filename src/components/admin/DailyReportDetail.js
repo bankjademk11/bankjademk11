@@ -56,7 +56,7 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
   }
 
   return (
-    <div className="max-w-4xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+    <div className="max-w-4xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h3 className="text-3xl font-bold text-center text-teal-700 mb-6">รายละเอียดรายงานประจำวัน</h3>
       <p className="text-lg font-semibold text-gray-800 mb-2">วันที่: {new Date(report.date).toLocaleDateString()}</p>
       <p className="text-lg text-gray-700 mb-2">เมนูที่ชนะ: {report.winning_food_name || 'ไม่มี'}</p>
@@ -68,7 +68,7 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
           {Object.entries(report.vote_details).map(([foodId, votes]) => {
             const food = foodDetails[foodId];
             return (
-              <div key={foodId} className="bg-gray-50 p-4 rounded-xl shadow-md flex items-center space-x-4">
+              <div key={foodId} className="bg-gray-50 p-4 rounded-xl shadow-lg flex items-center space-x-4">
                 {food && food.image ? (
                   <img
                     src={food.image}
