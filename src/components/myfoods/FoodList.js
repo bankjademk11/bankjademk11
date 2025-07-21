@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND_URL }) => {
   const [averageRatings, setAverageRatings] = useState({});
+  const [expandedFoodId, setExpandedFoodId] = useState(null); // State to track which food item's reviews are expanded
+  const [foodReviews, setFoodReviews] = useState({}); // State to store fetched reviews
 
   useEffect(() => {
     const fetchAverageRatings = async () => {
@@ -27,6 +29,31 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
       fetchAverageRatings();
     }
   }, [filteredFoodItems, BACKEND_URL]);
+
+  const handleToggleReviews = async (foodId) => {
+    if (expandedFoodId === foodId) {
+      setExpandedFoodId(null); // Collapse if already expanded
+    } else {
+      setExpandedFoodId(foodId); // Expand this food item
+      // Fetch reviews if not already fetched
+      if (!foodReviews[foodId]) {
+        try {
+          const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`);
+          if (response.ok) {
+            const data = await response.json();
+            setFoodReviews(prevReviews => ({
+              ...prevReviews,
+              [foodId]: data,
+            }));
+          } else {
+            console.error(`Error fetching reviews for food ${foodId}:`, response.statusText);
+          }
+        } catch (error) {
+          console.error(`Error fetching reviews for food ${foodId}:`, error);
+        }
+      }
+    }
+  };
 
   return (
     <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
@@ -59,7 +86,30 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 >
                   ลบ
                 </button>
+                <button
+                  onClick={() => handleToggleReviews(food.id)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+                >
+                  {expandedFoodId === food.id ? 'ซ่อนรีวิว' : 'ดูรีวิว'}
+                </button>
               </div>
+
+              {expandedFoodId === food.id && (
+                <div className="mt-4 w-full text-left">
+                  <h4 className="text-lg font-semibold mb-2">รีวิว:</h4>
+                  {foodReviews[food.id] && foodReviews[food.id].length > 0 ? (
+                    foodReviews[food.id].map(review => (
+                      <div key={review.id} className="bg-white p-3 rounded-lg shadow-sm mb-2">
+                        <p className="font-medium">คะแนน: {review.rating} / 5</p>
+                        {review.comment && <p className="text-gray-700">ความคิดเห็น: {review.comment}</p>}
+                        <p className="text-xs text-gray-500">โดย {review.user_id || 'ไม่ระบุ'} เมื่อ {new Date(review.created_at).toLocaleDateString()}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-600">ยังไม่มีรีวิวสำหรับเมนูนี้</p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
