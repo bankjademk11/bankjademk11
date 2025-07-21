@@ -28,7 +28,7 @@ const AdminDashboard = ({
   const [adminView, setAdminView] = useState('voting'); // 'voting' or 'report'
 
   return (
-    <section className="max-w-3xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+    <section className="max-w-3xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">แผงควบคุมแอดมิน</h2>
 
       {!isAdmin ? (
@@ -43,13 +43,13 @@ const AdminDashboard = ({
             <div className="flex space-x-2">
               <button
                 onClick={() => setAdminView('voting')}
-                className={`px-4 py-2 rounded-lg shadow-md transition ${adminView === 'voting' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'voting' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
               >
                 จัดการโหวต
               </button>
               <button
                 onClick={() => setAdminView('report')}
-                className={`px-4 py-2 rounded-lg shadow-md transition ${adminView === 'report' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'report' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
               >
                 รายงาน
               </button>
