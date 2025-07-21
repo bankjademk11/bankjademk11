@@ -21,7 +21,7 @@ const VoteSelection = ({
   return (
     <>
       {/* Selected Items for Voting Display */}
-      <div className="mb-6 p-4 border rounded-lg bg-teal-50">
+      <div className="mb-6 p-4 border rounded-lg bg-teal-50 shadow-lg">
         <h3 className="mb-2 text-xl font-semibold text-teal-800">เมนูที่เลือกสำหรับโหวต ({adminVoteSelections.length}/5):</h3>
         {adminVoteSelections.length === 0 ? (
           <p className="text-gray-600">ยังไม่ได้เลือกเมนู</p>
@@ -67,7 +67,7 @@ const VoteSelection = ({
             return (
               <div
                 key={food.id}
-                className={`p-3 border rounded-lg flex items-center justify-between ${
+                className={`p-3 border rounded-lg flex items-center justify-between shadow-md ${
                   isSelected ? 'bg-teal-100 border-teal-400' : 'bg-white border-gray-200'
                 } ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
