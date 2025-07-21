@@ -108,28 +108,38 @@ const App = () => {
     const tagsArray = foodTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
 
     try {
+      let response;
+      let method;
+      let url;
+
       if (editingFoodId) {
-        // Update existing food item (will implement PUT later)
-        // For now, just show a message
-        showMessage('ฟังก์ชันอัปเดตยังไม่พร้อมใช้งาน', 'info');
+        // Update existing food item
+        method = 'PUT';
+        url = `${BACKEND_URL}/api/foods/${editingFoodId}`;
       } else {
         // Add new food item
-        const response = await fetch(`${BACKEND_URL}/api/foods`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name: foodName, image: foodImage, tags: tagsArray }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const newFoodItem = await response.json();
-        setFoodItems(prevFoodItems => [...prevFoodItems, newFoodItem]);
-        showMessage('เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
+        method = 'POST';
+        url = `${BACKEND_URL}/api/foods`;
       }
+
+      response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: foodName, image: foodImage, tags: tagsArray }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Re-fetch all food items to update the list
+      const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
+      const updatedFoodItems = await updatedFoodItemsResponse.json();
+      setFoodItems(updatedFoodItems);
+
+      showMessage(editingFoodId ? 'อัปเดตเมนูอาหารเรียบร้อยแล้ว!' : 'เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
 
       // Clear form fields
       setFoodName('');
@@ -154,10 +164,27 @@ const App = () => {
     }
   };
 
-  const handleDeleteFood = (id) => {
+  const handleDeleteFood = async (id) => {
     if (window.confirm('คุณต้องการลบเมนูอาหารนี้หรือไม่?')) {
-      setFoodItems(foodItems.filter(item => item.id !== id));
-      showMessage('ลบเมนูอาหารเรียบร้อยแล้ว!', 'success');
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/foods/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Re-fetch all food items to update the list
+        const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
+        const updatedFoodItems = await updatedFoodItemsResponse.json();
+        setFoodItems(updatedFoodItems);
+
+        showMessage('ลบเมนูอาหารเรียบร้อยแล้ว!', 'success');
+      } catch (error) {
+        console.error("Error deleting food item:", error);
+        showMessage('เกิดข้อผิดพลาดในการลบเมนูอาหาร', 'error');
+      }
     }
   };
 
