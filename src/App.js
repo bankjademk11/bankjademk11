@@ -1,36 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; // Import routing components
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
   Header,
   Navigation,
   MessageDisplay,
-  FoodForm,
-  FoodList,
-  CategoryFilter,
-  VotingSection,
-  DailyWinner,
-  AdminDashboard,
-} from './components'; // Importing from the index.js barrel file
-import DailyReportDetail from './components/admin/DailyReportDetail'; // Import DailyReportDetail
+} from './components';
+import MyFoodsPage from './pages/MyFoodsPage';
+import VotePage from './pages/VotePage';
+import AdminPage from './pages/AdminPage';
+import DailyReportDetail from './components/admin/DailyReportDetail';
 
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-  
+  const [message, setMessage] = useState({ text: '', type: '' });
 
-  // Function to display messages
   const showMessage = useCallback((text, type) => {
     setMessage({ text, type });
     setTimeout(() => {
-      setMessage({ text: '', type: '' }); // Clear message after 3 seconds
+      setMessage({ text: '', type: '' });
     }, 3000);
   }, [setMessage]);
 
-  // State for current page view: 'my_foods', 'vote', 'admin'
-  const [currentPage, setCurrentPage] = useState('my_foods');
-
-  // User ID for offline voting (persists per browser session)
-  // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(() => {
     let id = localStorage.getItem('offlineUserId');
     if (!id) {
@@ -40,16 +31,12 @@ const App = () => {
     return id;
   });
 
-  // Simple admin state for offline demo (not secure for real apps)
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
-  const ADMIN_PASSWORD = 'admin'; // Hardcoded admin password for demo
+  const ADMIN_PASSWORD = 'admin';
 
-  // State to store the list of food items (user's private list)
   const [foodItems, setFoodItems] = useState([]);
 
-  // --- Fetch food items from backend ---
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
@@ -66,46 +53,20 @@ const App = () => {
     };
 
     fetchFoodItems();
-  }, [BACKEND_URL, showMessage]); // Added showMessage to dependency array
+  }, [BACKEND_URL, showMessage]);
 
-  // State for the daily menu/voting status (public, stored in localStorage)
   const [dailyMenu, setDailyMenu] = useState(() => {
     const savedDailyMenu = localStorage.getItem('thaiFoodMenu_dailyMenu');
     return savedDailyMenu ? JSON.parse(savedDailyMenu) : {
-      status: 'idle', // 'idle', 'voting', 'closed', 'admin_set'
+      status: 'idle',
       voteOptions: [],
-      votedUsers: {}, // { userId: foodItemId }
+      votedUsers: {},
       winningFoodItemId: null,
       adminSetFoodItemId: null,
       timestamp: null,
     };
   });
 
-  // State for the form inputs (for adding/editing food items)
-  const [foodName, setFoodName] = useState('');
-  const [foodImage, setFoodImage] = useState('');
-  const [foodTags, setFoodTags] = useState('');
-  const [editingFoodId, setEditingFoodId] = useState(null);
-
-  // State for admin panel: selected items for voting (stores full food objects)
-  const [adminVoteSelections, setAdminVoteSelections] = useState([]);
-  const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
-
-  // State for filtering food items in 'my_foods' page
-  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด'); // 'ทั้งหมด', 'อาหารราดหน้า', 'ทั่วไป', 'เส้น'
-  // State for filtering food items in 'admin' page
-  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด'); // 'ทั้งหมด', 'อาหารราดหน้า', 'ทั่วไป', 'เส้น'
-
-  // --- Effects to save data to Local Storage ---
-  useEffect(() => {
-    // localStorage.setItem('thaiFoodMenu_foodItems', JSON.stringify(foodItems)); // No longer needed, managed by backend
-  }, [foodItems]);
-
-  useEffect(() => {
-    localStorage.setItem('thaiFoodMenu_dailyMenu', JSON.stringify(dailyMenu));
-  }, [dailyMenu]);
-
-  // --- CRUD Operations for Food Items (using backend API) ---
   const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
 
@@ -122,11 +83,9 @@ const App = () => {
       let url;
 
       if (editingFoodId) {
-        // Update existing food item
         method = 'PUT';
         url = `${BACKEND_URL}/api/foods/${editingFoodId}`;
       } else {
-        // Add new food item
         method = 'POST';
         url = `${BACKEND_URL}/api/foods`;
       }
@@ -143,14 +102,12 @@ const App = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Re-fetch all food items to update the list
       const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
       const updatedFoodItems = await updatedFoodItemsResponse.json();
       setFoodItems(updatedFoodItems);
 
       showMessage(editingFoodId ? 'อัปเดตเมนูอาหารเรียบร้อยแล้ว!' : 'เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
 
-      // Clear form fields
       setFoodName('');
       setFoodImage('');
       setFoodTags('');
@@ -184,7 +141,6 @@ const App = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Re-fetch all food items to update the list
         const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
         const updatedFoodItems = await updatedFoodItemsResponse.json();
         setFoodItems(updatedFoodItems);
@@ -197,7 +153,6 @@ const App = () => {
     }
   };
 
-  // --- Admin Functions (using localStorage) ---
   const handleAdminLogin = () => {
     if (adminPasswordInput === ADMIN_PASSWORD) {
       setIsAdmin(true);
@@ -213,7 +168,6 @@ const App = () => {
     showMessage('ออกจากระบบแอดมินแล้ว', 'info');
   };
 
-  // Toggle selection for voting in admin panel
   const toggleAdminVoteSelection = (food) => {
     const isSelected = adminVoteSelections.some(item => item.id === food.id);
     if (isSelected) {
@@ -243,13 +197,13 @@ const App = () => {
     setDailyMenu({
       status: 'voting',
       voteOptions: voteOptions,
-      votedUsers: {}, // Reset voted users
+      votedUsers: {},
       winningFoodItemId: null,
       adminSetFoodItemId: null,
       timestamp: new Date().toISOString(),
     });
     showMessage('เริ่มการโหวตเมนูประจำวันแล้ว!', 'success');
-    setAdminVoteSelections([]); // Clear selected items after starting vote
+    setAdminVoteSelections([]);
   };
 
   const handleCloseVoting = async () => {
@@ -273,9 +227,8 @@ const App = () => {
     }));
     showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningItem ? winningItem.name : 'ไม่มี'}`, 'success');
 
-    // Save daily results to backend
     try {
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      const today = new Date().toISOString().split('T')[0];
       const totalVotes = dailyMenu.voteOptions.reduce((sum, option) => sum + option.votes, 0);
       const voteDetails = dailyMenu.voteOptions.reduce((acc, option) => {
         acc[option.foodItemId] = option.votes;
@@ -324,20 +277,17 @@ const App = () => {
     setAdminDirectSelectFoodId('');
   };
 
-  // --- User Voting Function (using localStorage) ---
   const handleVote = (foodItemId) => {
     if (dailyMenu.status !== 'voting') {
       showMessage('ไม่สามารถโหวตได้ในขณะนี้', 'error');
       return;
     }
 
-    // Check if user has already voted
     if (dailyMenu.votedUsers && dailyMenu.votedUsers[userId]) {
       showMessage('คุณโหวตไปแล้วสำหรับวันนี้!', 'info');
       return;
     }
 
-    // Update the vote count for the selected item and mark user as voted
     const updatedVoteOptions = dailyMenu.voteOptions.map(option =>
       option.foodItemId === foodItemId
         ? { ...option, votes: option.votes + 1 }
@@ -349,15 +299,13 @@ const App = () => {
       voteOptions: updatedVoteOptions,
       votedUsers: {
         ...prev.votedUsers,
-        [userId]: foodItemId, // Mark user as voted for this item
+        [userId]: foodItemId,
       },
       timestamp: new Date().toISOString(),
     }));
     showMessage('โหวตสำเร็จ!', 'success');
   };
 
-  // --- Review Submission Function ---
-  // eslint-disable-next-line no-unused-vars
   const handleReviewSubmit = useCallback(async (foodId, rating, comment) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`, {
@@ -365,7 +313,7 @@ const App = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ rating, comment, userId }), // Pass userId from App.js state
+        body: JSON.stringify({ rating, comment, userId }),
       });
 
       if (!response.ok) {
@@ -375,14 +323,12 @@ const App = () => {
       const newReview = await response.json();
       console.log('Review submitted:', newReview);
       showMessage('ส่งรีวิวเรียบร้อยแล้ว!', 'success');
-      // Optionally, re-fetch reviews for the food item or update state
     } catch (error) {
       console.error("Error submitting review:", error);
       showMessage('เกิดข้อผิดพลาดในการส่งรีวิว', 'error');
     }
-  }, [BACKEND_URL, userId, showMessage]); // Dependencies for useCallback
+  }, [BACKEND_URL, userId, showMessage]);
 
-  // Get winning food item details for display
   const getWinningFoodDetails = () => {
     if (!dailyMenu) return null;
 
@@ -397,100 +343,66 @@ const App = () => {
 
   const winningFood = getWinningFoodDetails();
 
-  // Filtered food items for 'my_foods' section
-  const filteredFoodItems = foodItems.filter(food => {
-    if (selectedCategory === 'ทั้งหมด') {
-      return true;
-    }
-    return food.tags.includes(selectedCategory);
-  });
-
   return (
     <BrowserRouter>
       <div className="min-h-screen p-4 text-gray-800 bg-food-bg bg-cover bg-center bg-fixed font-inter">
         <Header userId={userId} />
         <MessageDisplay message={message} />
-        <Navigation currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <Navigation />
 
         <Routes>
-          <Route path="/" element={(
-            <>
-              {currentPage === 'my_foods' && (
-                <>
-                  <FoodForm
-                    foodName={foodName}
-                    setFoodName={setFoodName}
-                    foodImage={foodImage}
-                    setFoodImage={setFoodImage}
-                    foodTags={foodTags}
-                    setFoodTags={setFoodTags}
-                    editingFoodId={editingFoodId}
-                    handleAddOrUpdateFood={handleAddOrUpdateFood}
-                    setEditingFoodId={setEditingFoodId}
-                    showMessage={showMessage}
-                  />
-                  <CategoryFilter
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    label="กรองตามหมวดหมู่:"
-                  />
-                  <FoodList
-                    filteredFoodItems={filteredFoodItems}
-                    handleEditFood={handleEditFood}
-                    handleDeleteFood={handleDeleteFood}
-                    BACKEND_URL={BACKEND_URL}
-                  />
-                </>
-              )}
-
-              {currentPage === 'vote' && (
-                <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
-                  <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">เมนูประจำวัน</h2>
-                  {dailyMenu.status === 'voting' ? (
-                    <VotingSection
-                      dailyMenu={dailyMenu}
-                      userId={userId}
-                      handleVote={handleVote}
-                      handleReviewSubmit={handleReviewSubmit}
-                      foodItems={foodItems}
-                    />
-                  ) : (
-                    <DailyWinner
-                      winningFood={winningFood}
-                      dailyMenuStatus={dailyMenu.status}
-                      handleReviewSubmit={handleReviewSubmit}
-                      userId={userId}
-                      foodItems={foodItems}
-                    />
-                  )}
-                </section>
-              )}
-
-              {currentPage === 'admin' && (
-                <AdminDashboard
-                  isAdmin={isAdmin}
-                  adminPasswordInput={adminPasswordInput}
-                  setAdminPasswordInput={setAdminPasswordInput}
-                  handleAdminLogin={handleAdminLogin}
-                  handleAdminLogout={handleAdminLogout}
-                  foodItems={foodItems}
-                  adminVoteSelections={adminVoteSelections}
-                  setAdminVoteSelections={setAdminVoteSelections}
-                  toggleAdminVoteSelection={toggleAdminVoteSelection}
-                  handleStartVoting={handleStartVoting}
-                  dailyMenu={dailyMenu} // Pass the full dailyMenu object
-                  handleCloseVoting={handleCloseVoting}
-                  adminDirectSelectFoodId={adminDirectSelectFoodId}
-                  setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-                  handleAdminSetFood={handleAdminSetFood}
-                  showMessage={showMessage}
-                  selectedAdminCategory={selectedAdminCategory}
-                  setSelectedAdminCategory={setSelectedAdminCategory}
-                  BACKEND_URL={BACKEND_URL}
-                />
-              )}
-            </>
-          )} />
+          <Route path="/" element={
+            <MyFoodsPage
+              BACKEND_URL={BACKEND_URL}
+              showMessage={showMessage}
+              foodItems={foodItems}
+              setFoodItems={setFoodItems}
+              foodName={foodName}
+              setFoodName={setFoodName}
+              foodImage={foodImage}
+              setFoodImage={setFoodImage}
+              foodTags={foodTags}
+              setFoodTags={setFoodTags}
+              editingFoodId={editingFoodId}
+              handleAddOrUpdateFood={handleAddOrUpdateFood}
+              setEditingFoodId={setEditingFoodId}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
+          } />
+          <Route path="/vote" element={
+            <VotePage
+              dailyMenu={dailyMenu}
+              userId={userId}
+              handleVote={handleVote}
+              handleReviewSubmit={handleReviewSubmit}
+              foodItems={foodItems}
+              winningFood={winningFood}
+            />
+          } />
+          <Route path="/admin" element={
+            <AdminPage
+              isAdmin={isAdmin}
+              adminPasswordInput={adminPasswordInput}
+              setAdminPasswordInput={setAdminPasswordInput}
+              handleAdminLogin={handleAdminLogin}
+              handleAdminLogout={handleAdminLogout}
+              foodItems={foodItems}
+              adminVoteSelections={adminVoteSelections}
+              setAdminVoteSelections={setAdminVoteSelections}
+              toggleAdminVoteSelection={toggleAdminVoteSelection}
+              handleStartVoting={handleStartVoting}
+              dailyMenu={dailyMenu}
+              handleCloseVoting={handleCloseVoting}
+              adminDirectSelectFoodId={adminDirectSelectFoodId}
+              setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
+              handleAdminSetFood={handleAdminSetFood}
+              showMessage={showMessage}
+              selectedAdminCategory={selectedAdminCategory}
+              setSelectedAdminCategory={setSelectedAdminCategory}
+              BACKEND_URL={BACKEND_URL}
+            />
+          } />
           <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
         </Routes>
       </div>
