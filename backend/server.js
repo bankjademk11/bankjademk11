@@ -51,6 +51,22 @@ pool.query(`
   console.error('Error ensuring foods table or image column type:', err.stack);
 });
 
+// Create food_reviews table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS food_reviews (
+    id SERIAL PRIMARY KEY,
+    food_id INTEGER NOT NULL REFERENCES foods(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    user_id VARCHAR(255), -- Optional, if you want to track who reviewed
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  );
+`).then(() => {
+  console.log('Food reviews table ensured.');
+}).catch(err => {
+  console.error('Error ensuring food reviews table:', err.stack);
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
