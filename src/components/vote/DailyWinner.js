@@ -59,7 +59,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
       <p className="text-2xl font-bold text-teal-700 mb-4">
         เมนูประจำวันนี้คือ:
       </p>
-      <div className="bg-teal-50 p-6 rounded-xl shadow-lg inline-block">
+      <div className="bg-teal-50 p-6 rounded-xl shadow-2xl inline-block">
         <img
           src={winningFood.image}
           alt={winningFood.name}
@@ -103,7 +103,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
       )}
 
       {showReviewForm && winningFood && (
-        <div className="mt-8 p-6 bg-white rounded-xl shadow-md">
+        <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">รีวิวเมนู {winningFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">
             <div>

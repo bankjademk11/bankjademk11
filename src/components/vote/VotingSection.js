@@ -34,7 +34,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {dailyMenu.voteOptions.map((option) => (
-          <div key={option.foodItemId} className="bg-gray-50 p-4 rounded-xl shadow-md flex flex-col items-center">
+          <div key={option.foodItemId} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
             <img
               src={option.image}
               alt={option.name}
@@ -55,7 +55,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
       </div>
 
       {hasVoted && showReviewForm && votedFood && (
-        <div className="mt-8 p-6 bg-white rounded-xl shadow-md">
+        <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">รีวิวเมนู {votedFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">
             <div>
