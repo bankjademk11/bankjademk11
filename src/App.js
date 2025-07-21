@@ -16,8 +16,7 @@ import DailyReportDetail from './components/admin/DailyReportDetail'; // Import 
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-  // State for showing success/error messages
-  const [message, setMessage] = useState({ text: '', type: '' });
+  
 
   // Function to display messages
   const showMessage = useCallback((text, type) => {
