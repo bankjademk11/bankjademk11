@@ -67,6 +67,39 @@ pool.query(`
   console.error('Error ensuring food reviews table:', err.stack);
 });
 
+// POST a new review for a food item
+app.post('/api/foods/:id/reviews', async (req, res) => {
+  const { id } = req.params; // food_id
+  const { rating, comment, userId } = req.body;
+
+  if (!rating || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+  }
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO food_reviews (food_id, rating, comment, user_id) VALUES ($1, $2, $3, $4) RETURNING *'
+      , [id, rating, comment, userId]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error adding review:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// GET all reviews for a specific food item
+app.get('/api/foods/:id/reviews', async (req, res) => {
+  const { id } = req.params; // food_id
+  try {
+    const result = await pool.query('SELECT * FROM food_reviews WHERE food_id = $1 ORDER BY created_at DESC', [id]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching reviews:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
