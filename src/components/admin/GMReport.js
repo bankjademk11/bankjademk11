@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const GMReport = ({ BACKEND_URL, showMessage }) => {
   const [reports, setReports] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // Last 5 years
@@ -96,7 +98,11 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
       ) : (
         <div className="space-y-6">
           {reports.map(report => (
-            <div key={report.id} className="bg-gray-50 p-4 rounded-xl shadow-md">
+            <div
+              key={report.id}
+              className="bg-gray-50 p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-100 transition"
+              onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
+            >
               <p className="text-lg font-semibold text-teal-800">วันที่: {new Date(report.date).toLocaleDateString()}</p>
               <p className="text-md text-gray-700">เมนูที่ชนะ: {report.winning_food_name || 'ไม่มี'}</p>
               <p className="text-md text-gray-700">จำนวนโหวตทั้งหมด: {report.total_votes}</p>
