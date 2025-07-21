@@ -100,6 +100,21 @@ app.get('/api/foods/:id/reviews', async (req, res) => {
   }
 });
 
+// GET average rating for a specific food item
+app.get('/api/foods/:id/average-rating', async (req, res) => {
+  const { id } = req.params; // food_id
+  try {
+    const result = await pool.query(
+      'SELECT AVG(rating)::numeric(10,2) AS average_rating FROM food_reviews WHERE food_id = $1'
+      , [id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching average rating:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
