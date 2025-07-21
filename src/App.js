@@ -12,6 +12,8 @@ import {
 } from './components'; // Importing from the index.js barrel file
 
 const App = () => {
+  const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
   // State for current page view: 'my_foods', 'vote', 'admin'
   const [currentPage, setCurrentPage] = useState('my_foods');
 
@@ -32,19 +34,26 @@ const App = () => {
   const ADMIN_PASSWORD = 'admin'; // Hardcoded admin password for demo
 
   // State to store the list of food items (user's private list)
-  const [foodItems, setFoodItems] = useState(() => {
-    const savedFoodItems = localStorage.getItem('thaiFoodMenu_foodItems');
-    return savedFoodItems ? JSON.parse(savedFoodItems) : [
-      { id: '1', name: 'ผัดไทย', image: 'https://placehold.co/400x300/FFD700/000000?text=Pad+Thai', tags: ['อาหารจานเดียว', 'เส้น', 'ยอดนิยม', 'ทั่วไป'] },
-      { id: '2', name: 'ต้มยำกุ้ง', image: 'https://placehold.co/400x300/FF6347/FFFFFF?text=Tom+Yum+Goong', tags: ['ซุป', 'เผ็ด', 'อาหารทะเล', 'ทั่วไป'] },
-      { id: '3', name: 'แกงเขียวหวาน', image: 'https://placehold.co/400x300/32CD32/FFFFFF?text=Green+Curry', tags: ['แกง', 'กะทิ', 'เผ็ดน้อย', 'ทั่วไป'] },
-      { id: '4', name: 'ข้าวผัด', image: 'https://placehold.co/400x300/87CEEB/000000?text=Fried+Rice', tags: ['อาหารจานเดียว', 'ข้าว', 'ง่ายๆ', 'ทั่วไป'] },
-      { id: '5', name: 'ส้มตำ', image: 'https://placehold.co/400x300/FF4500/FFFFFF?text=Som+Tum', tags: ['สลัด', 'เผ็ด', 'อีสาน', 'ทั่วไป'] },
-      { id: '6', name: 'มัสมั่นไก่', image: 'https://placehold.co/400x300/8B4513/FFFFFF?text=Massaman+Curry', tags: ['แกง', 'กะทิ', 'ไม่เผ็ด', 'ทั่วไป'] },
-      { id: '7', name: 'ราดหน้าหมู', image: 'https://placehold.co/400x300/90EE90/000000?text=Rad+Na+Moo', tags: ['อาหารจานเดียว', 'เส้น', 'อาหารราดหน้า'] },
-      { id: '8', name: 'ก๋วยเตี๋ยวเรือ', image: 'https://placehold.co/400x300/DDA0DD/FFFFFF?text=Boat+Noodle', tags: ['อาหารจานเดียว', 'เส้น'] },
-    ];
-  });
+  const [foodItems, setFoodItems] = useState([]);
+
+  // --- Fetch food items from backend ---
+  useEffect(() => {
+    const fetchFoodItems = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/foods`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setFoodItems(data);
+      } catch (error) {
+        console.error("Error fetching food items:", error);
+        showMessage('ไม่สามารถโหลดรายการอาหารได้', 'error');
+      }
+    };
+
+    fetchFoodItems();
+  }, []); // Empty dependency array means this effect runs once on mount
 
   // State for the daily menu/voting status (public, stored in localStorage)
   const [dailyMenu, setDailyMenu] = useState(() => {
