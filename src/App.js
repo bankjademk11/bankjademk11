@@ -15,7 +15,7 @@ const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   // State for showing success/error messages
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [message, setMessage] = useState({ text: '', type: '' }); // THIS IS THE CORRECT DECLARATION
 
   // Function to display messages
   const showMessage = useCallback((text, type) => {
@@ -94,9 +94,6 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด'); // 'ทั้งหมด', 'อาหารราดหน้า', 'ทั่วไป', 'เส้น'
   // State for filtering food items in 'admin' page
   const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด'); // 'ทั้งหมด', 'อาหารราดหน้า', 'ทั่วไป', 'เส้น'
-
-  // State for showing success/error messages
-  const [message, setMessage] = useState({ text: '', type: '' });
 
   // --- Effects to save data to Local Storage ---
   useEffect(() => {
@@ -383,14 +380,6 @@ const App = () => {
       showMessage('เกิดข้อผิดพลาดในการส่งรีวิว', 'error');
     }
   }, [BACKEND_URL, userId, showMessage]); // Dependencies for useCallback
-
-  // Function to display messages
-  const showMessage = useCallback((text, type) => {
-    setMessage({ text, type });
-    setTimeout(() => {
-      setMessage({ text: '', type: '' }); // Clear message after 3 seconds
-    }, 3000);
-  }, [setMessage]);
 
   // Get winning food item details for display
   const getWinningFoodDetails = () => {
