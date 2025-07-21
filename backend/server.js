@@ -170,6 +170,21 @@ app.get('/api/reports/daily', async (req, res) => {
   }
 });
 
+// GET a single daily report by ID
+app.get('/api/daily-results/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM daily_results WHERE id = $1', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching single daily report:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
