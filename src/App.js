@@ -88,15 +88,15 @@ const App = () => {
 
   // --- Effects to save data to Local Storage ---
   useEffect(() => {
-    localStorage.setItem('thaiFoodMenu_foodItems', JSON.stringify(foodItems));
+    // localStorage.setItem('thaiFoodMenu_foodItems', JSON.stringify(foodItems)); // No longer needed, managed by backend
   }, [foodItems]);
 
   useEffect(() => {
     localStorage.setItem('thaiFoodMenu_dailyMenu', JSON.stringify(dailyMenu));
   }, [dailyMenu]);
 
-  // --- CRUD Operations for Food Items (using localStorage) ---
-  const handleAddOrUpdateFood = (e) => {
+  // --- CRUD Operations for Food Items (using backend API) ---
+  const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
 
     if (!foodName.trim() || !foodImage.trim()) {
@@ -106,31 +106,40 @@ const App = () => {
 
     const tagsArray = foodTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
 
-    if (editingFoodId) {
-      // Update existing food item
-      setFoodItems(foodItems.map(item =>
-        item.id === editingFoodId
-          ? { ...item, name: foodName, image: foodImage, tags: tagsArray }
-          : item
-      ));
-      showMessage('อัปเดตเมนูอาหารเรียบร้อยแล้ว!', 'success');
-      setEditingFoodId(null);
-    } else {
-      // Add new food item
-      const newFoodItem = {
-        id: Date.now().toString(), // Unique ID based on timestamp
-        name: foodName,
-        image: foodImage,
-        tags: tagsArray,
-      };
-      setFoodItems([...foodItems, newFoodItem]);
-      showMessage('เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
-    }
+    try {
+      if (editingFoodId) {
+        // Update existing food item (will implement PUT later)
+        // For now, just show a message
+        showMessage('ฟังก์ชันอัปเดตยังไม่พร้อมใช้งาน', 'info');
+      } else {
+        // Add new food item
+        const response = await fetch(`${BACKEND_URL}/api/foods`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name: foodName, image: foodImage, tags: tagsArray }),
+        });
 
-    // Clear form fields
-    setFoodName('');
-    setFoodImage('');
-    setFoodTags('');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const newFoodItem = await response.json();
+        setFoodItems(prevFoodItems => [...prevFoodItems, newFoodItem]);
+        showMessage('เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
+      }
+
+      // Clear form fields
+      setFoodName('');
+      setFoodImage('');
+      setFoodTags('');
+      setEditingFoodId(null);
+
+    } catch (error) {
+      console.error("Error adding/updating food item:", error);
+      showMessage('เกิดข้อผิดพลาดในการเพิ่ม/อัปเดตเมนูอาหาร', 'error');
+    }
   };
 
   const handleEditFood = (id) => {
