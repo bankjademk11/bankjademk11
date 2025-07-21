@@ -16,6 +16,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState('my_foods');
 
   // User ID for offline voting (persists per browser session)
+  // eslint-disable-next-line no-unused-vars
   const [userId, setUserId] = useState(() => {
     let id = localStorage.getItem('offlineUserId');
     if (!id) {
