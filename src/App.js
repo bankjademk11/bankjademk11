@@ -315,6 +315,31 @@ const App = () => {
     showMessage('โหวตสำเร็จ!', 'success');
   };
 
+  // --- Review Submission Function ---
+  const handleReviewSubmit = async (foodId, rating, comment) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ rating, comment, userId }), // Pass userId from App.js state
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const newReview = await response.json();
+      console.log('Review submitted:', newReview);
+      showMessage('ส่งรีวิวเรียบร้อยแล้ว!', 'success');
+      // Optionally, re-fetch reviews for the food item or update state
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      showMessage('เกิดข้อผิดพลาดในการส่งรีวิว', 'error');
+    }
+  };
+
   // Function to display messages
   const showMessage = (text, type) => {
     setMessage({ text, type });
