@@ -1,32 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Navigation = ({ currentPage, setCurrentPage }) => {
+const Navigation = () => {
   return (
     <nav className="flex justify-center space-x-4 mb-8">
-      <button
-        onClick={() => setCurrentPage('my_foods')}
-        className={`px-6 py-3 rounded-xl font-bold transition duration-300 ${
-          currentPage === 'my_foods' ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
+      <Link
+        to="/"
+        className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
         เมนูส่วนตัว
-      </button>
-      <button
-        onClick={() => setCurrentPage('vote')}
-        className={`px-6 py-3 rounded-xl font-bold transition duration-300 ${
-          currentPage === 'vote' ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
+      </Link>
+      <Link
+        to="/vote"
+        className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
         โหวตเมนูประจำวัน
-      </button>
-      <button
-        onClick={() => setCurrentPage('admin')}
-        className={`px-6 py-3 rounded-xl font-bold transition duration-300 ${
-          currentPage === 'admin' ? 'bg-teal-600 text-white shadow-lg' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-        }`}
+      </Link>
+      <Link
+        to="/admin"
+        className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
         แผงควบคุมแอดมิน
-      </button>
+      </Link>
     </nav>
   );
 };

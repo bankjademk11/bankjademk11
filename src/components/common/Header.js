@@ -2,7 +2,7 @@ import React from 'react';
 
 const Header = ({ userId }) => {
   return (
-    <header className="mb-8 text-center">
+    <header className="mb-8 text-center drop-shadow-xl">
       <h1 className="mb-2 text-5xl font-extrabold text-teal-800 drop-shadow-lg">
         คลังอาหารของ ODG
       </h1>
