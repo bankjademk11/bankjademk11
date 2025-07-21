@@ -31,6 +31,31 @@ pool.connect((err, client, release) => {
   });
 });
 
+// Create foods table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS foods (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    image VARCHAR(255),
+    tags TEXT[]
+  );
+`).then(() => {
+  console.log('Foods table ensured.');
+}).catch(err => {
+  console.error('Error ensuring foods table:', err.stack);
+});
+
+// GET all food items
+app.get('/api/foods', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM foods ORDER BY id ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching food items:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
