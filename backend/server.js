@@ -56,6 +56,21 @@ app.get('/api/foods', async (req, res) => {
   }
 });
 
+// POST a new food item
+app.post('/api/foods', async (req, res) => {
+  const { name, image, tags } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO foods (name, image, tags) VALUES ($1, $2, $3) RETURNING *'
+      , [name, image, tags]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error adding food item:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
