@@ -316,6 +316,7 @@ const App = () => {
   };
 
   // --- Review Submission Function ---
+  // eslint-disable-next-line no-unused-vars
   const handleReviewSubmit = async (foodId, rating, comment) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`, {
@@ -412,6 +413,8 @@ const App = () => {
               dailyMenu={dailyMenu}
               userId={userId}
               handleVote={handleVote}
+              handleReviewSubmit={handleReviewSubmit}
+              foodItems={foodItems}
             />
           ) : (
             <DailyWinner
