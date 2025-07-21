@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
   const { id } = useParams(); // Get report ID from URL
@@ -51,6 +56,34 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
     fetchReportDetail();
   }, [id, BACKEND_URL, showMessage]);
 
+  // Prepare data for the Pie Chart
+  const chartData = report && report.vote_details ? {
+    labels: Object.keys(report.vote_details).map(foodId => foodDetails[foodId] ? foodDetails[foodId].name : `Food ID: ${foodId}`),
+    datasets: [
+      {
+        label: 'จำนวนโหวต',
+        data: Object.values(report.vote_details),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+          'rgba(255, 159, 64, 0.6)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  } : null;
+
   if (!report) {
     return <div className="text-center text-xl text-gray-600">กำลังโหลดรายงาน...</div>;
   }
@@ -61,6 +94,15 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
       <p className="text-lg font-semibold text-gray-800 mb-2">วันที่: {new Date(report.date).toLocaleDateString()}</p>
       <p className="text-lg text-gray-700 mb-2">เมนูที่ชนะ: {report.winning_food_name || 'ไม่มี'}</p>
       <p className="text-lg text-gray-700 mb-4">จำนวนโหวตทั้งหมด: {report.total_votes}</p>
+
+      {chartData && report.total_votes > 0 && (
+        <div className="mb-8">
+          <h4 className="text-xl font-semibold text-teal-700 mb-4 text-center">สัดส่วนการโหวต:</h4>
+          <div className="w-full max-w-md mx-auto">
+            <Pie data={chartData} />
+          </div>
+        </div>
+      )}
 
       <h4 className="text-xl font-semibold text-teal-700 mb-4">ผลโหวตแต่ละเมนู:</h4>
       {report.vote_details && Object.entries(report.vote_details).length > 0 ? (
