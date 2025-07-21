@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId, foodItems }) => {
+  console.log('DailyWinner: handleReviewSubmit prop:', handleReviewSubmit);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewRating, setReviewRating] = useState(5); // Default to 5 stars
   const [reviewComment, setReviewComment] = useState('');
@@ -40,11 +41,16 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
   const onSubmitReview = (e) => {
     e.preventDefault();
     if (winningFood && winningFood.id) {
-      handleReviewSubmit(winningFood.id, reviewRating, reviewComment);
-      setShowReviewForm(false); // Hide form after submission
-      setReviewComment(''); // Clear comment
-      setReviewRating(5); // Reset rating
-      setHasReviewed(true); // Mark as reviewed after submission
+      if (typeof handleReviewSubmit === 'function') { // Defensive check
+        handleReviewSubmit(winningFood.id, reviewRating, reviewComment);
+        setShowReviewForm(false); // Hide form after submission
+        setReviewComment(''); // Clear comment
+        setReviewRating(5); // Reset rating
+        setHasReviewed(true); // Mark as reviewed after submission
+      } else {
+        console.error("handleReviewSubmit prop is not a function!");
+        // Optionally show a user-friendly error message
+      }
     }
   };
 
