@@ -14,6 +14,17 @@ import {
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+  // State for showing success/error messages
+  const [message, setMessage] = useState({ text: '', type: '' });
+
+  // Function to display messages
+  const showMessage = useCallback((text, type) => {
+    setMessage({ text, type });
+    setTimeout(() => {
+      setMessage({ text: '', type: '' }); // Clear message after 3 seconds
+    }, 3000);
+  }, [setMessage]);
+
   // State for current page view: 'my_foods', 'vote', 'admin'
   const [currentPage, setCurrentPage] = useState('my_foods');
 
@@ -54,7 +65,7 @@ const App = () => {
     };
 
     fetchFoodItems();
-  }, [BACKEND_URL]); // Added BACKEND_URL to dependency array
+  }, [BACKEND_URL, showMessage]); // Added showMessage to dependency array
 
   // State for the daily menu/voting status (public, stored in localStorage)
   const [dailyMenu, setDailyMenu] = useState(() => {
