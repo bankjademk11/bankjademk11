@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Header,
   Navigation,
@@ -153,7 +153,7 @@ const App = () => {
     }
   };
 
-  const handleEditFood = (id) => {
+  const handleEditFood = async (id) => {
     const foodToEdit = foodItems.find(item => item.id === id);
     if (foodToEdit) {
       setFoodName(foodToEdit.name);
@@ -243,7 +243,7 @@ const App = () => {
     setAdminVoteSelections([]); // Clear selected items after starting vote
   };
 
-  const handleCloseVoting = () => {
+  const handleCloseVoting = async () => {
     if (dailyMenu.status !== 'voting') {
       showMessage('ไม่ได้อยู่ในสถานะกำลังโหวต', 'error');
       return;
@@ -349,7 +349,7 @@ const App = () => {
 
   // --- Review Submission Function ---
   // eslint-disable-next-line no-unused-vars
-  const handleReviewSubmit = async (foodId, rating, comment) => {
+  const handleReviewSubmit = useCallback(async (foodId, rating, comment) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`, {
         method: 'POST',
@@ -371,15 +371,15 @@ const App = () => {
       console.error("Error submitting review:", error);
       showMessage('เกิดข้อผิดพลาดในการส่งรีวิว', 'error');
     }
-  };
+  }, [BACKEND_URL, userId, showMessage]); // Dependencies for useCallback
 
   // Function to display messages
-  const showMessage = (text, type) => {
+  const showMessage = useCallback((text, type) => {
     setMessage({ text, type });
     setTimeout(() => {
       setMessage({ text: '', type: '' }); // Clear message after 3 seconds
     }, 3000);
-  };
+  }, [setMessage]);
 
   // Get winning food item details for display
   const getWinningFoodDetails = () => {
