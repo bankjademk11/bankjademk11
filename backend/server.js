@@ -31,18 +31,24 @@ pool.connect((err, client, release) => {
   });
 });
 
-// Create foods table if it doesn't exist
+// Create foods table if it doesn't exist and ensure image column is TEXT
 pool.query(`
   CREATE TABLE IF NOT EXISTS foods (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    image VARCHAR(255),
+    image TEXT, -- Changed from VARCHAR(255)
     tags TEXT[]
   );
 `).then(() => {
   console.log('Foods table ensured.');
+  // Attempt to alter the column type if it's not already TEXT
+  return pool.query(`
+    ALTER TABLE foods ALTER COLUMN image TYPE TEXT;
+  `);
+}).then(() => {
+  console.log('Image column type ensured to be TEXT.');
 }).catch(err => {
-  console.error('Error ensuring foods table:', err.stack);
+  console.error('Error ensuring foods table or image column type:', err.stack);
 });
 
 // GET all food items
