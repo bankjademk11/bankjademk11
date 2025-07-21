@@ -37,6 +37,7 @@ const App = () => {
   const [foodItems, setFoodItems] = useState([]);
 
   // --- Fetch food items from backend ---
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const fetchFoodItems = async () => {
       try {
