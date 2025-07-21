@@ -185,6 +185,22 @@ app.get('/api/daily-results/:id', async (req, res) => {
   }
 });
 
+// POST to get multiple food items by their IDs
+app.post('/api/foods/batch', async (req, res) => {
+  const { foodIds } = req.body; // Expects an array of food IDs
+  if (!Array.isArray(foodIds) || foodIds.length === 0) {
+    return res.status(400).json({ error: 'foodIds must be a non-empty array' });
+  }
+  try {
+    // Using UNNEST to query for multiple IDs efficiently
+    const result = await pool.query('SELECT id, name, image FROM foods WHERE id = ANY($1::int[])', [foodIds]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching food items in batch:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
