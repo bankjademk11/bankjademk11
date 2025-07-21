@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js/auto'; // Changed import to chart.js/auto
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'; // Changed import back to chart.js
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
