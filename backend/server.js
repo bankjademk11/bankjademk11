@@ -132,6 +132,21 @@ app.get('/api/foods/:id/average-rating', async (req, res) => {
   }
 });
 
+// POST daily voting results
+app.post('/api/daily-results', async (req, res) => {
+  const { date, winningFoodId, winningFoodName, totalVotes, voteDetails } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO daily_results (date, winning_food_id, winning_food_name, total_votes, vote_details) VALUES ($1, $2, $3, $4, $5) RETURNING *'
+      , [date, winningFoodId, winningFoodName, totalVotes, voteDetails]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error saving daily results:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET all food items
 app.get('/api/foods', async (req, res) => {
   try {
