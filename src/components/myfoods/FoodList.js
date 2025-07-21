@@ -56,14 +56,14 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
   };
 
   return (
-    <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+    <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">รายการเมนูอาหาร</h2>
       {filteredFoodItems.length === 0 ? (
         <p className="text-center text-gray-600">ไม่มีเมนูอาหารในรายการ</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFoodItems.map((food) => (
-            <div key={food.id} className="bg-gray-50 p-4 rounded-xl shadow-md flex flex-col items-center">
+            <div key={food.id} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
               <img
                 src={food.image}
                 alt={food.name}

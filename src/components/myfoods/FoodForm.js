@@ -13,7 +13,7 @@ const FoodForm = ({
   showMessage,
 }) => {
   return (
-    <section className="max-w-3xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+    <section className="max-w-3xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">
         {editingFoodId ? 'แก้ไขเมนูอาหารส่วนตัว' : 'เพิ่มเมนูอาหารส่วนตัวใหม่'}
       </h2>
