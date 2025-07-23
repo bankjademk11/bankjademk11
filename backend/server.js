@@ -420,8 +420,8 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
 
     try {
         const result = await pool.query(
-            'UPDATE daily_menu_states SET status = $1, admin_set_food_item_id = $2, winning_food_item_id = NULL, vote_options = [], voted_users = {}, timestamp = NOW() WHERE date = $3 RETURNING *'
-            , ['admin_set', foodId, today]
+            'UPDATE daily_menu_states SET status = $1, admin_set_food_item_id = $2, winning_food_item_id = NULL, vote_options = $3, voted_users = $4, timestamp = NOW() WHERE date = $5 RETURNING *'
+            , ['admin_set', foodId, [], {}, today]
         );
 
         if (result.rows.length === 0) {
