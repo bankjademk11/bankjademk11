@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems }) => {
   const [allDailyMenus, setAllDailyMenus] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchAllDailyMenus = async () => {
+  const fetchAllDailyMenus = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -22,14 +22,14 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [BACKEND_URL, showMessage]);
 
   useEffect(() => {
     fetchAllDailyMenus();
     // Optionally, poll for updates
     const intervalId = setInterval(fetchAllDailyMenus, 10000); // Poll every 10 seconds
     return () => clearInterval(intervalId);
-  }, [BACKEND_URL, showMessage]);
+  }, [BACKEND_URL, showMessage, fetchAllDailyMenus]);
 
   const handleStatusChange = async (date, newStatus) => {
     try {
