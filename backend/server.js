@@ -434,6 +434,17 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
     }
 });
 
+// GET all daily menu states
+app.get('/api/daily-menu/all', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM daily_menu_states ORDER BY date ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching all daily menu states:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // GET daily menu state for a specific date
 app.get('/api/daily-menu/:date', async (req, res) => {
   const { date } = req.params;
@@ -451,37 +462,6 @@ app.get('/api/daily-menu/:date', async (req, res) => {
     }
   } catch (err) {
     console.error('Error fetching daily menu state by date:', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// POST/PUT to save daily menu state for a specific date
-app.post('/api/daily-menu/save', async (req, res) => {
-  const { date, status, voteOptions, votedUsers, winningFoodItemId, adminSetFoodItemId } = req.body;
-
-  if (!date || !status) {
-    return res.status(400).json({ error: 'Date and status are required.' });
-  }
-
-  try {
-    const result = await pool.query(
-      'INSERT INTO daily_menu_states (date, status, vote_options, voted_users, winning_food_item_id, admin_set_food_item_id, timestamp) VALUES ($1, $2, $3, $4, $5, $6, NOW()) ON CONFLICT (date) DO UPDATE SET status = EXCLUDED.status, vote_options = EXCLUDED.vote_options, voted_users = EXCLUDED.voted_users, winning_food_item_id = EXCLUDED.winning_food_item_id, admin_set_food_item_id = EXCLUDED.admin_set_food_item_id, timestamp = NOW() RETURNING *'
-      , [date, status, JSON.stringify(voteOptions || []), JSON.stringify(votedUsers || {}), winningFoodItemId, adminSetFoodItemId]
-    );
-    res.status(200).json(result.rows[0]);
-  } catch (err) {
-    console.error('Error saving daily menu state:', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// GET all daily menu states
-app.get('/api/daily-menu/all', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM daily_menu_states ORDER BY date ASC');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching all daily menu states:', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
