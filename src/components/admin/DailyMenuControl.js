@@ -26,16 +26,25 @@ const DailyMenuControl = ({
       {/* Admin Direct Select Food */}
       <div className="pt-4 border-t border-gray-200">
         <h3 className="mb-4 text-xl font-semibold text-gray-700">ตั้งค่าเมนูประจำวันโดยตรง:</h3>
-        <select
-          value={adminDirectSelectFoodId}
-          onChange={(e) => setAdminDirectSelectFoodId(e.target.value)}
-          className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-xl focus:ring-teal-500 focus:border-teal-500"
-        >
-          <option value="">-- เลือกเมนู --</option>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-2 border rounded-lg bg-gray-50">
           {foodItems.map(food => (
-            <option key={food.id} value={food.id}>{food.name}</option>
+            <div
+              key={food.id}
+              className={`p-3 border rounded-lg flex flex-col items-center shadow-md cursor-pointer ${
+                adminDirectSelectFoodId === food.id ? 'bg-purple-100 border-purple-400' : 'bg-white border-gray-200'
+              }`}
+              onClick={() => setAdminDirectSelectFoodId(food.id)}
+            >
+              <img
+                src={food.image}
+                alt={food.name}
+                className="w-24 h-24 object-cover rounded-md mb-2"
+                onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+              />
+              <span className="font-medium text-gray-800 text-center">{food.name}</span>
+            </div>
           ))}
-        </select>
+        </div>
         <button
           onClick={handleAdminSetFood}
           disabled={!adminDirectSelectFoodId}

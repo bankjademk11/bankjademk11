@@ -28,15 +28,21 @@ const VoteSelection = ({
         ) : (
           <div className="flex flex-wrap gap-2">
             {adminVoteSelections.map(food => (
-              <span key={food.id} className="flex items-center px-3 py-1 bg-teal-200 text-teal-800 rounded-full text-sm font-medium">
-                {food.name}
+              <div key={food.id} className="flex items-center bg-teal-200 text-teal-800 rounded-lg p-2 shadow-sm">
+                <img
+                  src={food.image}
+                  alt={food.name}
+                  className="w-8 h-8 object-cover rounded-md mr-2"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+                />
+                <span className="text-sm font-medium">{food.name}</span>
                 <button
                   onClick={() => toggleAdminVoteSelection(food)}
-                  className="ml-2 text-teal-700 hover:text-red-700 font-bold"
+                  className="ml-2 text-teal-700 hover:text-red-700 font-bold text-lg"
                 >
                   &times;
                 </button>
-              </span>
+              </div>
             ))}
           </div>
         )}
