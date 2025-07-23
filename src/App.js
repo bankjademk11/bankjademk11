@@ -43,8 +43,6 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
 
   const [adminVoteSelections, setAdminVoteSelections] = useState([]);
-  const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
-  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด');
 
   useEffect(() => {
     const fetchFoodItems = async () => {
@@ -64,28 +62,7 @@ const App = () => {
     fetchFoodItems();
   }, [BACKEND_URL, showMessage]);
 
-  const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
-
-  useEffect(() => {
-    const fetchDailyMenu = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/daily-menu`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setDailyMenu(data);
-      } catch (error) {
-        console.error("Error fetching daily menu:", error);
-        showMessage('ไม่สามารถโหลดข้อมูลโหวตได้', 'error');
-      }
-    };
-
-    fetchDailyMenu(); // Initial fetch
-    const intervalId = setInterval(fetchDailyMenu, 3000); // Poll every 3 seconds
-
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, [BACKEND_URL, showMessage]);
+  
 
   const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
@@ -169,69 +146,7 @@ const App = () => {
     }
   };
 
-  const handleStartVoting = async () => {
-    if (adminVoteSelections.length !== 5) {
-      showMessage('ต้องเลือก 5 เมนูที่ไม่ซ้ำกันสำหรับโหวต', 'error');
-      return;
-    }
-    const voteOptions = adminVoteSelections.map(item => ({
-      foodItemId: item.id,
-      name: item.name,
-      image: item.image,
-    }));
-
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/daily-menu/start`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voteOptions }),
-      });
-      if (!response.ok) throw new Error('Failed to start voting');
-      const data = await response.json();
-      setDailyMenu(data);
-      showMessage('เริ่มการโหวตเมนูประจำวันแล้ว!', 'success');
-      setAdminVoteSelections([]);
-    } catch (error) {
-      console.error("Error starting voting:", error);
-      showMessage('เกิดข้อผิดพลาดในการเริ่มโหวต', 'error');
-    }
-  };
-
-  const handleCloseVoting = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/daily-menu/close`, { method: 'POST' });
-      if (!response.ok) throw new Error('Failed to close voting');
-      const data = await response.json();
-      setDailyMenu(data);
-      const winningFood = foodItems.find(f => f.id === data.winningFoodItemId);
-      showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningFood ? winningFood.name : 'ไม่มี'}`, 'success');
-    } catch (error) {
-      console.error("Error closing voting:", error);
-      showMessage('เกิดข้อผิดพลาดในการปิดโหวต', 'error');
-    }
-  };
-
-  const handleAdminSetFood = async () => {
-    if (!adminDirectSelectFoodId) {
-      showMessage('ต้องเลือกเมนู', 'error');
-      return;
-    }
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/daily-menu/admin-set`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ foodId: adminDirectSelectFoodId }),
-      });
-      if (!response.ok) throw new Error('Failed to set food by admin');
-      const data = await response.json();
-      setDailyMenu(data);
-      showMessage('ตั้งค่าเมนูประจำวันโดยแอดมินเรียบร้อยแล้ว!', 'success');
-      setAdminDirectSelectFoodId('');
-    } catch (error) {
-      console.error("Error setting food by admin:", error);
-      showMessage('เกิดข้อผิดพลาดในการตั้งค่าเมนู', 'error');
-    }
-  };
+  
 
   const handleVote = async (foodItemId) => {
     try {
@@ -244,8 +159,7 @@ const App = () => {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to vote');
       }
-      const data = await response.json();
-      setDailyMenu(data);
+      // No setDailyMenu here, as VotePage now fetches its own dailyMenu
       showMessage('โหวตสำเร็จ!', 'success');
     } catch (error) {
       console.error("Error voting:", error);
@@ -276,19 +190,7 @@ const App = () => {
     }
   }, [BACKEND_URL, userId, showMessage]);
 
-  const getWinningFoodDetails = () => {
-    if (!dailyMenu) return null;
-
-    if (dailyMenu.status === 'closed' && dailyMenu.winningFoodItemId) {
-      return foodItems.find(item => item.id === dailyMenu.winningFoodItemId) ||
-             dailyMenu.voteOptions.find(option => option.foodItemId === dailyMenu.winningFoodItemId);
-    } else if (dailyMenu.status === 'admin_set' && dailyMenu.adminSetFoodItemId) {
-      return foodItems.find(item => item.id === dailyMenu.adminSetFoodItemId);
-    }
-    return null;
-  };
-
-  const winningFood = getWinningFoodDetails();
+  
 
   return (
     <BrowserRouter>
@@ -319,12 +221,10 @@ const App = () => {
           } />
           <Route path="/vote" element={
             <VotePage
-              dailyMenu={dailyMenu}
               userId={userId}
               handleVote={handleVote}
               handleReviewSubmit={handleReviewSubmit}
               foodItems={foodItems}
-              winningFood={winningFood}
             />
           } />
           <Route path="/admin" element={
@@ -338,15 +238,7 @@ const App = () => {
               adminVoteSelections={adminVoteSelections}
               setAdminVoteSelections={setAdminVoteSelections}
               toggleAdminVoteSelection={toggleAdminVoteSelection}
-              handleStartVoting={handleStartVoting}
-              dailyMenu={dailyMenu}
-              handleCloseVoting={handleCloseVoting}
-              adminDirectSelectFoodId={adminDirectSelectFoodId}
-              setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-              handleAdminSetFood={handleAdminSetFood}
               showMessage={showMessage}
-              selectedAdminCategory={selectedAdminCategory}
-              setSelectedAdminCategory={setSelectedAdminCategory}
               BACKEND_URL={BACKEND_URL}
             />
           } />

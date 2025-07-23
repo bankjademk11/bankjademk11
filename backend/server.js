@@ -84,6 +84,24 @@ pool.query(`
   console.error('Error ensuring daily results table:', err.stack);
 });
 
+// Create daily_menu_states table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS daily_menu_states (
+    id SERIAL PRIMARY KEY,
+    date DATE UNIQUE NOT NULL,
+    status VARCHAR(255) NOT NULL DEFAULT 'idle',
+    vote_options JSONB DEFAULT '[]'::jsonb,
+    voted_users JSONB DEFAULT '{}'::jsonb,
+    winning_food_item_id INTEGER REFERENCES foods(id) ON DELETE SET NULL,
+    admin_set_food_item_id INTEGER REFERENCES foods(id) ON DELETE SET NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  );
+`).then(() => {
+  console.log('Daily menu states table ensured.');
+}).catch(err => {
+  console.error('Error ensuring daily menu states table:', err.stack);
+});
+
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {
   const { id } = req.params; // food_id
@@ -261,106 +279,194 @@ app.delete('/api/foods/:id', async (req, res) => {
   }
 });
 
-// --- Daily Menu State (In-memory) ---
-let dailyMenuState = {
-  status: 'idle', // idle, voting, closed, admin_set
-  voteOptions: [], // Array of { foodItemId, name, image, votes }
-  votedUsers: {}, // { userId: foodItemId }
-  winningFoodItemId: null,
-  adminSetFoodItemId: null,
-  timestamp: null,
-};
-
 // --- API Endpoints for Daily Menu ---
 
 // GET the current daily menu state
-app.get('/api/daily-menu', (req, res) => {
-  res.json(dailyMenuState);
+app.get('/api/daily-menu', async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+
+    if (result.rows.length === 0) {
+      // If no entry for today, create a new idle one
+      const newEntry = await pool.query(
+        'INSERT INTO daily_menu_states (date, status, vote_options, voted_users) VALUES ($1, $2, $3, $4) RETURNING *'
+        , [today, 'idle', '[]'::jsonb, '{}'::jsonb]
+      );
+      res.json(newEntry.rows[0]);
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (err) {
+    console.error('Error fetching daily menu state:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // POST to start the voting process (Admin)
-app.post('/api/daily-menu/start', (req, res) => {
+app.post('/api/daily-menu/start', async (req, res) => {
   const { voteOptions } = req.body;
-  if (dailyMenuState.status !== 'idle' && dailyMenuState.status !== 'closed') {
-    return res.status(400).json({ error: 'Voting is already in progress or set by admin.' });
-  }
+  const today = new Date().toISOString().split('T')[0];
+
   if (!Array.isArray(voteOptions) || voteOptions.length === 0) {
     return res.status(400).json({ error: 'Vote options must be a non-empty array.' });
   }
 
-  dailyMenuState = {
-    status: 'voting',
-    voteOptions: voteOptions.map(opt => ({ ...opt, votes: 0 })),
-    votedUsers: {},
-    winningFoodItemId: null,
-    adminSetFoodItemId: null,
-    timestamp: new Date().toISOString(),
-  };
-  res.status(200).json(dailyMenuState);
+  try {
+    const result = await pool.query(
+      'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW() WHERE date = $4 RETURNING *'
+      , ['voting', JSON.stringify(voteOptions.map(opt => ({ ...opt, votes: 0 }))), '{}'::jsonb, today]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for today not found.' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error starting voting:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 // POST to close the voting process (Admin)
-app.post('/api/daily-menu/close', (req, res) => {
-  if (dailyMenuState.status !== 'voting') {
-    return res.status(400).json({ error: 'No voting is currently active.' });
-  }
+app.post('/api/daily-menu/close', async (req, res) => {
+  const today = new Date().toISOString().split('T')[0];
+  try {
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    if (result.rows.length === 0 || result.rows[0].status !== 'voting') {
+      return res.status(400).json({ error: 'No voting is currently active for today.' });
+    }
 
-  let winningItem = null;
-  if (dailyMenuState.voteOptions.length > 0) {
-    winningItem = dailyMenuState.voteOptions.reduce((prev, current) =>
-      (prev.votes > current.votes) ? prev : current
+    const currentMenu = result.rows[0];
+    let winningItem = null;
+    if (currentMenu.vote_options && currentMenu.vote_options.length > 0) {
+      winningItem = currentMenu.vote_options.reduce((prev, current) =>
+        (prev.votes > current.votes) ? prev : current
+      );
+    }
+
+    const updatedMenu = await pool.query(
+      'UPDATE daily_menu_states SET status = $1, winning_food_item_id = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
+      , ['closed', winningItem ? winningItem.foodItemId : null, today]
     );
+
+    // Optional: Save the result to the daily_results table as well
+    const totalVotes = currentMenu.vote_options.reduce((sum, option) => sum + option.votes, 0);
+    const voteDetails = currentMenu.vote_options.reduce((acc, option) => {
+      acc[option.foodItemId] = option.votes;
+      return acc;
+    }, {});
+
+    await pool.query(
+      'INSERT INTO daily_results (date, winning_food_id, winning_food_name, total_votes, vote_details) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (date) DO UPDATE SET winning_food_id = EXCLUDED.winning_food_id, winning_food_name = EXCLUDED.winning_food_name, total_votes = EXCLUDED.total_votes, vote_details = EXCLUDED.vote_details, created_at = NOW()'
+      , [today, winningItem ? winningItem.foodItemId : null, winningItem ? winningItem.name : null, totalVotes, voteDetails]
+    );
+
+    res.status(200).json(updatedMenu.rows[0]);
+  } catch (err) {
+    console.error('Error closing voting:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  dailyMenuState.status = 'closed';
-  dailyMenuState.winningFoodItemId = winningItem ? winningItem.foodItemId : null;
-  dailyMenuState.timestamp = new Date().toISOString();
-
-  // Optional: Save the result to the database here as well
-  // This part can be enhanced later
-
-  res.status(200).json(dailyMenuState);
 });
 
 // POST to cast a vote
-app.post('/api/daily-menu/vote', (req, res) => {
+app.post('/api/daily-menu/vote', async (req, res) => {
   const { userId, foodItemId } = req.body;
+  const today = new Date().toISOString().split('T')[0];
 
-  if (dailyMenuState.status !== 'voting') {
-    return res.status(400).json({ error: 'Voting is not active.' });
+  try {
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for today not found.' });
+    }
+
+    const currentMenu = result.rows[0];
+
+    if (currentMenu.status !== 'voting') {
+      return res.status(400).json({ error: 'Voting is not active.' });
+    }
+    if (currentMenu.voted_users && currentMenu.voted_users[userId]) {
+      return res.status(400).json({ error: 'User has already voted.' });
+    }
+
+    const updatedVoteOptions = currentMenu.vote_options.map(option =>
+      option.foodItemId === foodItemId
+        ? { ...option, votes: option.votes + 1 }
+        : option
+    );
+
+    const updatedVotedUsers = { ...currentMenu.voted_users, [userId]: foodItemId };
+
+    const updatedMenu = await pool.query(
+      'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
+      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), today]
+    );
+
+    res.status(200).json(updatedMenu.rows[0]);
+  } catch (err) {
+    console.error('Error casting vote:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  if (dailyMenuState.votedUsers[userId]) {
-    return res.status(400).json({ error: 'User has already voted.' });
-  }
-
-  const option = dailyMenuState.voteOptions.find(opt => opt.foodItemId === foodItemId);
-  if (!option) {
-    return res.status(404).json({ error: 'Food item not found in vote options.' });
-  }
-
-  option.votes += 1;
-  dailyMenuState.votedUsers[userId] = foodItemId;
-  dailyMenuState.timestamp = new Date().toISOString();
-
-  res.status(200).json(dailyMenuState);
 });
 
 // POST to set the menu by admin
-app.post('/api/daily-menu/admin-set', (req, res) => {
+app.post('/api/daily-menu/admin-set', async (req, res) => {
     const { foodId } = req.body;
+    const today = new Date().toISOString().split('T')[0];
+
     if (!foodId) {
         return res.status(400).json({ error: 'Food ID is required.' });
     }
 
-    dailyMenuState = {
-        status: 'admin_set',
-        voteOptions: [],
-        votedUsers: {},
-        winningFoodItemId: null,
-        adminSetFoodItemId: foodId,
-        timestamp: new Date().toISOString(),
-    };
-    res.status(200).json(dailyMenuState);
+    try {
+        const result = await pool.query(
+            'UPDATE daily_menu_states SET status = $1, admin_set_food_item_id = $2, winning_food_item_id = NULL, vote_options = '[]'::jsonb, voted_users = '{}'::jsonb, timestamp = NOW() WHERE date = $3 RETURNING *'
+            , ['admin_set', foodId, today]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Daily menu state for today not found.' });
+        }
+        res.status(200).json(result.rows[0]);
+    } catch (err) {
+        console.error('Error setting menu by admin:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// GET daily menu state for a specific date
+app.get('/api/daily-menu/:date', async (req, res) => {
+  const { date } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [date]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for this date not found.' });
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error fetching daily menu state by date:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// POST/PUT to save daily menu state for a specific date
+app.post('/api/daily-menu/save', async (req, res) => {
+  const { date, status, voteOptions, votedUsers, winningFoodItemId, adminSetFoodItemId } = req.body;
+
+  if (!date || !status) {
+    return res.status(400).json({ error: 'Date and status are required.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'INSERT INTO daily_menu_states (date, status, vote_options, voted_users, winning_food_item_id, admin_set_food_item_id, timestamp) VALUES ($1, $2, $3, $4, $5, $6, NOW()) ON CONFLICT (date) DO UPDATE SET status = EXCLUDED.status, vote_options = EXCLUDED.vote_options, voted_users = EXCLUDED.voted_users, winning_food_item_id = EXCLUDED.winning_food_item_id, admin_set_food_item_id = EXCLUDED.admin_set_food_item_id, timestamp = NOW() RETURNING *'
+      , [date, status, JSON.stringify(voteOptions || []), JSON.stringify(votedUsers || {}), winningFoodItemId, adminSetFoodItemId]
+    );
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error saving daily menu state:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 });
 
 

@@ -13,12 +13,6 @@ const AdminPage = ({
   adminVoteSelections,
   setAdminVoteSelections,
   toggleAdminVoteSelection,
-  handleStartVoting,
-  dailyMenu,
-  handleCloseVoting,
-  adminDirectSelectFoodId,
-  setAdminDirectSelectFoodId,
-  handleAdminSetFood,
   showMessage,
   selectedAdminCategory,
   setSelectedAdminCategory,
@@ -35,12 +29,6 @@ const AdminPage = ({
       adminVoteSelections={adminVoteSelections}
       setAdminVoteSelections={setAdminVoteSelections}
       toggleAdminVoteSelection={toggleAdminVoteSelection}
-      handleStartVoting={handleStartVoting}
-      dailyMenu={dailyMenu}
-      handleCloseVoting={handleCloseVoting}
-      adminDirectSelectFoodId={adminDirectSelectFoodId}
-      setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-      handleAdminSetFood={handleAdminSetFood}
       showMessage={showMessage}
       selectedAdminCategory={selectedAdminCategory}
       setSelectedAdminCategory={setSelectedAdminCategory}
