@@ -246,7 +246,7 @@ app.put('/api/foods/:id', async (req, res) => {
   }
 });
 
-// DELETE a food item
+"""// DELETE a food item
 app.delete('/api/foods/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -261,10 +261,114 @@ app.delete('/api/foods/:id', async (req, res) => {
   }
 });
 
+// --- Daily Menu State (In-memory) ---
+let dailyMenuState = {
+  status: 'idle', // idle, voting, closed, admin_set
+  voteOptions: [], // Array of { foodItemId, name, image, votes }
+  votedUsers: {}, // { userId: foodItemId }
+  winningFoodItemId: null,
+  adminSetFoodItemId: null,
+  timestamp: null,
+};
+
+// --- API Endpoints for Daily Menu ---
+
+// GET the current daily menu state
+app.get('/api/daily-menu', (req, res) => {
+  res.json(dailyMenuState);
+});
+
+// POST to start the voting process (Admin)
+app.post('/api/daily-menu/start', (req, res) => {
+  const { voteOptions } = req.body;
+  if (dailyMenuState.status !== 'idle' && dailyMenuState.status !== 'closed') {
+    return res.status(400).json({ error: 'Voting is already in progress or set by admin.' });
+  }
+  if (!Array.isArray(voteOptions) || voteOptions.length === 0) {
+    return res.status(400).json({ error: 'Vote options must be a non-empty array.' });
+  }
+
+  dailyMenuState = {
+    status: 'voting',
+    voteOptions: voteOptions.map(opt => ({ ...opt, votes: 0 })),
+    votedUsers: {},
+    winningFoodItemId: null,
+    adminSetFoodItemId: null,
+    timestamp: new Date().toISOString(),
+  };
+  res.status(200).json(dailyMenuState);
+});
+
+// POST to close the voting process (Admin)
+app.post('/api/daily-menu/close', (req, res) => {
+  if (dailyMenuState.status !== 'voting') {
+    return res.status(400).json({ error: 'No voting is currently active.' });
+  }
+
+  let winningItem = null;
+  if (dailyMenuState.voteOptions.length > 0) {
+    winningItem = dailyMenuState.voteOptions.reduce((prev, current) =>
+      (prev.votes > current.votes) ? prev : current
+    );
+  }
+
+  dailyMenuState.status = 'closed';
+  dailyMenuState.winningFoodItemId = winningItem ? winningItem.foodItemId : null;
+  dailyMenuState.timestamp = new Date().toISOString();
+
+  // Optional: Save the result to the database here as well
+  // This part can be enhanced later
+
+  res.status(200).json(dailyMenuState);
+});
+
+// POST to cast a vote
+app.post('/api/daily-menu/vote', (req, res) => {
+  const { userId, foodItemId } = req.body;
+
+  if (dailyMenuState.status !== 'voting') {
+    return res.status(400).json({ error: 'Voting is not active.' });
+  }
+  if (dailyMenuState.votedUsers[userId]) {
+    return res.status(400).json({ error: 'User has already voted.' });
+  }
+
+  const option = dailyMenuState.voteOptions.find(opt => opt.foodItemId === foodItemId);
+  if (!option) {
+    return res.status(404).json({ error: 'Food item not found in vote options.' });
+  }
+
+  option.votes += 1;
+  dailyMenuState.votedUsers[userId] = foodItemId;
+  dailyMenuState.timestamp = new Date().toISOString();
+
+  res.status(200).json(dailyMenuState);
+});
+
+// POST to set the menu by admin
+app.post('/api/daily-menu/admin-set', (req, res) => {
+    const { foodId } = req.body;
+    if (!foodId) {
+        return res.status(400).json({ error: 'Food ID is required.' });
+    }
+
+    dailyMenuState = {
+        status: 'admin_set',
+        voteOptions: [],
+        votedUsers: {},
+        winningFoodItemId: null,
+        adminSetFoodItemId: foodId,
+        timestamp: new Date().toISOString(),
+    };
+    res.status(200).json(dailyMenuState);
+});
+
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
 });
+""
 
 // Start the server
 app.listen(port, () => {

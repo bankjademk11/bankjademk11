@@ -64,17 +64,28 @@ const App = () => {
     fetchFoodItems();
   }, [BACKEND_URL, showMessage]);
 
-  const [dailyMenu, setDailyMenu] = useState(() => {
-    const savedDailyMenu = localStorage.getItem('thaiFoodMenu_dailyMenu');
-    return savedDailyMenu ? JSON.parse(savedDailyMenu) : {
-      status: 'idle',
-      voteOptions: [],
-      votedUsers: {},
-      winningFoodItemId: null,
-      adminSetFoodItemId: null,
-      timestamp: null,
+  const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
+
+  useEffect(() => {
+    const fetchDailyMenu = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/daily-menu`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setDailyMenu(data);
+      } catch (error) {
+        console.error("Error fetching daily menu:", error);
+        showMessage('ไม่สามารถโหลดข้อมูลโหวตได้', 'error');
+      }
     };
-  });
+
+    fetchDailyMenu(); // Initial fetch
+    const intervalId = setInterval(fetchDailyMenu, 3000); // Poll every 3 seconds
+
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, [BACKEND_URL, showMessage]);
 
   const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
@@ -158,129 +169,88 @@ const App = () => {
     }
   };
 
-  const handleStartVoting = () => {
+  const handleStartVoting = async () => {
     if (adminVoteSelections.length !== 5) {
       showMessage('ต้องเลือก 5 เมนูที่ไม่ซ้ำกันสำหรับโหวต', 'error');
       return;
     }
-
     const voteOptions = adminVoteSelections.map(item => ({
       foodItemId: item.id,
       name: item.name,
       image: item.image,
-      votes: 0,
     }));
 
-    setDailyMenu({
-      status: 'voting',
-      voteOptions: voteOptions,
-      votedUsers: {},
-      winningFoodItemId: null,
-      adminSetFoodItemId: null,
-      timestamp: new Date().toISOString(),
-    });
-    showMessage('เริ่มการโหวตเมนูประจำวันแล้ว!', 'success');
-    setAdminVoteSelections([]);
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/daily-menu/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ voteOptions }),
+      });
+      if (!response.ok) throw new Error('Failed to start voting');
+      const data = await response.json();
+      setDailyMenu(data);
+      showMessage('เริ่มการโหวตเมนูประจำวันแล้ว!', 'success');
+      setAdminVoteSelections([]);
+    } catch (error) {
+      console.error("Error starting voting:", error);
+      showMessage('เกิดข้อผิดพลาดในการเริ่มโหวต', 'error');
+    }
   };
 
   const handleCloseVoting = async () => {
-    if (dailyMenu.status !== 'voting') {
-      showMessage('ไม่ได้อยู่ในสถานะกำลังโหวต', 'error');
-      return;
-    }
-
-    let winningItem = null;
-    if (dailyMenu.voteOptions && dailyMenu.voteOptions.length > 0) {
-      winningItem = dailyMenu.voteOptions.reduce((prev, current) =>
-        (prev.votes > current.votes) ? prev : current
-      );
-    }
-
-    setDailyMenu(prev => ({
-      ...prev,
-      status: 'closed',
-      winningFoodItemId: winningItem ? winningItem.foodItemId : null,
-      timestamp: new Date().toISOString(),
-    }));
-    showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningItem ? winningItem.name : 'ไม่มี'}`, 'success');
-
     try {
-      const today = new Date().toISOString().split('T')[0];
-      const totalVotes = dailyMenu.voteOptions.reduce((sum, option) => sum + option.votes, 0);
-      const voteDetails = dailyMenu.voteOptions.reduce((acc, option) => {
-        acc[option.foodItemId] = option.votes;
-        return acc;
-      }, {});
-
-      const response = await fetch(`${BACKEND_URL}/api/daily-results`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          date: today,
-          winningFoodId: winningItem ? winningItem.foodItemId : null,
-          winningFoodName: winningItem ? winningItem.name : null,
-          totalVotes: totalVotes,
-          voteDetails: voteDetails,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      console.log('Daily results saved:', await response.json());
+      const response = await fetch(`${BACKEND_URL}/api/daily-menu/close`, { method: 'POST' });
+      if (!response.ok) throw new Error('Failed to close voting');
+      const data = await response.json();
+      setDailyMenu(data);
+      const winningFood = foodItems.find(f => f.id === data.winningFoodItemId);
+      showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningFood ? winningFood.name : 'ไม่มี'}`, 'success');
     } catch (error) {
-      console.error('Error saving daily results:', error);
-      showMessage('เกิดข้อผิดพลาดในการบันทึกผลโหวตประจำวัน', 'error');
+      console.error("Error closing voting:", error);
+      showMessage('เกิดข้อผิดพลาดในการปิดโหวต', 'error');
     }
   };
 
-  const handleAdminSetFood = () => {
+  const handleAdminSetFood = async () => {
     if (!adminDirectSelectFoodId) {
       showMessage('ต้องเลือกเมนู', 'error');
       return;
     }
-
-    setDailyMenu({
-      status: 'admin_set',
-      adminSetFoodItemId: adminDirectSelectFoodId,
-      winningFoodItemId: null,
-      voteOptions: [],
-      votedUsers: {},
-      timestamp: new Date().toISOString(),
-    });
-    showMessage('ตั้งค่าเมนูประจำวันโดยแอดมินเรียบร้อยแล้ว!', 'success');
-    setAdminDirectSelectFoodId('');
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/daily-menu/admin-set`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ foodId: adminDirectSelectFoodId }),
+      });
+      if (!response.ok) throw new Error('Failed to set food by admin');
+      const data = await response.json();
+      setDailyMenu(data);
+      showMessage('ตั้งค่าเมนูประจำวันโดยแอดมินเรียบร้อยแล้ว!', 'success');
+      setAdminDirectSelectFoodId('');
+    } catch (error) {
+      console.error("Error setting food by admin:", error);
+      showMessage('เกิดข้อผิดพลาดในการตั้งค่าเมนู', 'error');
+    }
   };
 
-  const handleVote = (foodItemId) => {
-    if (dailyMenu.status !== 'voting') {
-      showMessage('ไม่สามารถโหวตได้ในขณะนี้', 'error');
-      return;
+  const handleVote = async (foodItemId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, foodItemId }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to vote');
+      }
+      const data = await response.json();
+      setDailyMenu(data);
+      showMessage('โหวตสำเร็จ!', 'success');
+    } catch (error) {
+      console.error("Error voting:", error);
+      showMessage(error.message === 'User has already voted.' ? 'คุณโหวตไปแล้วสำหรับวันนี้!' : 'เกิดข้อผิดพลาดในการโหวต', 'error');
     }
-
-    if (dailyMenu.votedUsers && dailyMenu.votedUsers[userId]) {
-      showMessage('คุณโหวตไปแล้วสำหรับวันนี้!', 'info');
-      return;
-    }
-
-    const updatedVoteOptions = dailyMenu.voteOptions.map(option =>
-      option.foodItemId === foodItemId
-        ? { ...option, votes: option.votes + 1 }
-        : option
-    );
-
-    setDailyMenu(prev => ({
-      ...prev,
-      voteOptions: updatedVoteOptions,
-      votedUsers: {
-        ...prev.votedUsers,
-        [userId]: foodItemId,
-      },
-      timestamp: new Date().toISOString(),
-    }));
-    showMessage('โหวตสำเร็จ!', 'success');
   };
 
   const handleReviewSubmit = useCallback(async (foodId, rating, comment) => {
