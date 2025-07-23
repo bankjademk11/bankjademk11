@@ -51,14 +51,21 @@ const VotePage = ({
   };
 
   const getWinningFoodDetails = () => {
-    if (!dailyMenu) return null;
+    if (!dailyMenu || dailyMenu.status === 'loading') return null;
 
-    if (dailyMenu.status === 'closed' && dailyMenu.winning_food_item_id) {
-      return foodItems.find(item => item.id === dailyMenu.winning_food_item_id) ||
-             dailyMenu.vote_options.find(option => option.foodItemId === dailyMenu.winning_food_item_id);
-    } else if (dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id) {
-      return foodItems.find(item => item.id === dailyMenu.admin_set_food_item_id);
+    const foodIdToFind = dailyMenu.status === 'closed' ? dailyMenu.winning_food_item_id : dailyMenu.admin_set_food_item_id;
+
+    if (foodIdToFind) {
+      return foodItems.find(item => item.id === foodIdToFind);
     }
+
+    // If status is 'closed' but no winning_food_item_id (e.g., no votes)
+    // Or if status is 'voting' and we need to show vote options
+    if (dailyMenu.status === 'voting' && dailyMenu.vote_options && dailyMenu.vote_options.length > 0) {
+      // For voting, we might want to return the options themselves or null if not applicable
+      return null; // Or return dailyMenu.vote_options if you want to display them here
+    }
+
     return null;
   };
 
