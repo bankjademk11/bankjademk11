@@ -475,6 +475,58 @@ app.post('/api/daily-menu/save', async (req, res) => {
   }
 });
 
+// GET all daily menu states
+app.get('/api/daily-menu/all', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM daily_menu_states ORDER BY date ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching all daily menu states:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// PUT to update status of a daily menu state
+app.put('/api/daily-menu/:date/status', async (req, res) => {
+  const { date } = req.params;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: 'Status is required.' });
+  }
+
+  try {
+    const result = await pool.query(
+      'UPDATE daily_menu_states SET status = $1, timestamp = NOW() WHERE date = $2 RETURNING *'
+      , [status, date]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for this date not found.' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating daily menu state status:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// DELETE a daily menu state
+app.delete('/api/daily-menu/:date', async (req, res) => {
+  const { date } = req.params;
+  try {
+    const result = await pool.query('DELETE FROM daily_menu_states WHERE date = $1 RETURNING *'
+      , [date]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for this date not found.' });
+    }
+    res.status(204).send(); // No content for successful deletion
+  } catch (err) {
+    console.error('Error deleting daily menu state:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Basic route
 app.get('/', (req, res) => {

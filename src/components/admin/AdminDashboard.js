@@ -3,6 +3,7 @@ import AdminLogin from './AdminLogin';
 import VoteSelection from './VoteSelection';
 import DailyMenuControl from './DailyMenuControl';
 import GMReport from './GMReport'; // Import GMReport
+import DailyMenuStatus from './DailyMenuStatus';
 
 const AdminDashboard = ({
   isAdmin,
@@ -150,6 +151,12 @@ const AdminDashboard = ({
               >
                 รายงาน
               </button>
+              <button
+                onClick={() => setAdminView('status')}
+                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'status' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              >
+                สถานะเมนู
+              </button>
             </div>
             <div className="flex items-center space-x-2">
               <label htmlFor="date-picker" className="text-gray-700">เลือกวันที่:</label>
@@ -196,6 +203,10 @@ const AdminDashboard = ({
 
           {adminView === 'report' && (
             <GMReport BACKEND_URL={BACKEND_URL} showMessage={showMessage} />
+          )}
+
+          {adminView === 'status' && (
+            <DailyMenuStatus BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} />
           )}
         </>
       )}
