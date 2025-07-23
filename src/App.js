@@ -36,6 +36,15 @@ const App = () => {
   const ADMIN_PASSWORD = 'admin';
 
   const [foodItems, setFoodItems] = useState([]);
+  const [foodName, setFoodName] = useState('');
+  const [foodImage, setFoodImage] = useState('');
+  const [foodTags, setFoodTags] = useState('');
+  const [editingFoodId, setEditingFoodId] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+
+  const [adminVoteSelections, setAdminVoteSelections] = useState([]);
+  const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
+  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด');
 
   useEffect(() => {
     const fetchFoodItems = async () => {
