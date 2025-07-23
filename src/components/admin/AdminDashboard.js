@@ -15,14 +15,13 @@ const AdminDashboard = ({
   setAdminVoteSelections,
   toggleAdminVoteSelection,
   showMessage,
-  selectedAdminCategory,
-  setSelectedAdminCategory,
   BACKEND_URL, // Receive BACKEND_URL prop
 }) => {
   const [adminView, setAdminView] = useState('voting'); // 'voting' or 'report'
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
+  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด');
 
   useEffect(() => {
     const fetchDailyMenu = async () => {
