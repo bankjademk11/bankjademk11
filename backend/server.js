@@ -438,11 +438,17 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
 app.get('/api/daily-menu/:date', async (req, res) => {
   const { date } = req.params;
   try {
-    const result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [date]);
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [date]);
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Daily menu state for this date not found.' });
+      // If no entry for this date, create a new idle one
+      const newEntry = await pool.query(
+        'INSERT INTO daily_menu_states (date, status, vote_options, voted_users) VALUES ($1, $2, $3, $4) RETURNING *'
+        , [date, 'idle', [], {}]
+      );
+      res.json(newEntry.rows[0]);
+    } else {
+      res.json(result.rows[0]);
     }
-    res.json(result.rows[0]);
   } catch (err) {
     console.error('Error fetching daily menu state by date:', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
