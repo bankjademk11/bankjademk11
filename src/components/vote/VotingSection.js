@@ -33,7 +33,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
         {hasVoted ? ' (คุณโหวตแล้ว)' : ''}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {dailyMenu.voteOptions.map((option) => (
+        {dailyMenu.vote_options && dailyMenu.vote_options.map((option) => (
           <div key={option.foodItemId} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
             <img
               src={option.image}
