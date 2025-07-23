@@ -315,7 +315,7 @@ app.post('/api/daily-menu/start', async (req, res) => {
   try {
     const result = await pool.query(
       'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW() WHERE date = $4 RETURNING *'
-      , ['voting', JSON.stringify(voteOptions.map(opt => ({ ...opt, votes: 0 }))), '{}'::jsonb, today]
+      , ['voting', JSON.stringify(voteOptions.map(opt => ({ ...opt, votes: 0 }))), {}, today]
     );
 
     if (result.rows.length === 0) {
