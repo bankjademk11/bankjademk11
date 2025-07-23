@@ -6,7 +6,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: 'https://odgfood.netlify.app' }));
 app.use(express.json());
 
 // Database connection
@@ -246,7 +246,7 @@ app.put('/api/foods/:id', async (req, res) => {
   }
 });
 
-"""// DELETE a food item
+// DELETE a food item
 app.delete('/api/foods/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -368,7 +368,6 @@ app.post('/api/daily-menu/admin-set', (req, res) => {
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
 });
-""
 
 // Start the server
 app.listen(port, () => {
