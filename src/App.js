@@ -22,7 +22,7 @@ const App = () => {
     }, 3000);
   }, [setMessage]);
 
-  const [userId, setUserId] = useState(() => {
+  const [userId] = useState(() => {
     let id = localStorage.getItem('offlineUserId');
     if (!id) {
       id = crypto.randomUUID();
@@ -128,39 +128,7 @@ const App = () => {
     }
   };
 
-  const handleEditFood = async (id) => {
-    const foodToEdit = foodItems.find(item => item.id === id);
-    if (foodToEdit) {
-      setFoodName(foodToEdit.name);
-      setFoodImage(foodToEdit.image);
-      setFoodTags(foodToEdit.tags.join(', '));
-      setEditingFoodId(id);
-      showMessage('กำลังแก้ไขเมนูอาหาร...', 'info');
-    }
-  };
-
-  const handleDeleteFood = async (id) => {
-    if (window.confirm('คุณต้องการลบเมนูอาหารนี้หรือไม่?')) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/foods/${id}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
-        const updatedFoodItems = await updatedFoodItemsResponse.json();
-        setFoodItems(updatedFoodItems);
-
-        showMessage('ลบเมนูอาหารเรียบร้อยแล้ว!', 'success');
-      } catch (error) {
-        console.error("Error deleting food item:", error);
-        showMessage('เกิดข้อผิดพลาดในการลบเมนูอาหาร', 'error');
-      }
-    }
-  };
+  
 
   const handleAdminLogin = () => {
     if (adminPasswordInput === ADMIN_PASSWORD) {
