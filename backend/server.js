@@ -291,7 +291,7 @@ app.get('/api/daily-menu', async (req, res) => {
       // If no entry for today, create a new idle one
       const newEntry = await pool.query(
         'INSERT INTO daily_menu_states (date, status, vote_options, voted_users) VALUES ($1, $2, $3, $4) RETURNING *'
-        , [today, 'idle', '[]'::jsonb, '{}'::jsonb]
+        , [today, 'idle', [], {}]
       );
       res.json(newEntry.rows[0]);
     } else {
