@@ -1,10 +1,10 @@
 import React from 'react';
-import Dashboard from '../components/admin/Dashboard';
+import DailySummary from '../components/admin/DailySummary';
 
 const AdminDashboardPage = ({ BACKEND_URL }) => {
     return (
         <div>
-            <Dashboard BACKEND_URL={BACKEND_URL} />
+            <DailySummary BACKEND_URL={BACKEND_URL} />
         </div>
     );
 };

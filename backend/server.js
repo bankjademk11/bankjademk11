@@ -557,6 +557,29 @@ app.get('/api/reports/summary', async (req, res) => {
 });
 
 
+app.get('/api/reports/daily-summary', async (req, res) => {
+    const date = req.query.date || new Date().toISOString().split('T')[0];
+
+    try {
+        const dailyStateQuery = 'SELECT * FROM daily_menu_states WHERE date = $1';
+        const dailyResultQuery = 'SELECT * FROM daily_results WHERE date = $1';
+
+        const [dailyStateRes, dailyResultRes] = await Promise.all([
+            pool.query(dailyStateQuery, [date]),
+            pool.query(dailyResultQuery, [date])
+        ]);
+
+        res.json({
+            dailyState: dailyStateRes.rows[0] || null,
+            dailyResult: dailyResultRes.rows[0] || null
+        });
+    } catch (err) {
+        console.error('Error fetching daily summary:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 // Basic route
 app.get('/', (req, res) => {
   res.send('Hello from Backend!');
