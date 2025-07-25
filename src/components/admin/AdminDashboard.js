@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import AdminLogin from './AdminLogin';
 import VoteSelection from './VoteSelection';
 import DailyMenuControl from './DailyMenuControl';
@@ -157,6 +158,9 @@ const AdminDashboard = ({
               >
                 สถานะเมนู
               </button>
+              <Link to="/admin/dashboard" className="px-4 py-2 rounded-lg shadow-lg transition bg-blue-500 text-white hover:bg-blue-600">
+                View Dashboard
+              </Link>
             </div>
             <div className="flex items-center space-x-2">
               <label htmlFor="date-picker" className="text-gray-700">เลือกวันที่:</label>
