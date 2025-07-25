@@ -141,43 +141,45 @@ const App = () => {
         <MessageDisplay message={message} />
         <Navigation isAdmin={isAdmin} />
 
-        <Routes>
-          <Route path="/" element={<Navigate to="/vote" replace />} />
-          <Route path="/vote" element={
-            <VotePage
-              userId={userId}
-              handleVote={handleVote}
-              handleReviewSubmit={handleReviewSubmit}
-              foodItems={foodItems}
-            />
-          } />
-          <Route path="/admin" element={
-            <AdminPage
-              isAdmin={isAdmin}
-              adminPasswordInput={adminPasswordInput}
-              setAdminPasswordInput={setAdminPasswordInput}
-              handleAdminLogin={handleAdminLogin}
-              handleAdminLogout={handleAdminLogout}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-              adminVoteSelections={adminVoteSelections}
-              setAdminVoteSelections={setAdminVoteSelections}
-              toggleAdminVoteSelection={toggleAdminVoteSelection}
-              showMessage={showMessage}
-              BACKEND_URL={BACKEND_URL}
-            />
-          } />
-          <Route path="/admin/my-foods" element={
-            <MyFoodsPage
-              BACKEND_URL={BACKEND_URL}
-              showMessage={showMessage}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-            />
-          } />
-          <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
-        </Routes>
+        <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-lg max-w-4xl mx-auto my-8">
+          <Routes>
+            <Route path="/" element={<Navigate to="/vote" replace />} />
+            <Route path="/vote" element={
+              <VotePage
+                userId={userId}
+                handleVote={handleVote}
+                handleReviewSubmit={handleReviewSubmit}
+                foodItems={foodItems}
+              />
+            } />
+            <Route path="/admin" element={
+              <AdminPage
+                isAdmin={isAdmin}
+                adminPasswordInput={adminPasswordInput}
+                setAdminPasswordInput={setAdminPasswordInput}
+                handleAdminLogin={handleAdminLogin}
+                handleAdminLogout={handleAdminLogout}
+                foodItems={foodItems}
+                setFoodItems={setFoodItems}
+                adminVoteSelections={adminVoteSelections}
+                setAdminVoteSelections={setAdminVoteSelections}
+                toggleAdminVoteSelection={toggleAdminVoteSelection}
+                showMessage={showMessage}
+                BACKEND_URL={BACKEND_URL}
+              />
+            } />
+            <Route path="/admin/my-foods" element={
+              <MyFoodsPage
+                BACKEND_URL={BACKEND_URL}
+                showMessage={showMessage}
+                foodItems={foodItems}
+                setFoodItems={setFoodItems}
+              />
+            } />
+            <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
+          </Routes>
+        </div>
       </div>
     </BrowserRouter>
   );
