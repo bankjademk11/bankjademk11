@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ตัวอย่าง Canvas</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: sans-serif;
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #fff;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #555;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ตัวอย่างการใช้งาน HTML Canvas</h1>
+        <canvas id="myCanvas" width="400" height="300"></canvas>
+        <p>นี่คือตัวอย่างการวาดรูปสี่เหลี่ยมและวงกลมบน Canvas ด้วย JavaScript</p>
+    </div>
+
+    <script>
+        // 1. เข้าถึง Canvas Element
+        const canvas = document.getElementById('myCanvas');
+
+        // 2. รับ Context สำหรับการวาด (2D)
+        // Context คือ Object ที่มีเมธอดและคุณสมบัติสำหรับวาดรูปทรงต่างๆ
+        const ctx = canvas.getContext('2d');
+
+        // 3. วาดรูปสี่เหลี่ยม
+        // กำหนดสีเติม
+        ctx.fillStyle = 'blue';
+        // วาดสี่เหลี่ยม (x, y, width, height)
+        ctx.fillRect(50, 50, 100, 75); // สี่เหลี่ยมสีน้ำเงิน
+
+        // 4. วาดรูปวงกลม
+        // กำหนดสีเส้นขอบ
+        ctx.strokeStyle = 'red';
+        // กำหนดความหนาของเส้นขอบ
+        ctx.lineWidth = 5;
+        // เริ่มต้น Path ใหม่
+        ctx.beginPath();
+        // วาดส่วนโค้ง (x_center, y_center, radius, start_angle, end_angle)
+        // Math.PI * 2 คือ 360 องศา (วงกลมเต็มวง)
+        ctx.arc(250, 150, 60, 0, Math.PI * 2);
+        // วาดเส้นขอบ
+        ctx.stroke();
+
+        // 5. วาดข้อความ
+        ctx.fillStyle = 'green';
+        ctx.font = '20px Arial';
+        ctx.fillText('Hello Canvas!', 100, 250);
+    </script>
+</body>
+</html>

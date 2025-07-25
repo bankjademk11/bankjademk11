@@ -232,6 +232,7 @@ app.get('/api/foods', async (req, res) => {
 
 // POST a new food item
 app.post('/api/foods', async (req, res) => {
+  console.log('Received request to add new food item:', req.body);
   const { name, image, tags } = req.body;
   try {
     const result = await pool.query(

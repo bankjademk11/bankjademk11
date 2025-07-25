@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'food-bg': "url('./Assets/BG.png')",
+        'food-bg': "url('/BG.png')",
       },
       fontFamily: {
         playfair: ['Playfair Display', 'serif'],
