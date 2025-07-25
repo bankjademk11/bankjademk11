@@ -33,7 +33,7 @@ const VoteSelection = ({
                   src={food.image}
                   alt={food.name}
                   className="w-8 h-8 object-cover rounded-md mr-2"
-                  onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                 />
                 <span className="text-sm font-medium">{food.name}</span>
                 <button
@@ -82,7 +82,7 @@ const VoteSelection = ({
                     src={food.image}
                     alt={food.name}
                     className="w-12 h-12 object-cover rounded-md mr-3"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+                    onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                   />
                   <span className="font-medium text-gray-800">{food.name}</span>
                 </div>

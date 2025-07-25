@@ -39,7 +39,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
               src={option.image}
               alt={option.name}
               className="w-full h-32 object-cover rounded-lg mb-3"
-              onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
+              onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
             />
             <h3 className="text-xl font-semibold mb-2">{option.name}</h3>
             <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {option.votes}</p>

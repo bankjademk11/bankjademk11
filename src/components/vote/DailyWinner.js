@@ -64,7 +64,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           src={winningFood.image}
           alt={winningFood.name}
           className="w-64 h-48 object-cover rounded-lg mb-4 mx-auto"
-          onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
+          onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
         />
         <h3 className="text-3xl font-extrabold text-teal-800">{winningFood.name}</h3>
         <div className="flex flex-wrap justify-center gap-2 mt-3">

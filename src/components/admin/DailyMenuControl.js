@@ -39,7 +39,7 @@ const DailyMenuControl = ({
                 src={food.image}
                 alt={food.name}
                 className="w-24 h-24 object-cover rounded-md mb-2"
-                onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }}
+                onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
               />
               <span className="font-medium text-gray-800 text-center">{food.name}</span>
             </div>

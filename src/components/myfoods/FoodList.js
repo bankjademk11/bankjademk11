@@ -68,7 +68,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 src={food.image}
                 alt={food.name}
                 className="w-full h-32 object-cover rounded-lg mb-3"
-                onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
+                onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
               />
               <h3 className="text-xl font-semibold mb-2">{food.name}</h3>
               <p className="text-sm text-gray-500 mb-2">{food.tags && food.tags.length > 0 ? food.tags.join(', ') : 'ບໍ່ມີແທັກ'}</p>

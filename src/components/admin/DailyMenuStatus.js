@@ -98,7 +98,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems }) => {
                     <div className="flex flex-wrap gap-2">
                       {currentMenu.vote_options.map(food => (
                         <div key={food.foodItemId} className="flex items-center bg-white rounded-lg p-2 shadow-sm">
-                          <img src={food.image} alt={food.name} className="w-8 h-8 object-cover rounded-md mr-2" onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }} />
+                          <img src={food.image} alt={food.name} className="w-8 h-8 object-cover rounded-md mr-2" onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }} />
                           <span className="text-sm font-medium">{food.name} ({food.votes} ໂຫວດ)</span>
                         </div>
                       ))}
@@ -134,7 +134,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems }) => {
                         <div className="flex flex-wrap gap-2">
                           {menu.vote_options.map(food => (
                             <div key={food.foodItemId} className="flex items-center bg-gray-100 rounded-lg p-1 text-sm">
-                              <img src={food.image} alt={food.name} className="w-6 h-6 object-cover rounded-md mr-1" onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=NF`; }} />
+                              <img src={food.image} alt={food.name} className="w-6 h-6 object-cover rounded-md mr-1" onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }} />
                               <span>{food.name}</span>
                             </div>
                           ))}
