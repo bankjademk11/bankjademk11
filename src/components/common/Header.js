@@ -4,10 +4,10 @@ const Header = ({ userId }) => {
   return (
     <header className="mb-8 text-center drop-shadow-xl">
       <img src="/FoodODG.png" alt="FoodODG Logo" className="mx-auto mb-4" style={{ maxWidth: '150px' }} />
-      <h1 className="mb-2 text-5xl font-extrabold text-teal-800 drop-shadow-lg">
-        ODIEN canteen
+      <h1 className="mb-2 text-5xl font-extrabold text-black drop-shadow-lg">
+        ODIEN COOKING
       </h1>
-      <p className="text-xl text-teal-600">ຈັດການລາຍການເມນູອາຫານທີ່ທ່ານມັກ ແລະ ໂຫວດເມນູປະຈຳວັນ</p>
+      <p className="text-xl text-gray-800">ODIEN COOKING</p>
       <p className="text-sm text-gray-500 mt-2">ລະຫັດຜູ້ໃຊ້: {userId}</p>
     </header>
   );
