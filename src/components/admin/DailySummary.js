@@ -27,17 +27,17 @@ const DailySummary = ({ BACKEND_URL }) => {
         fetchDailySummary();
     }, [BACKEND_URL, selectedDate]);
 
-    if (loading) return <div className="text-center py-4">Loading daily summary...</div>;
-    if (error) return <div className="text-center py-4 text-red-500">Error: {error}</div>;
+    if (loading) return <div className="text-center py-4">ກຳລັງໂຫຼດສະຫຼຸບປະຈຳວັນ...</div>;
+    if (error) return <div className="text-center py-4 text-red-500">ຂໍ້ຜິດພາດ: {error}</div>;
 
     const { dailyState, dailyResult } = summary;
 
     return (
         <div className="p-4 bg-gray-50 rounded-lg shadow-md">
-            <h2 className="text-xl font-bold mb-4 text-teal-700">Daily Activity Summary</h2>
+            <h2 className="text-xl font-bold mb-4 text-teal-700">ສະຫຼຸບກິດຈະກຳປະຈຳວັນ</h2>
 
             <div className="mb-4">
-                <label htmlFor="summary-date-picker" className="block text-gray-700 text-sm font-bold mb-2">Select Date:</label>
+                <label htmlFor="summary-date-picker" className="block text-gray-700 text-sm font-bold mb-2">ເລືອກວັນທີ:</label>
                 <input
                     type="date"
                     id="summary-date-picker"
@@ -49,59 +49,59 @@ const DailySummary = ({ BACKEND_URL }) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="text-lg font-semibold mb-2">Daily Menu State</h3>
+                    <h3 className="text-lg font-semibold mb-2">ສະຖານະເມນູປະຈຳວັນ</h3>
                     {dailyState ? (
                         <>
-                            <p><strong>Date:</strong> {dailyState.date}</p>
-                            <p><strong>Status:</strong> <span className={`font-bold ${dailyState.status === 'voting' ? 'text-blue-600' : dailyState.status === 'closed' ? 'text-red-600' : 'text-gray-600'}`}>{dailyState.status}</span></p>
-                            {dailyState.winning_food_item_id && <p><strong>Winning Food ID:</strong> {dailyState.winning_food_item_id}</p>}
-                            {dailyState.admin_set_food_item_id && <p><strong>Admin Set Food ID:</strong> {dailyState.admin_set_food_item_id}</p>}
+                            <p><strong>ວັນທີ:</strong> {dailyState.date}</p>
+                            <p><strong>ສະຖານະ:</strong> <span className={`font-bold ${dailyState.status === 'voting' ? 'text-blue-600' : dailyState.status === 'closed' ? 'text-red-600' : 'text-gray-600'}`}>{dailyState.status === 'idle' ? 'ບໍ່ມີກິດຈະກຳ' : dailyState.status === 'voting' ? 'ກຳລັງໂຫວດ' : dailyState.status === 'closed' ? 'ປິດໂຫວດແລ້ວ' : dailyState.status === 'admin_set' ? 'ແອັດມິນກຳນົດ' : dailyState.status}</span></p>
+                            {dailyState.winning_food_item_id && <p><strong>ID ອາຫານທີ່ຊະນະ:</strong> {dailyState.winning_food_item_id}</p>}
+                            {dailyState.admin_set_food_item_id && <p><strong>ID ອາຫານທີ່ແອັດມິນກຳນົດ:</strong> {dailyState.admin_set_food_item_id}</p>}
                             {dailyState.vote_options && dailyState.vote_options.length > 0 && (
                                 <div className="mt-2">
-                                    <p className="font-medium">Vote Options:</p>
+                                    <p className="font-medium">ຕົວເລືອກການໂຫວດ:</p>
                                     <ul className="list-disc list-inside ml-4">
                                         {dailyState.vote_options.map((option, index) => (
-                                            <li key={index}>{option.name} (Votes: {option.votes})</li>
+                                            <li key={index}>{option.name} (ໂຫວດ: {option.votes})</li>
                                         ))}
                                     </ul>
                                 </div>
                             )}
                             {dailyState.voted_users && Object.keys(dailyState.voted_users).length > 0 && (
                                 <div className="mt-2">
-                                    <p className="font-medium">Voted Users:</p>
+                                    <p className="font-medium">ຜູ້ໃຊ້ທີ່ໂຫວດແລ້ວ:</p>
                                     <ul className="list-disc list-inside ml-4">
                                         {Object.keys(dailyState.voted_users).map((userId, index) => (
-                                            <li key={index}>{userId} voted for {dailyState.voted_users[userId]}</li>
+                                            <li key={index}>ຜູ້ໃຊ້ {userId} ໂຫວດໃຫ້ {dailyState.voted_users[userId]}</li>
                                         ))}
                                     </ul>
                                 </div>
                             )}
                         </>
                     ) : (
-                        <p>No daily menu state found for this date.</p>
+                        <p>ບໍ່ພົບສະຖານະເມນູປະຈຳວັນສຳລັບວັນທີນີ້.</p>
                     )}
                 </div>
 
                 <div className="bg-white p-4 rounded-lg shadow">
-                    <h3 className="text-lg font-semibold mb-2">Daily Voting Result</h3>
+                    <h3 className="text-lg font-semibold mb-2">ຜົນການໂຫວດປະຈຳວັນ</h3>
                     {dailyResult ? (
                         <>
-                            <p><strong>Date:</strong> {dailyResult.date}</p>
-                            <p><strong>Winning Food:</strong> {dailyResult.winning_food_name || 'N/A'}</p>
-                            <p><strong>Total Votes:</strong> {dailyResult.total_votes}</p>
+                            <p><strong>ວັນທີ:</strong> {dailyResult.date}</p>
+                            <p><strong>ອາຫານທີ່ຊະນະ:</strong> {dailyResult.winning_food_name || 'ບໍ່ມີ'}</p>
+                            <p><strong>ຈຳນວນໂຫວດທັງໝົດ:</strong> {dailyResult.total_votes}</p>
                             {dailyResult.vote_details && Object.keys(dailyResult.vote_details).length > 0 && (
                                 <div className="mt-2">
-                                    <p className="font-medium">Vote Details (Food ID: Votes):</p>
+                                    <p className="font-medium">ລາຍລະອຽດການໂຫວດ (ID ອາຫານ: ໂຫວດ):</p>
                                     <ul className="list-disc list-inside ml-4">
                                         {Object.keys(dailyResult.vote_details).map((foodId, index) => (
-                                            <li key={index}>Food ID {foodId}: {dailyResult.vote_details[foodId]} votes</li>
+                                            <li key={index}>ID ອາຫານ {foodId}: {dailyResult.vote_details[foodId]} ໂຫວດ</li>
                                         ))}
                                     </ul>
                                 </div>
                             )}
                         </>
                     ) : (
-                        <p>No daily voting result found for this date.</p>
+                        <p>ບໍ່ພົບຜົນການໂຫວດປະຈຳວັນສຳລັບວັນທີນີ້.</p>
                     )}
                 </div>
             </div>
