@@ -9,6 +9,10 @@ module.exports = {
       backgroundImage: {
         'food-bg': "url('./Assets/BG.png')",
       },
+      fontFamily: {
+        playfair: ['Playfair Display', 'serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
     },
   },
   plugins: [],

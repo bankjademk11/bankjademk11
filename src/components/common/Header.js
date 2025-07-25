@@ -4,7 +4,7 @@ const Header = ({ userId }) => {
   return (
     <header className="mb-8 text-center drop-shadow-xl">
       <img src="/FoodODG.png" alt="FoodODG Logo" className="mx-auto mb-4" style={{ maxWidth: '150px' }} />
-      <h1 className="mb-2 text-5xl font-extrabold text-black drop-shadow-lg">
+      <h1 className="mb-2 text-5xl font-extrabold text-blue-600 drop-shadow-lg font-playfair">
         ODIEN COOKING
       </h1>
       <p className="text-xl text-gray-800">ODIEN COOKING</p>
