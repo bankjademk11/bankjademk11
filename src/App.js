@@ -236,6 +236,7 @@ const App = () => {
               handleAdminLogin={handleAdminLogin}
               handleAdminLogout={handleAdminLogout}
               foodItems={foodItems}
+              setFoodItems={setFoodItems}
               adminVoteSelections={adminVoteSelections}
               setAdminVoteSelections={setAdminVoteSelections}
               toggleAdminVoteSelection={toggleAdminVoteSelection}

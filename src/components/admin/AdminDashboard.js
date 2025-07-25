@@ -5,6 +5,7 @@ import VoteSelection from './VoteSelection';
 import DailyMenuControl from './DailyMenuControl';
 import GMReport from './GMReport'; // Import GMReport
 import DailyMenuStatus from './DailyMenuStatus';
+import FoodManagement from './FoodManagement'; // Import FoodManagement
 
 const AdminDashboard = ({
   isAdmin,
@@ -13,6 +14,7 @@ const AdminDashboard = ({
   handleAdminLogin,
   handleAdminLogout,
   foodItems,
+  setFoodItems,
   adminVoteSelections,
   setAdminVoteSelections,
   toggleAdminVoteSelection,
@@ -158,6 +160,12 @@ const AdminDashboard = ({
               >
                 ສະຖານະເມນູ
               </button>
+              <button
+                onClick={() => setAdminView('food-management')}
+                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'food-management' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              >
+                ຈັດການອາຫານ
+              </button>
               <Link to="/admin/dashboard" className="px-4 py-2 rounded-lg shadow-lg transition bg-blue-500 text-white hover:bg-blue-600">
                 ເບິ່ງ Dashboard
               </Link>
@@ -211,6 +219,10 @@ const AdminDashboard = ({
 
           {adminView === 'status' && (
             <DailyMenuStatus BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} />
+          )}
+
+          {adminView === 'food-management' && (
+            <FoodManagement BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} setFoodItems={setFoodItems} />
           )}
         </>
       )}
