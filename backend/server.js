@@ -507,6 +507,55 @@ app.delete('/api/daily-menu/:date', async (req, res) => {
   }
 });
 
+app.get('/api/reports/summary', async (req, res) => {
+    try {
+        const monthlyQuery = `
+            SELECT winning_food_name, COUNT(*) as wins
+            FROM daily_results
+            WHERE date_part('month', date) = date_part('month', CURRENT_DATE)
+              AND date_part('year', date) = date_part('year', CURRENT_DATE)
+              AND winning_food_name IS NOT NULL
+            GROUP BY winning_food_name
+            ORDER BY wins DESC
+            LIMIT 1;
+        `;
+
+        const yearlyQuery = `
+            SELECT winning_food_name, COUNT(*) as wins
+            FROM daily_results
+            WHERE date_part('year', date) = date_part('year', CURRENT_DATE)
+              AND winning_food_name IS NOT NULL
+            GROUP BY winning_food_name
+            ORDER BY wins DESC
+            LIMIT 1;
+        `;
+
+        const overallQuery = `
+            SELECT winning_food_name, COUNT(*) as wins
+            FROM daily_results
+            WHERE winning_food_name IS NOT NULL
+            GROUP BY winning_food_name
+            ORDER BY wins DESC
+            LIMIT 1;
+        `;
+
+        const [monthlyRes, yearlyRes, overallRes] = await Promise.all([
+            pool.query(monthlyQuery),
+            pool.query(yearlyQuery),
+            pool.query(overallQuery)
+        ]);
+
+        res.json({
+            monthly: monthlyRes.rows[0] || null,
+            yearly: yearlyRes.rows[0] || null,
+            overall: overallRes.rows[0] || null,
+        });
+    } catch (err) {
+        console.error('Error fetching report summary:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 // Basic route
 app.get('/', (req, res) => {
