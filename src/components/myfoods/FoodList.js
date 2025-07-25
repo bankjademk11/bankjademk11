@@ -57,9 +57,9 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
 
   return (
     <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
-      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">รายการเมนูอาหาร</h2>
+      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ລາຍການເມນູອາຫານ</h2>
       {filteredFoodItems.length === 0 ? (
-        <p className="text-center text-gray-600">ไม่มีเมนูอาหารในรายการ</p>
+        <p className="text-center text-gray-600">ບໍ່ມີເມນູອາຫານໃນລາຍການ</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFoodItems.map((food) => (
@@ -71,42 +71,42 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
               />
               <h3 className="text-xl font-semibold mb-2">{food.name}</h3>
-              <p className="text-sm text-gray-500 mb-2">{food.tags && food.tags.length > 0 ? food.tags.join(', ') : 'ไม่มีแท็ก'}</p>
-              <p className="text-lg text-teal-600 mb-4">คะแนนเฉลี่ย: {averageRatings[food.id] !== undefined ? averageRatings[food.id] : 'กำลังโหลด...'}</p>
+              <p className="text-sm text-gray-500 mb-2">{food.tags && food.tags.length > 0 ? food.tags.join(', ') : 'ບໍ່ມີແທັກ'}</p>
+              <p className="text-lg text-teal-600 mb-4">ຄະແນນສະເລ່ຍ: {averageRatings[food.id] !== undefined ? averageRatings[food.id] : 'ກຳລັງໂຫຼດ...'}</p>
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleEditFood(food.id)}
                   className="px-4 py-2 bg-yellow-500 text-white rounded-lg shadow-md hover:bg-yellow-600 transition"
                 >
-                  แก้ไข
+                  ແກ້ໄຂ
                 </button>
                 <button
                   onClick={() => handleDeleteFood(food.id)}
                   className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
                 >
-                  ลบ
+                  ລຶບ
                 </button>
                 <button
                   onClick={() => handleToggleReviews(food.id)}
                   className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
                 >
-                  {expandedFoodId === food.id ? 'ซ่อนรีวิว' : 'ดูรีวิว'}
+                  {expandedFoodId === food.id ? 'ເຊື່ອງຄຳເຫັນ' : 'ເບິ່ງຄຳເຫັນ'}
                 </button>
               </div>
 
               {expandedFoodId === food.id && (
                 <div className="mt-4 w-full text-left">
-                  <h4 className="text-lg font-semibold mb-2">รีวิว:</h4>
+                  <h4 className="text-lg font-semibold mb-2">ຄຳເຫັນ:</h4>
                   {foodReviews[food.id] && foodReviews[food.id].length > 0 ? (
                     foodReviews[food.id].map(review => (
                       <div key={review.id} className="bg-white p-3 rounded-lg shadow-sm mb-2">
-                        <p className="font-medium">คะแนน: {review.rating} / 5</p>
-                        {review.comment && <p className="text-gray-700">ความคิดเห็น: {review.comment}</p>}
-                        <p className="text-xs text-gray-500">โดย {review.user_id || 'ไม่ระบุ'} เมื่อ {new Date(review.created_at).toLocaleDateString()}</p>
+                        <p className="font-medium">ຄະແນນ: {review.rating} / 5</p>
+                        {review.comment && <p className="text-gray-700">ຄຳເຫັນ: {review.comment}</p>}
+                        <p className="text-xs text-gray-500">ໂດຍ {review.user_id || 'ບໍ່ລະບຸ'} ເມື່ອ {new Date(review.created_at).toLocaleDateString()}</p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-600">ยังไม่มีรีวิวสำหรับเมนูนี้</p>
+                    <p className="text-gray-600">ຍັງບໍ່ມີຄຳເຫັນສຳລັບເມນູນີ້</p>
                   )}
                 </div>
               )}

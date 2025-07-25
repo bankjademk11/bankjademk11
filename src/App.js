@@ -56,7 +56,7 @@ const App = () => {
         setFoodItems(data);
       } catch (error) {
         console.error("Error fetching food items:", error);
-        showMessage('ไม่สามารถโหลดรายการอาหารได้', 'error');
+        showMessage('ບໍ່ສາມາດໂຫຼດລາຍການອາຫານໄດ້', 'error');
       }
     };
 
@@ -122,16 +122,16 @@ const App = () => {
   const handleAdminLogin = () => {
     if (adminPasswordInput === ADMIN_PASSWORD) {
       setIsAdmin(true);
-      showMessage('เข้าสู่ระบบแอดมินสำเร็จ!', 'success');
+      showMessage('ເຂົ້າສູ່ລະບົບແອັດມິນສຳເລັດແລ້ວ!', 'success');
     } else {
-      showMessage('รหัสผ่านแอดมินไม่ถูกต้อง', 'error');
+      showMessage('ລະຫັດຜ່ານແອັດມິນບໍ່ຖືກຕ້ອງ', 'error');
     }
     setAdminPasswordInput('');
   };
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
-    showMessage('ออกจากระบบแอดมินแล้ว', 'info');
+    showMessage('ອອກຈາກລະບົບແອັດມິນແລ້ວ', 'info');
   };
 
   const toggleAdminVoteSelection = (food) => {
@@ -142,7 +142,7 @@ const App = () => {
       if (adminVoteSelections.length < 5) {
         setAdminVoteSelections([...adminVoteSelections, food]);
       } else {
-        showMessage('เลือกได้สูงสุด 5 เมนูสำหรับโหวตเท่านั้น', 'info');
+        showMessage('ເລືອກໄດ້ສູງສຸດ 5 ເມນູສຳລັບໂຫວດເທົ່ານັ້ນ', 'info');
       }
     }
   };
@@ -161,10 +161,10 @@ const App = () => {
         throw new Error(errorData.error || 'Failed to vote');
       }
       // No setDailyMenu here, as VotePage now fetches its own dailyMenu
-      showMessage('โหวตสำเร็จ!', 'success');
+      showMessage('ໂຫວດສຳເລັດ!', 'success');
     } catch (error) {
       console.error("Error voting:", error);
-      showMessage(error.message === 'User has already voted.' ? 'คุณโหวตไปแล้วสำหรับวันนี้!' : 'เกิดข้อผิดพลาดในการโหวต', 'error');
+      showMessage(error.message === 'User has already voted.' ? 'ທ່ານໂຫວດໄປແລ້ວສຳລັບມື້ນີ້!' : 'ເກີດຂໍ້ຜິດພາດໃນການໂຫວດ', 'error');
     }
   };
 
@@ -184,10 +184,10 @@ const App = () => {
 
       const newReview = await response.json();
       console.log('Review submitted:', newReview);
-      showMessage('ส่งรีวิวเรียบร้อยแล้ว!', 'success');
+      showMessage('ສົ່ງຄຳເຫັນສຳເລັດແລ້ວ!', 'success');
     } catch (error) {
       console.error("Error submitting review:", error);
-      showMessage('เกิดข้อผิดพลาดในการส่งรีวิว', 'error');
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການສົ່ງຄຳເຫັນ', 'error');
     }
   }, [BACKEND_URL, userId, showMessage]);
 

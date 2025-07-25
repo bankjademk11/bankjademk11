@@ -33,7 +33,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
   if (!winningFood) {
     return (
       <p className="text-center text-xl text-gray-600">
-        ยังไม่มีการตั้งค่าเมนูประจำวัน หรือกำลังรอแอดมินเริ่มการโหวต
+        ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູປະຈຳວັນ ຫຼື ກຳລັງລໍຖ້າແອັດມິນເລີ່ມການໂຫວດ
       </p>
     );
   }
@@ -57,7 +57,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
   return (
     <div className="text-center">
       <p className="text-2xl font-bold text-teal-700 mb-4">
-        เมนูประจำวันนี้คือ:
+        ເມນູປະຈຳວັນນີ້ແມ່ນ:
       </p>
       <div className="bg-teal-50 p-6 rounded-xl shadow-2xl inline-block">
         <img
@@ -80,12 +80,12 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
       </div>
       {dailyMenuStatus === 'closed' && (
         <p className="mt-4 text-gray-600">
-          (มาจากผลโหวต)
+          (ມາຈາກຜົນໂຫວດ)
         </p>
       )}
       {dailyMenuStatus === 'admin_set' && (
         <p className="mt-4 text-gray-600">
-          (ตั้งค่าโดยแอดมิน)
+          (ຕັ້ງຄ່າໂດຍແອັດມິນ)
         </p>
       )}
 
@@ -94,20 +94,20 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           onClick={() => setShowReviewForm(true)}
           className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition"
         >
-          รีวิวเมนูนี้
+          ຄຳເຫັນເມນູນີ້
         </button>
       )}
 
       {hasReviewed && (
-        <p className="mt-6 text-lg text-gray-600">คุณได้รีวิวเมนูนี้แล้ว</p>
+        <p className="mt-6 text-lg text-gray-600">ທ່ານໄດ້ຄຳເຫັນເມນູນີ້ແລ້ວ</p>
       )}
 
       {showReviewForm && winningFood && (
         <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
-          <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">รีวิวเมนู {winningFood.name}</h3>
+          <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">ຄຳເຫັນເມນູ {winningFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">
             <div>
-              <label htmlFor="rating" className="block text-lg font-medium text-gray-700">คะแนน (1-5):</label>
+              <label htmlFor="rating" className="block text-lg font-medium text-gray-700">ຄະແນນ (1-5):</label>
               <input
                 type="number"
                 id="rating"
@@ -120,7 +120,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
               />
             </div>
             <div>
-              <label htmlFor="comment" className="block text-lg font-medium text-gray-700">ความคิดเห็น (ไม่บังคับ):</label>
+              <label htmlFor="comment" className="block text-lg font-medium text-gray-700">ຄຳເຫັນ (ບໍ່ບັງຄັບ):</label>
               <textarea
                 id="comment"
                 rows="3"
@@ -133,14 +133,14 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
               type="submit"
               className="w-full px-4 py-2 bg-teal-600 text-white font-semibold rounded-md shadow-md hover:bg-teal-700 transition"
             >
-              ส่งรีวิว
+              ສົ່ງຄຳເຫັນ
             </button>
             <button
               type="button"
               onClick={() => setShowReviewForm(false)}
               className="w-full px-4 py-2 mt-2 bg-gray-400 text-white font-semibold rounded-md shadow-md hover:bg-gray-500 transition"
             >
-              ยกเลิก
+              ຍົກເລີກ
             </button>
           </form>
         </div>

@@ -8,19 +8,19 @@ const Navigation = () => {
         to="/"
         className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
-        เมนูส่วนตัว
+        ເມນູສ່ວນຕົວ
       </Link>
       <Link
         to="/vote"
         className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
-        โหวตเมนูประจำวัน
+        ໂຫວດເມນູປະຈຳວັນ
       </Link>
       <Link
         to="/admin"
         className="px-6 py-3 rounded-xl font-bold transition duration-300 bg-gray-200 text-gray-700 hover:bg-gray-300 shadow-lg"
       >
-        แผงควบคุมแอดมิน
+        ແຜງຄວບຄຸມແອັດມິນ
       </Link>
     </nav>
   );

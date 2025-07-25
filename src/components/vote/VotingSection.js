@@ -29,8 +29,8 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
   return (
     <div>
       <p className="text-center text-xl mb-4 text-gray-700 font-semibold">
-        กำลังเปิดโหวตเมนูประจำวัน!
-        {hasVoted ? ' (คุณโหวตแล้ว)' : ''}
+        ກຳລັງເປີດໂຫວດເມນູປະຈຳວັນ!
+        {hasVoted ? ' (ທ່ານໂຫວດແລ້ວ)' : ''}
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {dailyMenu.vote_options && dailyMenu.vote_options.map((option) => (
@@ -42,13 +42,13 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
               onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
             />
             <h3 className="text-xl font-semibold mb-2">{option.name}</h3>
-            <p className="text-lg text-teal-600 mb-4">คะแนนโหวต: {option.votes}</p>
+            <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {option.votes}</p>
             <button
               onClick={() => onVote(option.foodItemId)}
               disabled={hasVoted}
               className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              โหวต
+              ໂຫວດ
             </button>
           </div>
         ))}
@@ -56,10 +56,10 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
 
       {hasVoted && showReviewForm && votedFood && (
         <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
-          <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">รีวิวเมนู {votedFood.name}</h3>
+          <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">ຄຳເຫັນເມນູ {votedFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">
             <div>
-              <label htmlFor="rating" className="block text-lg font-medium text-gray-700">คะแนน (1-5):</label>
+              <label htmlFor="rating" className="block text-lg font-medium text-gray-700">ຄະແນນ (1-5):</label>
               <input
                 type="number"
                 id="rating"
@@ -72,7 +72,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
               />
             </div>
             <div>
-              <label htmlFor="comment" className="block text-lg font-medium text-gray-700">ความคิดเห็น (ไม่บังคับ):</label>
+              <label htmlFor="comment" className="block text-lg font-medium text-gray-700">ຄຳເຫັນ (ບໍ່ບັງຄັບ):</label>
               <textarea
                 id="comment"
                 rows="3"
@@ -85,7 +85,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
               type="submit"
               className="w-full px-4 py-2 bg-teal-600 text-white font-semibold rounded-md shadow-md hover:bg-teal-700 transition"
             >
-              ส่งรีวิว
+              ສົ່ງຄຳເຫັນ
             </button>
           </form>
         </div>

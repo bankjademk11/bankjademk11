@@ -10,18 +10,18 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // Last 5 years
   const months = [
-    { value: '01', label: 'มกราคม' },
-    { value: '02', label: 'กุมภาพันธ์' },
-    { value: '03', label: 'มีนาคม' },
-    { value: '04', label: 'เมษายน' },
-    { value: '05', label: 'พฤษภาคม' },
-    { value: '06', label: 'มิถุนายน' },
-    { value: '07', label: 'กรกฎาคม' },
-    { value: '08', label: 'สิงหาคม' },
-    { value: '09', label: 'กันยายน' },
-    { value: '10', label: 'ตุลาคม' },
-    { value: '11', label: 'พฤศจิกายน' },
-    { value: '12', label: 'ธันวาคม' },
+    { value: '01', label: 'ມັງກອນ' },
+    { value: '02', label: 'ກຸມພາ' },
+    { value: '03', label: 'ມີນາ' },
+    { value: '04', label: 'ເມສາ' },
+    { value: '05', label: 'ພຶດສະພາ' },
+    { value: '06', label: 'ມິຖຸນາ' },
+    { value: '07', label: 'ກໍລະກົດ' },
+    { value: '08', label: 'ສິງຫາ' },
+    { value: '09', label: 'ກັນຍາ' },
+    { value: '10', label: 'ຕຸລາ' },
+    { value: '11', label: 'ພະຈິກ' },
+    { value: '12', label: 'ທັນວາ' },
   ];
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
         setReports(data);
       } catch (error) {
         console.error("Error fetching reports:", error);
-        showMessage('ไม่สามารถโหลดรายงานได้', 'error');
+        showMessage('ບໍ່ສາມາດໂຫຼດລາຍງານໄດ້', 'error');
       }
     };
 
@@ -60,32 +60,32 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
 
   return (
     <div className="p-6 bg-white rounded-xl shadow-lg">
-      <h3 className="text-2xl font-bold text-center text-teal-700 mb-6">รายงานผลโหวตประจำวัน</h3>
+      <h3 className="text-2xl font-bold text-center text-teal-700 mb-6">ລາຍງານຜົນໂຫວດປະຈຳວັນ</h3>
 
       <div className="flex justify-center space-x-4 mb-6">
         <div>
-          <label htmlFor="month-select" className="block text-sm font-medium text-gray-700">เลือกเดือน:</label>
+          <label htmlFor="month-select" className="block text-sm font-medium text-gray-700">ເລືອກເດືອນ:</label>
           <select
             id="month-select"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md"
           >
-            <option value="">ทั้งหมด</option>
+            <option value="">ທັງໝົດ</option>
             {months.map(month => (
               <option key={month.value} value={month.value}>{month.label}</option>
             ))}
           </select>
         </div>
         <div>
-          <label htmlFor="year-select" className="block text-sm font-medium text-gray-700">เลือกปี:</label>
+          <label htmlFor="year-select" className="block text-sm font-medium text-gray-700">ເລືອກປີ:</label>
           <select
             id="year-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
             className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md"
           >
-            <option value="">ทั้งหมด</option>
+            <option value="">ທັງໝົດ</option>
             {years.map(year => (
               <option key={year} value={year}>{year}</option>
             ))}
@@ -94,7 +94,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
       </div>
 
       {reports.length === 0 ? (
-        <p className="text-center text-gray-600">ไม่มีรายงานสำหรับช่วงเวลาที่เลือก</p>
+        <p className="text-center text-gray-600">ບໍ່ມີລາຍງານສຳລັບຊ່ວງເວລາທີ່ເລືອກ</p>
       ) : (
         <div className="space-y-6">
           {reports.map(report => (
@@ -103,13 +103,13 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
               className="bg-gray-50 p-4 rounded-xl shadow-lg cursor-pointer hover:bg-gray-100 transition"
               onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
             >
-              <p className="text-lg font-semibold text-teal-800">วันที่: {new Date(report.date).toLocaleDateString()}</p>
-              <p className="text-md text-gray-700">เมนูที่ชนะ: {report.winning_food_name || 'ไม่มี'}</p>
-              <p className="text-md text-gray-700">จำนวนโหวตทั้งหมด: {report.total_votes}</p>
+              <p className="text-lg font-semibold text-teal-800">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
+              <p className="text-md text-gray-700">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
+              <p className="text-md text-gray-700">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
               <div className="mt-2">
-                <p className="font-medium">รายละเอียดการโหวต:</p>
+                <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
                 {report.vote_details && Object.entries(report.vote_details).map(([foodId, votes]) => (
-                  <p key={foodId} className="text-sm text-gray-600 ml-4">- {foodId} (ID): {votes} โหวต</p>
+                  <p key={foodId} className="text-sm text-gray-600 ml-4">- {foodId} (ID): {votes} ໂຫວດ</p>
                 ))}
               </div>
             </div>

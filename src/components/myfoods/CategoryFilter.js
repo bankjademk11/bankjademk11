@@ -12,10 +12,10 @@ const CategoryFilter = ({ selectedCategory, setSelectedCategory, label, idPrefix
         onChange={(e) => setSelectedCategory(e.target.value)}
         className="block w-full max-w-xs mx-auto px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-xl focus:ring-teal-500 focus:border-teal-500"
       >
-        <option value="ทั้งหมด">ทั้งหมด</option>
-        <option value="อาหารราดหน้า">อาหารราดหน้า</option>
-        <option value="ทั่วไป">ทั่วไป</option>
-        <option value="เส้น">เส้น</option>
+        <option value="ທັງໝົດ">ທັງໝົດ</option>
+        <option value="ອາຫານລາບໜ້າ">ອາຫານລາບໜ້າ</option>
+        <option value="ທົ່ວໄປ">ທົ່ວໄປ</option>
+        <option value="ເສັ້ນ">ເສັ້ນ</option>
       </select>
     </div>
   );

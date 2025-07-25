@@ -13,14 +13,14 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
   const [editingFoodId, setEditingFoodId] = useState(null);
 
   // State for filtering food items in 'my_foods' page
-  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
+  const [selectedCategory, setSelectedCategory] = useState('ທັງໝົດ');
 
   // --- CRUD Operations for Food Items (using backend API) ---
   const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
 
     if (!foodName.trim() || !foodImage.trim()) {
-      showMessage('กรุณากรอกชื่อและรูปภาพอาหาร', 'error');
+      showMessage('ກະລຸນາປ້ອນຊື່ ແລະ ຮູບພາບອາຫານ', 'error');
       return;
     }
 
@@ -58,7 +58,7 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
       const updatedFoodItems = await updatedFoodItemsResponse.json();
       setFoodItems(updatedFoodItems);
 
-      showMessage(editingFoodId ? 'อัปเดตเมนูอาหารเรียบร้อยแล้ว!' : 'เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
+      showMessage(editingFoodId ? 'ອັບເດດເມນູອາຫານສຳເລັດແລ້ວ!' : 'ເພີ່ມເມນູອາຫານສຳເລັດແລ້ວ!', 'success');
 
       // Clear form fields
       setFoodName('');
@@ -68,7 +68,7 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
 
     } catch (error) {
       console.error("Error adding/updating food item:", error);
-      showMessage('เกิดข้อผิดพลาดในการเพิ่ม/อัปเดตเมนูอาหาร', 'error');
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການເພີ່ມ/ອັບເດດເມນູອາຫານ', 'error');
     }
   };
 
@@ -79,12 +79,12 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
       setFoodImage(foodToEdit.image);
       setFoodTags(foodToEdit.tags.join(', '));
       setEditingFoodId(id);
-      showMessage('กำลังแก้ไขเมนูอาหาร...', 'info');
+      showMessage('ກຳລັງແກ້ໄຂເມນູອາຫານ...', 'info');
     }
   };
 
   const handleDeleteFood = async (id) => {
-    if (window.confirm('คุณต้องการลบเมนูอาหารนี้หรือไม่?')) {
+    if (window.confirm('ທ່ານຕ້ອງການລຶບເມນູອາຫານນີ້ບໍ່?')) {
       try {
         const response = await fetch(`${BACKEND_URL}/api/foods/${id}`, {
           method: 'DELETE',
@@ -99,10 +99,10 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
         const updatedFoodItems = await updatedFoodItemsResponse.json();
         setFoodItems(updatedFoodItems);
 
-        showMessage('ลบเมนูอาหารเรียบร้อยแล้ว!', 'success');
+        showMessage('ລຶບເມນູອາຫານສຳເລັດແລ້ວ!', 'success');
       } catch (error) {
         console.error("Error deleting food item:", error);
-        showMessage('เกิดข้อผิดพลาดในการลบเมนูอาหาร', 'error');
+        showMessage('ເກີດຂໍ້ຜິດພາດໃນການລຶບເມນູອາຫານ', 'error');
       }
     }
   };
@@ -124,11 +124,11 @@ const MyFoodsPage = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
       <CategoryFilter
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-        label="กรองตามหมวดหมู่:"
+        label="ກັ່ນຕອງຕາມໝວດໝູ່:"
       />
       <FoodList
         filteredFoodItems={foodItems.filter(food => {
-          if (selectedCategory === 'ทั้งหมด') {
+          if (selectedCategory === 'ທັງໝົດ') {
             return true;
           }
           return food.tags.includes(selectedCategory);

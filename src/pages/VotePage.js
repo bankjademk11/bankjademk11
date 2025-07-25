@@ -102,7 +102,7 @@ const VotePage = ({
 
   return (
     <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
-      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">เมนูประจำวัน</h2>
+      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ເມນູປະຈຳວັນ</h2>
 
       {/* Spoil Vote Button */}
       {tomorrowMenu && tomorrowMenu.status !== 'idle' && (
@@ -111,7 +111,7 @@ const VotePage = ({
             onClick={() => setShowSpoilVote(!showSpoilVote)}
             className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-blue-500 shadow-lg rounded-xl hover:bg-blue-600 hover:scale-105"
           >
-            {showSpoilVote ? 'ซ่อนเมนูวันพรุ่งนี้' : 'ดูเมนูวันพรุ่งนี้ (Spoil Vote)'}
+            {showSpoilVote ? 'ເຊື່ອງເມນູມື້ອື່ນ' : 'ເບິ່ງເມນູມື້ອື່ນ (Spoil Vote)'}
           </button>
         </div>
       )}
@@ -119,7 +119,7 @@ const VotePage = ({
       {/* Tomorrow's Menu Display */}
       {showSpoilVote && tomorrowMenu && tomorrowMenu.status !== 'idle' && (
         <div className="mb-6 p-4 border rounded-lg bg-blue-50 shadow-lg">
-          <h3 className="mb-4 text-xl font-semibold text-blue-800 text-center">เมนูสำหรับวันพรุ่งนี้:</h3>
+          <h3 className="mb-4 text-xl font-semibold text-blue-800 text-center">ເມນູສຳລັບມື້ອື່ນ:</h3>
           {tomorrowMenu.status === 'voting' && tomorrowMenu.vote_options && tomorrowMenu.vote_options.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {tomorrowMenu.vote_options.map(food => (
@@ -136,7 +136,7 @@ const VotePage = ({
             </div>
           ) : tomorrowMenu.status === 'admin_set' && tomorrowMenu.admin_set_food_item_id ? (
             <div className="text-center">
-              <p className="text-lg font-semibold text-blue-700">เมนูที่แอดมินเลือกไว้:</p>
+              <p className="text-lg font-semibold text-blue-700">ເມນູທີ່ແອັດມິນເລືອກໄວ້:</p>
               {foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id) ? (
                 <div className="bg-white p-3 rounded-lg shadow-md inline-flex flex-col items-center mt-2">
                   <img
@@ -148,11 +148,11 @@ const VotePage = ({
                   <span className="font-medium text-gray-800">{foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id).name}</span>
                 </div>
               ) : (
-                <p className="text-gray-600">ไม่พบข้อมูลเมนู</p>
+                <p className="text-gray-600">ບໍ່ພົບຂໍ້ມູນເມນູ</p>
               )}
             </div>
           ) : (
-            <p className="text-center text-gray-600">ยังไม่มีเมนูสำหรับวันพรุ่งนี้</p>
+            <p className="text-center text-gray-600">ຍັງບໍ່ມີເມນູສຳລັບມື້ອື່ນ</p>
           )}
         </div>
       )}

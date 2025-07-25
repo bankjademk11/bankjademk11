@@ -49,7 +49,7 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
 
       } catch (error) {
         console.error("Error fetching report detail:", error);
-        showMessage('ไม่สามารถโหลดรายละเอียดรายงานได้', 'error');
+        showMessage('ບໍ່ສາມາດໂຫຼດລາຍລະອຽດລາຍງານໄດ້', 'error');
       }
     };
 
@@ -58,10 +58,10 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
 
   // Prepare data for the Pie Chart
   const chartData = report && report.vote_details ? {
-    labels: Object.keys(report.vote_details).map(foodId => foodDetails[foodId] ? foodDetails[foodId].name : `Food ID: ${foodId}`),
+    labels: Object.keys(report.vote_details).map(foodId => foodDetails[foodId] ? foodDetails[foodId].name : `ID ອາຫານ: ${foodId}`),
     datasets: [
       {
-        label: 'จำนวนโหวต',
+        label: 'ຈຳນວນໂຫວດ',
         data: Object.values(report.vote_details),
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
@@ -85,26 +85,26 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
   } : null;
 
   if (!report) {
-    return <div className="text-center text-xl text-gray-600">กำลังโหลดรายงาน...</div>;
+    return <div className="text-center text-xl text-gray-600">ກຳລັງໂຫຼດລາຍງານ...</div>;
   }
 
   return (
     <div className="max-w-4xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
-      <h3 className="text-3xl font-bold text-center text-teal-700 mb-6">รายละเอียดรายงานประจำวัน</h3>
-      <p className="text-lg font-semibold text-gray-800 mb-2">วันที่: {new Date(report.date).toLocaleDateString()}</p>
-      <p className="text-lg text-gray-700 mb-2">เมนูที่ชนะ: {report.winning_food_name || 'ไม่มี'}</p>
-      <p className="text-lg text-gray-700 mb-4">จำนวนโหวตทั้งหมด: {report.total_votes}</p>
+      <h3 className="text-3xl font-bold text-center text-teal-700 mb-6">ລາຍລະອຽດລາຍງານປະຈຳວັນ</h3>
+      <p className="text-lg font-semibold text-gray-800 mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
+      <p className="text-lg text-gray-700 mb-2">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
+      <p className="text-lg text-gray-700 mb-4">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
 
       {chartData && report.total_votes > 0 && (
         <div className="mb-8">
-          <h4 className="text-xl font-semibold text-teal-700 mb-4 text-center">สัดส่วนการโหวต:</h4>
+          <h4 className="text-xl font-semibold text-teal-700 mb-4 text-center">ສັດສ່ວນການໂຫວດ:</h4>
           <div className="w-full max-w-md mx-auto">
             <Pie data={chartData} />
           </div>
         </div>
       )}
 
-      <h4 className="text-xl font-semibold text-teal-700 mb-4">ผลโหวตแต่ละเมนู:</h4>
+      <h4 className="text-xl font-semibold text-teal-700 mb-4">ຜົນການໂຫວດແຕ່ລະເມນູ:</h4>
       {report.vote_details && Object.entries(report.vote_details).length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(report.vote_details).map(([foodId, votes]) => {
@@ -119,18 +119,18 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
                     onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
                   />
                 ) : (
-                  <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">ไม่มีรูป</div>
+                  <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">ບໍ່ມີຮູບ</div>
                 )}
                 <div>
-                  <p className="text-lg font-semibold">{food ? food.name : `Food ID: ${foodId}`}</p>
-                  <p className="text-md text-gray-700">โหวต: {votes}</p>
+                  <p className="text-lg font-semibold">{food ? food.name : `ID ອາຫານ: ${foodId}`}</p>
+                  <p className="text-md text-gray-700">ໂຫວດ: {votes}</p>
                 </div>
               </div>
             );
           })}
         </div>
       ) : (
-        <p className="text-gray-600">ไม่มีรายละเอียดการโหวต</p>
+        <p className="text-gray-600">ບໍ່ມີລາຍລະອຽດການໂຫວດ</p>
       )}
     </div>
   );

@@ -49,7 +49,7 @@ const AdminDashboard = ({
         setDailyMenu(data);
       } catch (error) {
         console.error("Error fetching daily menu for date:", error);
-        showMessage('ไม่สามารถโหลดข้อมูลเมนูประจำวันได้', 'error');
+        showMessage('ບໍ່ສາມາດໂຫຼດຂໍ້ມູນເມນູປະຈຳວັນໄດ້', 'error');
       }
     };
 
@@ -60,7 +60,7 @@ const AdminDashboard = ({
 
   const handleStartVoting = async () => {
     if (adminVoteSelections.length !== 5) {
-      showMessage('ต้องเลือก 5 เมนูที่ไม่ซ้ำกันสำหรับโหวต', 'error');
+      showMessage('ຕ້ອງເລືອກ 5 ເມນູທີ່ບໍ່ຊ້ຳກັນສຳລັບການໂຫວດ', 'error');
       return;
     }
     const voteOptions = adminVoteSelections.map(item => ({
@@ -78,11 +78,11 @@ const AdminDashboard = ({
       if (!response.ok) throw new Error('Failed to start voting');
       const data = await response.json();
       setDailyMenu(data);
-      showMessage('เริ่มการโหวตเมนูประจำวันแล้ว!', 'success');
+      showMessage('ເລີ່ມການໂຫວດເມນູປະຈຳວັນແລ້ວ!', 'success');
       setAdminVoteSelections([]);
     } catch (error) {
       console.error("Error starting voting:", error);
-      showMessage('เกิดข้อผิดพลาดในการเริ่มโหวต', 'error');
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');
     }
   };
 
@@ -97,16 +97,16 @@ const AdminDashboard = ({
       const data = await response.json();
       setDailyMenu(data);
       const winningFood = foodItems.find(f => f.id === data.winning_food_item_id);
-      showMessage(`ปิดการโหวตแล้ว! เมนูที่ชนะคือ ${winningFood ? winningFood.name : 'ไม่มี'}`, 'success');
+      showMessage(`ປິດການໂຫວດແລ້ວ! ເມນູທີ່ຊະນະແມ່ນ ${winningFood ? winningFood.name : 'ບໍ່ມີ'}`, 'success');
     } catch (error) {
       console.error("Error closing voting:", error);
-      showMessage('เกิดข้อผิดพลาดในการปิดโหวต', 'error');
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການປິດໂຫວດ', 'error');
     }
   };
 
   const handleAdminSetFood = async () => {
     if (!adminDirectSelectFoodId) {
-      showMessage('ต้องเลือกเมนู', 'error');
+      showMessage('ຕ້ອງເລືອກເມນູ', 'error');
       return;
     }
     try {
@@ -118,17 +118,17 @@ const AdminDashboard = ({
       if (!response.ok) throw new Error('Failed to set food by admin');
       const data = await response.json();
       setDailyMenu(data);
-      showMessage('ตั้งค่าเมนูประจำวันโดยแอดมินเรียบร้อยแล้ว!', 'success');
+      showMessage('ຕັ້ງຄ່າເມນູປະຈຳວັນໂດຍແອັດມິນສຳເລັດແລ້ວ!', 'success');
       setAdminDirectSelectFoodId('');
     } catch (error) {
       console.error("Error setting food by admin:", error);
-      showMessage('เกิดข้อผิดพลาดในการตั้งค่าเมนู', 'error');
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການຕັ້ງຄ່າເມນູ', 'error');
     }
   };
 
   return (
     <section className="max-w-3xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
-      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">แผงควบคุมแอดมิน</h2>
+      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ແຜງຄວບຄຸມແອັດມິນ</h2>
 
       {!isAdmin ? (
         <AdminLogin
@@ -144,26 +144,26 @@ const AdminDashboard = ({
                 onClick={() => setAdminView('voting')}
                 className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'voting' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
               >
-                จัดการโหวต
+                ຈັດການໂຫວດ
               </button>
               <button
                 onClick={() => setAdminView('report')}
                 className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'report' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
               >
-                รายงาน
+                ລາຍງານ
               </button>
               <button
                 onClick={() => setAdminView('status')}
                 className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'status' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
               >
-                สถานะเมนู
+                ສະຖານະເມນູ
               </button>
               <Link to="/admin/dashboard" className="px-4 py-2 rounded-lg shadow-lg transition bg-blue-500 text-white hover:bg-blue-600">
-                View Dashboard
+                ເບິ່ງ Dashboard
               </Link>
             </div>
             <div className="flex items-center space-x-2">
-              <label htmlFor="date-picker" className="text-gray-700">เลือกวันที่:</label>
+              <label htmlFor="date-picker" className="text-gray-700">ເລືອກວັນທີ:</label>
               <input
                 type="date"
                 id="date-picker"
@@ -176,7 +176,7 @@ const AdminDashboard = ({
               onClick={handleAdminLogout}
               className="px-4 py-2 text-sm font-bold text-white transition duration-300 bg-red-500 rounded-lg hover:bg-red-600"
             >
-              ออกจากระบบ
+              ອອກຈາກລະບົບ
             </button>
           </div>
 

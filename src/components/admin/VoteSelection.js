@@ -12,7 +12,7 @@ const VoteSelection = ({
   setSelectedAdminCategory,
 }) => {
   const filteredAdminFoodItems = foodItems.filter(food => {
-    if (selectedAdminCategory === 'ทั้งหมด') {
+    if (selectedAdminCategory === 'ທັງໝົດ') {
       return true;
     }
     return food.tags.includes(selectedAdminCategory);
@@ -22,9 +22,9 @@ const VoteSelection = ({
     <>
       {/* Selected Items for Voting Display */}
       <div className="mb-6 p-4 border rounded-lg bg-teal-50 shadow-lg">
-        <h3 className="mb-2 text-xl font-semibold text-teal-800">เมนูที่เลือกสำหรับโหวต ({adminVoteSelections.length}/5):</h3>
+        <h3 className="mb-2 text-xl font-semibold text-teal-800">ເມນູທີ່ເລືອກສຳລັບໂຫວດ ({adminVoteSelections.length}/5):</h3>
         {adminVoteSelections.length === 0 ? (
-          <p className="text-gray-600">ยังไม่ได้เลือกเมนู</p>
+          <p className="text-gray-600">ຍັງບໍ່ໄດ້ເລືອກເມນູ</p>
         ) : (
           <div className="flex flex-wrap gap-2">
             {adminVoteSelections.map(food => (
@@ -51,18 +51,18 @@ const VoteSelection = ({
           disabled={adminVoteSelections.length !== 5 || dailyMenuStatus === 'voting'}
           className="mt-4 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-teal-600 shadow-lg rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
         >
-          {dailyMenuStatus === 'voting' ? 'กำลังโหวต...' : 'เริ่มการโหวต'}
+          {dailyMenuStatus === 'voting' ? 'ກຳລັງໂຫວດ...' : 'ເລີ່ມການໂຫວດ'}
         </button>
       </div>
 
       {/* All Food Items for Selection with Category Filter */}
       <div className="mb-6">
-        <h3 className="mb-4 text-xl font-semibold text-gray-700">เลือกเมนูจากรายการทั้งหมด:</h3>
+        <h3 className="mb-4 text-xl font-semibold text-gray-700">ເລືອກເມນູຈາກລາຍການທັງໝົດ:</h3>
         {/* Admin Category Filter - Reusing CategoryFilter component */}
         <CategoryFilter
           selectedCategory={selectedAdminCategory}
           setSelectedCategory={setSelectedAdminCategory}
-          label="กรองตามหมวดหมู่:"
+          label="ກັ່ນຕອງຕາມໝວດໝູ່:"
           idPrefix="admin"
         />
 
@@ -93,7 +93,7 @@ const VoteSelection = ({
                     isSelected ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  {isSelected ? 'ลบออก' : 'เพิ่มเข้าโหวต'}
+                  {isSelected ? 'ລຶບອອກ' : 'ເພີ່ມເຂົ້າໂຫວດ'}
                 </button>
               </div>
             );
