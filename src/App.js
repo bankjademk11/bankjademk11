@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import {
   Header,
   Navigation,
@@ -37,11 +37,6 @@ const App = () => {
   const ADMIN_PASSWORD = 'admin';
 
   const [foodItems, setFoodItems] = useState([]);
-  const [foodName, setFoodName] = useState('');
-  const [foodImage, setFoodImage] = useState('');
-  const [foodTags, setFoodTags] = useState('');
-  const [editingFoodId, setEditingFoodId] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('ทั้งหมด');
 
   const [adminVoteSelections, setAdminVoteSelections] = useState([]);
 
@@ -62,60 +57,6 @@ const App = () => {
 
     fetchFoodItems();
   }, [BACKEND_URL, showMessage]);
-
-  
-
-  const handleAddOrUpdateFood = async (e) => {
-    e.preventDefault();
-
-    if (!foodName.trim() || !foodImage.trim()) {
-      showMessage('กรุณากรอกชื่อและรูปภาพอาหาร', 'error');
-      return;
-    }
-
-    const tagsArray = foodTags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-
-    try {
-      let response;
-      let method;
-      let url;
-
-      if (editingFoodId) {
-        method = 'PUT';
-        url = `${BACKEND_URL}/api/foods/${editingFoodId}`;
-      } else {
-        method = 'POST';
-        url = `${BACKEND_URL}/api/foods`;
-      }
-
-      response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: foodName, image: foodImage, tags: tagsArray }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
-      const updatedFoodItems = await updatedFoodItemsResponse.json();
-      setFoodItems(updatedFoodItems);
-
-      showMessage(editingFoodId ? 'อัปเดตเมนูอาหารเรียบร้อยแล้ว!' : 'เพิ่มเมนูอาหารเรียบร้อยแล้ว!', 'success');
-
-      setFoodName('');
-      setFoodImage('');
-      setFoodTags('');
-      setEditingFoodId(null);
-
-    } catch (error) {
-      console.error("Error adding/updating food item:", error);
-      showMessage('เกิดข้อผิดพลาดในการเพิ่ม/อัปเดตเมนูอาหาร', 'error');
-    }
-  };
 
   
 
@@ -198,28 +139,10 @@ const App = () => {
       <div className="min-h-screen p-4 text-gray-800 bg-food-bg bg-cover bg-center bg-fixed font-inter">
         <Header userId={userId} />
         <MessageDisplay message={message} />
-        <Navigation />
+        <Navigation isAdmin={isAdmin} />
 
         <Routes>
-          <Route path="/" element={
-            <MyFoodsPage
-              BACKEND_URL={BACKEND_URL}
-              showMessage={showMessage}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-              foodName={foodName}
-              setFoodName={setFoodName}
-              foodImage={foodImage}
-              setFoodImage={setFoodImage}
-              foodTags={foodTags}
-              setFoodTags={setFoodTags}
-              editingFoodId={editingFoodId}
-              handleAddOrUpdateFood={handleAddOrUpdateFood}
-              setEditingFoodId={setEditingFoodId}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-            />
-          } />
+          <Route path="/" element={<Navigate to="/vote" replace />} />
           <Route path="/vote" element={
             <VotePage
               userId={userId}
@@ -242,6 +165,14 @@ const App = () => {
               toggleAdminVoteSelection={toggleAdminVoteSelection}
               showMessage={showMessage}
               BACKEND_URL={BACKEND_URL}
+            />
+          } />
+          <Route path="/admin/my-foods" element={
+            <MyFoodsPage
+              BACKEND_URL={BACKEND_URL}
+              showMessage={showMessage}
+              foodItems={foodItems}
+              setFoodItems={setFoodItems}
             />
           } />
           <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
