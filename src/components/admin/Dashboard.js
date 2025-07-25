@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Dashboard = () => {
+const Dashboard = ({ BACKEND_URL }) => {
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -8,7 +8,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchSummary = async () => {
             try {
-                const response = await fetch('/api/reports/summary');
+                const response = await fetch(`${BACKEND_URL}/api/reports/summary`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch summary');
                 }
@@ -22,7 +22,7 @@ const Dashboard = () => {
         };
 
         fetchSummary();
-    }, []);
+    }, [BACKEND_URL]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
