@@ -140,8 +140,8 @@ const AdminDashboard = ({
         />
       ) : (
         <>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-2">
+          <div className="flex flex-wrap justify-between items-center mb-4">
+            <div className="flex flex-wrap space-x-2 space-y-2 sm:space-y-0">
               <button
                 onClick={() => setAdminView('voting')}
                 className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'voting' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}

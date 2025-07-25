@@ -61,7 +61,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
       {filteredFoodItems.length === 0 ? (
         <p className="text-center text-gray-600">ບໍ່ມີເມນູອາຫານໃນລາຍການ</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFoodItems.map((food) => (
             <div key={food.id} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
               <img

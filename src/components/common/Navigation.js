@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Navigation = ({ isAdmin }) => {
   return (
-    <nav className="flex justify-center space-x-4 mb-8">
+    <nav className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 mb-8">
       {isAdmin && (
         <Link
           to="/admin/my-foods"
