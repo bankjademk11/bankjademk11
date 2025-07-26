@@ -53,10 +53,17 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Re-fetch all food items to update the list
-      const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
-      const updatedFoodItems = await updatedFoodItemsResponse.json();
-      setFoodItems(updatedFoodItems);
+      const foodItem = await response.json(); // Get the newly added/updated food item
+
+      if (editingFoodId) {
+        // Update existing item in state
+        setFoodItems(foodItems.map(item => (item.id === foodItem.id ? foodItem : item)));
+      } else {
+        // Add new item to state
+        setFoodItems([...foodItems, foodItem]);
+      }
+
+      console.log('Food item added/updated:', foodItem);
 
       showMessage(editingFoodId ? 'ອັບເດດເມນູອາຫານສຳເລັດແລ້ວ!' : 'ເພີ່ມເມນູອາຫານສຳເລັດແລ້ວ!', 'success');
 
@@ -68,6 +75,7 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
 
     } catch (error) {
       console.error("Error adding/updating food item:", error);
+      console.log('Error object in catch:', error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເພີ່ມ/ອັບເດດເມນູອາຫານ', 'error');
     }
   };

@@ -10,6 +10,7 @@ const AdminPage = ({
   handleAdminLogin,
   handleAdminLogout,
   foodItems,
+  setFoodItems, // เพิ่มบรรทัดนี้
   adminVoteSelections,
   setAdminVoteSelections,
   toggleAdminVoteSelection,
@@ -26,6 +27,7 @@ const AdminPage = ({
       handleAdminLogin={handleAdminLogin}
       handleAdminLogout={handleAdminLogout}
       foodItems={foodItems}
+      setFoodItems={setFoodItems} // เพิ่มบรรทัดนี้
       adminVoteSelections={adminVoteSelections}
       setAdminVoteSelections={setAdminVoteSelections}
       toggleAdminVoteSelection={toggleAdminVoteSelection}

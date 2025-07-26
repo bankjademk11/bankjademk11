@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
@@ -6,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors({ origin: 'https://odgfood.netlify.app' }));
+app.use(cors({ origin: ['https://odgfood.netlify.app', 'http://localhost:3000'] }));
 app.use(express.json());
 
 // Database connection
