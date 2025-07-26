@@ -239,6 +239,7 @@ app.post('/api/foods', async (req, res) => {
       'INSERT INTO foods (name, image, tags) VALUES ($1, $2, $3) RETURNING *'
       , [name, image, tags]
     );
+    console.log('Sending response:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Error adding food item:', err.stack);
