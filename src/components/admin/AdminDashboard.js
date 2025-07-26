@@ -166,6 +166,12 @@ const AdminDashboard = ({
               >
                 ຈັດການອາຫານ
               </button>
+              <button
+                onClick={() => setAdminView('admin-set-menu')}
+                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'admin-set-menu' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+              >
+                ຕັ້ງຄ່າເມນູປະຈຳວັນ
+              </button>
               <Link to="/admin/dashboard" className="px-4 py-2 rounded-lg shadow-lg transition bg-blue-500 text-white hover:bg-blue-600">
                 ເບິ່ງ Dashboard
               </Link>
@@ -189,28 +195,28 @@ const AdminDashboard = ({
           </div>
 
           {adminView === 'voting' && (
-            <>
-              <VoteSelection
-                foodItems={foodItems}
-                adminVoteSelections={adminVoteSelections}
-                setAdminVoteSelections={setAdminVoteSelections}
-                toggleAdminVoteSelection={toggleAdminVoteSelection}
-                handleStartVoting={handleStartVoting}
-                dailyMenuStatus={dailyMenu.status}
-                showMessage={showMessage}
-                selectedAdminCategory={selectedAdminCategory}
-                setSelectedAdminCategory={setSelectedAdminCategory}
-              />
+            <VoteSelection
+              foodItems={foodItems}
+              adminVoteSelections={adminVoteSelections}
+              setAdminVoteSelections={setAdminVoteSelections}
+              toggleAdminVoteSelection={toggleAdminVoteSelection}
+              handleStartVoting={handleStartVoting}
+              dailyMenuStatus={dailyMenu.status}
+              showMessage={showMessage}
+              selectedAdminCategory={selectedAdminCategory}
+              setSelectedAdminCategory={setSelectedAdminCategory}
+            />
+          )}
 
-              <DailyMenuControl
-                dailyMenuStatus={dailyMenu.status}
-                handleCloseVoting={handleCloseVoting}
-                adminDirectSelectFoodId={adminDirectSelectFoodId}
-                setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-                handleAdminSetFood={handleAdminSetFood}
-                foodItems={foodItems}
-              />
-            </>
+          {adminView === 'admin-set-menu' && (
+            <DailyMenuControl
+              dailyMenuStatus={dailyMenu.status}
+              handleCloseVoting={handleCloseVoting}
+              adminDirectSelectFoodId={adminDirectSelectFoodId}
+              setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
+              handleAdminSetFood={handleAdminSetFood}
+              foodItems={foodItems}
+            />
           )}
 
           {adminView === 'report' && (

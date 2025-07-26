@@ -11,6 +11,8 @@ const VoteSelection = ({
   selectedAdminCategory,
   setSelectedAdminCategory,
 }) => {
+  console.log('VoteSelection - foodItems:', foodItems);
+  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
   const filteredAdminFoodItems = foodItems.filter(food => {
     if (selectedAdminCategory === 'ທັງໝົດ') {
       return true;
