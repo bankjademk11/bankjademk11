@@ -11,14 +11,16 @@ const VoteSelection = ({
   selectedAdminCategory,
   setSelectedAdminCategory,
 }) => {
-  console.log('VoteSelection - foodItems:', foodItems);
-  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
   const filteredAdminFoodItems = foodItems.filter(food => {
     if (selectedAdminCategory === 'ທັງໝົດ') {
       return true;
     }
     return food.tags.includes(selectedAdminCategory);
   });
+
+  console.log('VoteSelection - foodItems.length:', foodItems.length);
+  console.log('VoteSelection - filteredAdminFoodItems.length:', filteredAdminFoodItems.length);
+  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
 
   return (
     <>
