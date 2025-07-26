@@ -12,15 +12,11 @@ const VoteSelection = ({
   setSelectedAdminCategory,
 }) => {
   const filteredAdminFoodItems = foodItems.filter(food => {
-    if (selectedAdminCategory === 'ທັງໝົດ') {
+    if (selectedAdminCategory.trim() === 'ທັງໝົດ') {
       return true;
     }
     return food.tags.includes(selectedAdminCategory);
   });
-
-  console.log('VoteSelection - foodItems.length:', foodItems.length);
-  console.log('VoteSelection - filteredAdminFoodItems.length:', filteredAdminFoodItems.length);
-  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
 
   return (
     <>
