@@ -6,6 +6,7 @@ import {
 
 const VotePage = ({
   userId,
+  onVoteFromApp, // เปลี่ยนชื่อ prop จาก handleVote
   handleReviewSubmit,
   foodItems,
 }) => {
@@ -61,21 +62,14 @@ const VotePage = ({
     }; // Cleanup on component unmount
   }, [BACKEND_URL]);
 
+  // This handleVote will be passed to VotingSection
   const handleVote = async (foodItemId) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, foodItemId }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to vote');
-      }
-      const data = await response.json();
-      setDailyMenu(data);
+      const updatedDailyMenu = await onVoteFromApp(foodItemId); // Call App.js's handleVote
+      setDailyMenu(updatedDailyMenu); // Update local state immediately
     } catch (error) {
-      console.error("Error voting:", error);
+      // Error handling is done in App.js's handleVote, but we can log here if needed
+      console.error("Error voting in VotePage:", error);
     }
   };
 

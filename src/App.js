@@ -102,10 +102,13 @@ const App = () => {
         throw new Error(errorData.error || 'Failed to vote');
       }
       // No setDailyMenu here, as VotePage now fetches its own dailyMenu
-      showMessage('ໂຫວດສຳເລັດ!', 'success');
+      const data = await response.json();
+      showMessage('ຂອບໃຈທີ່ທ່ານໂຫວດ', 'success');
+      return data; // Return the updated dailyMenu data
     } catch (error) {
       console.error("Error voting:", error);
       showMessage(error.message === 'User has already voted.' ? 'ທ່ານໂຫວດໄປແລ້ວສຳລັບມື້ນີ້!' : 'ເກີດຂໍ້ຜິດພາດໃນການໂຫວດ', 'error');
+      throw error; // Re-throw the error so VotePage can catch it
     }
   };
 
@@ -146,7 +149,7 @@ const App = () => {
           <Route path="/vote" element={
             <VotePage
               userId={userId}
-              handleVote={handleVote}
+              onVoteFromApp={handleVote} // เปลี่ยนชื่อ prop
               handleReviewSubmit={handleReviewSubmit}
               foodItems={foodItems}
             />
