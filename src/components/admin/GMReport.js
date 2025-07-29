@@ -58,26 +58,6 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
     fetchReports();
   }, [BACKEND_URL, selectedMonth, selectedYear, showMessage]);
 
-  const handleDeleteReport = async (reportId) => {
-    if (window.confirm('ທ່ານຕ້ອງການລຶບລາຍງານນີ້ບໍ່?')) {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/daily-results/${reportId}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        setReports(reports.filter(report => report.id !== reportId));
-        showMessage('ລຶບລາຍງານສຳເລັດແລ້ວ!', 'success');
-      } catch (error) {
-        console.error("Error deleting report:", error);
-        showMessage('ເກີດຂໍ້ຜິດພາດໃນການລຶບລາຍງານ', 'error');
-      }
-    }
-  };
-
   return (
     <div className="p-6 bg-white rounded-xl shadow-lg">
       <h3 className="text-2xl font-bold text-center text-teal-700 mb-6">ລາຍງານຜົນໂຫວດປະຈຳວັນ</h3>
@@ -120,28 +100,18 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
           {reports.map(report => (
             <div
               key={report.id}
-              className="bg-gray-50 p-4 rounded-xl shadow-lg transition flex justify-between items-center"
+              className="bg-gray-50 p-4 rounded-xl shadow-lg cursor-pointer hover:bg-gray-100 transition"
+              onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
             >
-              <div className="cursor-pointer hover:bg-gray-100 flex-grow" onClick={() => navigate(`/report/${report.id}`)}>
-                <p className="text-lg font-semibold text-teal-800">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
-                <p className="text-md text-gray-700">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
-                <p className="text-md text-gray-700">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
-                <div className="mt-2">
-                  <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
-                  {report.vote_details && Object.entries(report.vote_details).map(([foodId, votes]) => (
-                    <p key={foodId} className="text-sm text-gray-600 ml-4">- {foodId} (ID): {votes} ໂຫວດ</p>
-                  ))}
-                </div>
+              <p className="text-lg font-semibold text-teal-800">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
+              <p className="text-md text-gray-700">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
+              <p className="text-md text-gray-700">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
+              <div className="mt-2">
+                <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
+                {report.vote_details && Object.entries(report.vote_details).map(([foodId, votes]) => (
+                  <p key={foodId} className="text-sm text-gray-600 ml-4">- {foodId} (ID): {votes} ໂຫວດ</p>
+                ))}
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent navigating to detail page
-                  handleDeleteReport(report.id);
-                }}
-                className="ml-4 px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
-              >
-                ລຶບ
-              </button>
             </div>
           ))}
         </div>
