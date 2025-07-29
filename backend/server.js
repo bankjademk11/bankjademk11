@@ -205,6 +205,23 @@ app.get('/api/daily-results/:id', async (req, res) => {
   }
 });
 
+// DELETE a daily result report
+app.delete('/api/daily-results/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('DELETE FROM daily_results WHERE id = $1 RETURNING *'
+      , [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Report not found' });
+    }
+    res.status(204).send(); // No content for successful deletion
+  } catch (err) {
+    console.error('Error deleting daily result report:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // POST to get multiple food items by their IDs
 app.post('/api/foods/batch', async (req, res) => {
   const { foodIds } = req.body; // Expects an array of food IDs

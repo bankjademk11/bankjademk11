@@ -7,6 +7,9 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
   const [votedFoodId, setVotedFoodId] = useState(null);
 
   const hasVoted = dailyMenu.voted_users && dailyMenu.voted_users[userId];
+  console.log('VotingSection - dailyMenu:', dailyMenu);
+  console.log('VotingSection - userId:', userId);
+  console.log('VotingSection - hasVoted:', hasVoted);
 
   const onVote = (foodItemId) => {
     handleVote(foodItemId);
