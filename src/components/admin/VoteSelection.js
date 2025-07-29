@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CategoryFilter from '../myfoods/CategoryFilter'; // Reusing CategoryFilter component
 
 const VoteSelection = ({
@@ -11,19 +11,13 @@ const VoteSelection = ({
   selectedAdminCategory,
   setSelectedAdminCategory,
 }) => {
-  console.log('VoteSelection - foodItems (full array):', foodItems);
-  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
+  const [searchTerm, setSearchTerm] = useState(''); // New state for search term
+
   const filteredAdminFoodItems = foodItems.filter(food => {
-    // Log food.tags for debugging
-    if (foodItems.length > 0) {
-      console.log('Sample food.tags:', foodItems[0].tags);
-    }
-    if (selectedAdminCategory.trim() === 'ທັງໝົດ') {
-      return true;
-    }
-    return food.tags.includes(selectedAdminCategory);
+    const matchesCategory = selectedAdminCategory.trim() === 'ທັງໝົດ' || food.tags.includes(selectedAdminCategory);
+    const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
   });
-  console.log('VoteSelection - filteredAdminFoodItems (after filter):', filteredAdminFoodItems);
 
   return (
     <>
@@ -62,16 +56,26 @@ const VoteSelection = ({
         </button>
       </div>
 
-      {/* All Food Items for Selection with Category Filter */}
+      {/* All Food Items for Selection with Category Filter and Search */}
       <div className="mb-6">
         <h3 className="mb-4 text-xl font-semibold text-gray-700">ເລືອກເມນູຈາກລາຍການທັງໝົດ:</h3>
-        {/* Admin Category Filter - Reusing CategoryFilter component */}
-        <CategoryFilter
-          selectedCategory={selectedAdminCategory}
-          setSelectedCategory={setSelectedAdminCategory}
-          label="ກັ່ນຕອງຕາມໝວດໝູ່:"
-          idPrefix="admin"
-        />
+        <div className="flex flex-wrap items-center gap-4 mb-4">
+          {/* Admin Category Filter - Reusing CategoryFilter component */}
+          <CategoryFilter
+            selectedCategory={selectedAdminCategory}
+            setSelectedCategory={setSelectedAdminCategory}
+            label="ກັ່ນຕອງຕາມໝວດໝູ່:"
+            idPrefix="admin"
+          />
+          {/* Search Input */}
+          <input
+            type="text"
+            placeholder="ຄົ້ນຫາຊື່ເມນູ..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="flex-grow px-4 py-3 text-lg border border-gray-300 shadow-sm rounded-xl focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-h-96 overflow-y-auto p-2 border rounded-lg bg-gray-50">
           {filteredAdminFoodItems.map((food) => {
