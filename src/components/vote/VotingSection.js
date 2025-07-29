@@ -11,7 +11,6 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
   const onVote = (foodItemId) => {
     handleVote(foodItemId);
     setVotedFoodId(foodItemId);
-    setShowReviewForm(true);
   };
 
   const onSubmitReview = (e) => {
