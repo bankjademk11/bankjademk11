@@ -43,13 +43,14 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
             />
             <h3 className="text-xl font-semibold mb-2">{option.name}</h3>
             <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {option.votes}</p>
-            <button
-              onClick={() => onVote(option.foodItemId)}
-              disabled={hasVoted}
-              className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ໂຫວດ
-            </button>
+            {!hasVoted && (
+              <button
+                onClick={() => onVote(option.foodItemId)}
+                className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+              >
+                ໂຫວດ
+              </button>
+            )}
           </div>
         ))}
       </div>
