@@ -6,6 +6,8 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
   const [reviewComment, setReviewComment] = useState('');
   const [votedFoodId, setVotedFoodId] = useState(null);
 
+  const hasVoted = dailyMenu.votedUsers && dailyMenu.votedUsers[userId];
+
   const onVote = (foodItemId) => {
     handleVote(foodItemId);
     setVotedFoodId(foodItemId);
@@ -24,14 +26,11 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
 
   const votedFood = foodItems.find(item => item.id === votedFoodId);
 
-  // Check if the current user has voted for this specific food item
-  const userHasVotedForThisItem = dailyMenu.voted_users && dailyMenu.voted_users[userId] === votedFoodId;
-
   return (
     <div>
       <p className="text-center text-xl mb-4 text-gray-700 font-semibold">
         ກຳລັງເປີດໂຫວດເມນູປະຈຳວັນ!
-        {dailyMenu.voted_users && dailyMenu.voted_users[userId] ? ' (ທ່ານໂຫວດແລ້ວ)' : ''}
+        {hasVoted ? ' (ທ່ານໂຫວດແລ້ວ)' : ''}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {dailyMenu.vote_options && dailyMenu.vote_options.map((option) => (
@@ -46,7 +45,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
             <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {option.votes}</p>
             <button
               onClick={() => onVote(option.foodItemId)}
-              disabled={dailyMenu.voted_users && dailyMenu.voted_users[userId] === option.foodItemId}
+              disabled={hasVoted}
               className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               ໂຫວດ
@@ -55,7 +54,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, food
         ))}
       </div>
 
-      {dailyMenu.voted_users && dailyMenu.voted_users[userId] && showReviewForm && votedFood && (
+      {hasVoted && showReviewForm && votedFood && (
         <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">ຄຳເຫັນເມນູ {votedFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">

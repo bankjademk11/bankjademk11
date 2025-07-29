@@ -102,7 +102,7 @@ const App = () => {
         throw new Error(errorData.error || 'Failed to vote');
       }
       // No setDailyMenu here, as VotePage now fetches its own dailyMenu
-            showMessage('ขอบคุณที่โหวต!', 'success');
+      showMessage('ໂຫວດສຳເລັດ!', 'success');
     } catch (error) {
       console.error("Error voting:", error);
       showMessage(error.message === 'User has already voted.' ? 'ທ່ານໂຫວດໄປແລ້ວສຳລັບມື້ນີ້!' : 'ເກີດຂໍ້ຜິດພາດໃນການໂຫວດ', 'error');
