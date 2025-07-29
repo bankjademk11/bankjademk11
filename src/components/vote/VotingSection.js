@@ -1,3 +1,5 @@
+import React, { useState } from 'react';
+
 const VotingSection = ({ dailyMenu, userId, handleVote, handleReviewSubmit, foodItems }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewRating, setReviewRating] = useState(5); // Default to 5 stars
