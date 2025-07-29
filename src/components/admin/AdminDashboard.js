@@ -25,7 +25,7 @@ const AdminDashboard = ({
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
-  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ทั้งหมด');
+  const [selectedAdminCategory, setSelectedAdminCategory] = useState('ທັງໝົດ');
 
   useEffect(() => {
     const fetchDailyMenu = async () => {

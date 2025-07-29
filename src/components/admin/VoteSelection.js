@@ -11,12 +11,19 @@ const VoteSelection = ({
   selectedAdminCategory,
   setSelectedAdminCategory,
 }) => {
+  console.log('VoteSelection - foodItems (full array):', foodItems);
+  console.log('VoteSelection - selectedAdminCategory:', selectedAdminCategory);
   const filteredAdminFoodItems = foodItems.filter(food => {
+    // Log food.tags for debugging
+    if (foodItems.length > 0) {
+      console.log('Sample food.tags:', foodItems[0].tags);
+    }
     if (selectedAdminCategory.trim() === 'ທັງໝົດ') {
       return true;
     }
     return food.tags.includes(selectedAdminCategory);
   });
+  console.log('VoteSelection - filteredAdminFoodItems (after filter):', filteredAdminFoodItems);
 
   return (
     <>
