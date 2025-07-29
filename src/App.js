@@ -4,6 +4,7 @@ import {
   Header,
   Navigation,
   MessageDisplay,
+  ThankYouPopup, // Import ThankYouPopup
 } from './components';
 import MyFoodsPage from './pages/MyFoodsPage';
 import VotePage from './pages/VotePage';
@@ -15,6 +16,7 @@ const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showThankYouPopup, setShowThankYouPopup] = useState(false); // New state for popup
 
   const showMessage = useCallback((text, type) => {
     setMessage({ text, type });
@@ -22,6 +24,10 @@ const App = () => {
       setMessage({ text: '', type: '' });
     }, 3000);
   }, [setMessage]);
+
+  const handleCloseThankYouPopup = () => {
+    setShowThankYouPopup(false);
+  };
 
   const [userId] = useState(() => {
     let id = localStorage.getItem('offlineUserId');
@@ -103,7 +109,8 @@ const App = () => {
       }
       // No setDailyMenu here, as VotePage now fetches its own dailyMenu
       const data = await response.json();
-      showMessage('ຂອບໃຈທີ່ທ່ານໂຫວດ', 'success');
+      setShowThankYouPopup(true); // Show popup on success
+      // No showMessage here, as popup will handle the message
       return data; // Return the updated dailyMenu data
     } catch (error) {
       console.error("Error voting:", error);
@@ -143,6 +150,12 @@ const App = () => {
         <Header userId={userId} />
         <MessageDisplay message={message} />
         <Navigation isAdmin={isAdmin} />
+
+        <ThankYouPopup
+          show={showThankYouPopup}
+          onClose={handleCloseThankYouPopup}
+          message="ຂອບໃຈທີ່ທ່ານໂຫວດ"
+        />
 
         <Routes>
           <Route path="/" element={<Navigate to="/vote" replace />} />

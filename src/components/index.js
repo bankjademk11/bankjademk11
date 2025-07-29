@@ -11,6 +11,7 @@ export { default as VoteSelection } from './admin/VoteSelection';
 export { default as Header } from './common/Header';
 export { default as MessageDisplay } from './common/MessageDisplay';
 export { default as Navigation } from './common/Navigation';
+export { default as ThankYouPopup } from './common/ThankYouPopup';
 
 // MyFoods Components
 export { default as CategoryFilter } from './myfoods/CategoryFilter';
