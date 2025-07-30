@@ -402,29 +402,27 @@ app.post('/api/daily-menu/close', async (req, res) => {
 
 // POST to cast a vote
 app.post('/api/daily-menu/vote', async (req, res) => {
-  const { userId, foodPackIndex } = req.body; // foodPackIndex is the index of the chosen pack in vote_options array
-  const today = new Date().toISOString().split('T')[0];
+  const { userId, foodPackIndex, date } = req.body; // foodPackIndex is the index of the chosen pack in vote_options array
+  const targetDate = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
   try {
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Daily menu state for today not found.' });
+      return res.status(404).json({ error: 'Daily menu state for the selected date not found.' });
     }
 
     const currentMenu = result.rows[0];
 
     if (currentMenu.status !== 'voting') {
-      return res.status(400).json({ error: 'Voting is not active.' });
+      return res.status(400).json({ error: 'Voting is not active for the selected date.' });
     }
 
     // Ensure vote_options is an array and contains valid objects
     let voteOptions = currentMenu.vote_options;
-    console.log('Raw vote_options from DB:', voteOptions);
     if (!Array.isArray(voteOptions)) {
         if (typeof voteOptions === 'string') {
             try {
                 voteOptions = JSON.parse(voteOptions);
-                console.log('Parsed vote_options from string:', voteOptions);
             } catch (e) {
                 console.error('Error parsing vote_options string:', e);
                 return res.status(500).json({ error: 'Internal Server Error: Invalid vote options data format.' });
@@ -450,15 +448,11 @@ app.post('/api/daily-menu/vote', async (req, res) => {
       }
     }
 
-    console.log('foodPackIndex received:', foodPackIndex);
-    console.log('updatedVoteOptions length:', updatedVoteOptions.length);
-
     // Validate the new foodPackIndex
     if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
       return res.status(400).json({ error: 'Invalid food pack index.' });
     }
 
-    console.log('Target vote option before check:', updatedVoteOptions[foodPackIndex]);
     // Ensure the target pack object exists and has a 'votes' property
     if (!updatedVoteOptions[foodPackIndex] || typeof updatedVoteOptions[foodPackIndex].votes === 'undefined') {
         console.error('Target vote option is malformed:', updatedVoteOptions[foodPackIndex]);
@@ -473,7 +467,7 @@ app.post('/api/daily-menu/vote', async (req, res) => {
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
-      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), today]
+      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), targetDate]
     );
 
     res.status(200).json(updatedMenu.rows[0]);
@@ -486,18 +480,19 @@ app.post('/api/daily-menu/vote', async (req, res) => {
 // DELETE to cancel a vote
 app.delete('/api/daily-menu/vote/:userId', async (req, res) => {
   const { userId } = req.params;
-  const today = new Date().toISOString().split('T')[0];
+  const { date } = req.body; // Get date from request body
+  const targetDate = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
   try {
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Daily menu state for today not found.' });
+      return res.status(404).json({ error: 'Daily menu state for the selected date not found.' });
     }
 
     const currentMenu = result.rows[0];
 
     if (currentMenu.status !== 'voting') {
-      return res.status(400).json({ error: 'Voting is not active.' });
+      return res.status(400).json({ error: 'Voting is not active for the selected date.' });
     }
 
     let votedUsers = currentMenu.voted_users;
@@ -538,7 +533,7 @@ app.delete('/api/daily-menu/vote/:userId', async (req, res) => {
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
-      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), today]
+      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), targetDate]
     );
 
     res.status(200).json(updatedMenu.rows[0]);

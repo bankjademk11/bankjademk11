@@ -13,77 +13,61 @@ const VotePage = ({
 }) => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
-  const [showSpoilVote, setShowSpoilVote] = useState(false);
-  const [tomorrowMenu, setTomorrowMenu] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    const fetchDailyMenu = async () => {
+    const fetchMenuForDate = async () => {
+      if (!selectedDate) return;
+      setDailyMenu({ status: 'loading' }); // Set loading state
       try {
-        const response = await fetch(`${BACKEND_URL}/api/daily-menu`);
+        const response = await fetch(`${BACKEND_URL}/api/daily-menu/${selectedDate}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         setDailyMenu(data);
       } catch (error) {
-        console.error("Error fetching daily menu:", error);
+        console.error(`Error fetching menu for ${selectedDate}:`, error);
+        setDailyMenu({ status: 'error' }); // Set error state
       }
     };
 
-    const fetchTomorrowMenu = async () => {
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const tomorrowDateString = tomorrow.toISOString().split('T')[0];
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/daily-menu/${tomorrowDateString}`);
-        if (response.status === 404) {
-          setTomorrowMenu(null); // No menu set for tomorrow
-          return;
-        }
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setTomorrowMenu(data);
-      } catch (error) {
-        console.error("Error fetching tomorrow's menu:", error);
-        setTomorrowMenu(null);
-      }
-    };
+    fetchMenuForDate();
 
-    fetchDailyMenu(); // Initial fetch for today's menu
-    fetchTomorrowMenu(); // Initial fetch for tomorrow's menu
+    // Optional: Set up a polling interval if you want real-time updates for the selected date
+    const intervalId = setInterval(fetchMenuForDate, 5000); // Poll every 5 seconds
 
-    const intervalId = setInterval(fetchDailyMenu, 3000); // Poll every 3 seconds for today's menu
-    const tomorrowIntervalId = setInterval(fetchTomorrowMenu, 5000); // Poll every 5 seconds for tomorrow's menu
+    return () => clearInterval(intervalId); // Cleanup on component unmount or when selectedDate changes
 
-    return () => {
-      clearInterval(intervalId);
-      clearInterval(tomorrowIntervalId);
-    }; // Cleanup on component unmount
-  }, [BACKEND_URL]);
+  }, [BACKEND_URL, selectedDate]);
 
-  // This handleVote will be passed to VotingSection
   const handleVote = async (foodPackIndex) => {
     try {
-      const updatedDailyMenu = await onVoteFromApp(foodPackIndex); // Call App.js's handleVote with foodPackIndex
+      // Pass the selectedDate to the voting function
+      const updatedDailyMenu = await onVoteFromApp(foodPackIndex, selectedDate);
       setDailyMenu(updatedDailyMenu); // Update local state immediately
     } catch (error) {
-      // Error handling is done in App.js's handleVote, but we can log here if needed
       console.error("Error voting in VotePage:", error);
     }
   };
 
+  const handleCancelVote = async () => {
+    try {
+      // Pass the selectedDate to the cancel vote function
+      const updatedDailyMenu = await onCancelVoteFromApp(selectedDate);
+      setDailyMenu(updatedDailyMenu);
+    } catch (error) {
+      console.error("Error canceling vote in VotePage:", error);
+    }
+  };
+
   const getWinningFoodDetails = () => {
-    if (!dailyMenu || dailyMenu.status === 'loading') return null;
+    if (!dailyMenu || dailyMenu.status === 'loading' || dailyMenu.status === 'error') return null;
 
     if (dailyMenu.status === 'closed') {
-      // If status is closed, find the winner from the vote_options array
       if (dailyMenu.vote_options && Array.isArray(dailyMenu.vote_options) && dailyMenu.vote_options.length > 0) {
-        // Check if there were any votes
         const totalVotes = dailyMenu.vote_options.reduce((sum, pack) => sum + (pack.votes || 0), 0);
         if (totalVotes > 0) {
-          // Find the pack with the most votes
           const winningPack = dailyMenu.vote_options.reduce((prev, current) => {
             return (prev.votes > current.votes) ? prev : current;
           });
@@ -93,14 +77,12 @@ const VotePage = ({
           };
         }
       }
-      // Fallback for old data or if there were no votes
       if (dailyMenu.winning_food_item_id) {
         return foodItems.find(item => item.id === dailyMenu.winning_food_item_id);
       }
-      return null; // No winner if no votes and no fallback ID
+      return null;
     }
 
-    // If admin set a food, find its details
     if (dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id) {
       return foodItems.find(item => item.id === dailyMenu.admin_set_food_item_id);
     }
@@ -110,89 +92,57 @@ const VotePage = ({
 
   const winningFood = getWinningFoodDetails();
 
-  return (
-    <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
-      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ເມນູປະຈຳວັນ</h2>
-
-      {/* Spoil Vote Button */}
-      {tomorrowMenu && tomorrowMenu.status !== 'idle' && (
-        <div className="text-center mb-4">
-          <button
-            onClick={() => setShowSpoilVote(!showSpoilVote)}
-            className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-blue-500 shadow-lg rounded-xl hover:bg-blue-600 hover:scale-105"
-          >
-            {showSpoilVote ? 'ເຊື່ອງເມນູມື້ອື່ນ' : 'ເບິ່ງເມນູມື້ອື່ນ (Spoil Vote)'}
-          </button>
-        </div>
-      )}
-
-      {/* Tomorrow's Menu Display */}
-      {showSpoilVote && tomorrowMenu && tomorrowMenu.status !== 'idle' && (
-        <div className="mb-6 p-4 border rounded-lg bg-blue-50 shadow-lg">
-          <h3 className="mb-4 text-xl font-semibold text-blue-800 text-center">ເມນູສຳລັບມື້ອື່ນ:</h3>
-          {tomorrowMenu.status === 'voting' && tomorrowMenu.vote_options && tomorrowMenu.vote_options.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {tomorrowMenu.vote_options.map((pack, index) => (
-                <div key={index} className="bg-white p-3 rounded-lg shadow-md flex flex-col items-center">
-                  {/* Display images for the pack */}
-                  <div className="flex space-x-2 mb-2">
-                    {pack.foodIds.map(foodId => {
-                      const food = foodItems.find(item => item.id === foodId);
-                      return food ? (
-                        <img
-                          key={food.id}
-                          src={food.image}
-                          alt={food.name}
-                          className="w-16 h-16 object-cover rounded-md"
-                          onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-                        />
-                      ) : null;
-                    })}
-                  </div>
-                  <span className="font-medium text-gray-800 text-center">{pack.name}</span>
-                </div>
-              ))}
-            </div>
-          ) : tomorrowMenu.status === 'admin_set' && tomorrowMenu.admin_set_food_item_id ? (
-            <div className="text-center">
-              <p className="text-lg font-semibold text-blue-700">ເມນູທີ່ແອັດມິນເລືອກໄວ້:</p>
-              {foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id) ? (
-                <div className="bg-white p-3 rounded-lg shadow-md inline-flex flex-col items-center mt-2">
-                  <img
-                    src={foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id).image}
-                    alt={foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id).name}
-                    className="w-24 h-24 object-cover rounded-md mb-2"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-                  />
-                  <span className="font-medium text-gray-800">{foodItems.find(item => item.id === tomorrowMenu.admin_set_food_item_id).name}</span>
-                </div>
-              ) : (
-                <p className="text-gray-600">ບໍ່ພົບຂໍ້ມູນເມນູ</p>
-              )}
-            </div>
-          ) : (
-            <p className="text-center text-gray-600">ຍັງບໍ່ມີເມນູສຳລັບມື້ອື່ນ</p>
-          )}
-        </div>
-      )}
-
-      {dailyMenu.status === 'voting' ? (
+  const renderContent = () => {
+    if (dailyMenu.status === 'loading') {
+      return <p className="text-center text-xl text-gray-500">ກຳລັງໂຫຼດຂໍ້ມູນ...</p>;
+    }
+    if (dailyMenu.status === 'error') {
+      return <p className="text-center text-xl text-red-500">ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນ.</p>;
+    }
+    if (dailyMenu.status === 'idle') {
+      return <p className="text-center text-xl text-gray-600">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>;
+    }
+    if (dailyMenu.status === 'voting') {
+      return (
         <VotingSection
           dailyMenu={dailyMenu}
           userId={userId}
           handleVote={handleVote}
-          foodItems={foodItems} // Pass foodItems to VotingSection to resolve names
-          onCancelVoteFromApp={onCancelVoteFromApp}
-        />
-      ) : (
-        <DailyWinner
-          winningFood={winningFood}
-          dailyMenuStatus={dailyMenu.status}
-          handleReviewSubmit={handleReviewSubmit}
-          userId={userId}
           foodItems={foodItems}
+          onCancelVoteFromApp={handleCancelVote} // Use the new handleCancelVote
         />
-      )}
+      );
+    }
+    // For 'closed' or 'admin_set' status
+    return (
+      <DailyWinner
+        winningFood={winningFood}
+        dailyMenuStatus={dailyMenu.status}
+        handleReviewSubmit={handleReviewSubmit}
+        userId={userId}
+        foodItems={foodItems}
+      />
+    );
+  };
+
+  return (
+    <section className="max-w-6xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <h2 className="text-3xl font-bold text-center text-teal-700">ເມນູປະຈຳວັນ</h2>
+        <div className="flex items-center gap-2">
+          <label htmlFor="vote-date-picker" className="font-semibold text-gray-700">ເລືອກວັນທີ:</label>
+          <input
+            type="date"
+            id="vote-date-picker"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
+      </div>
+
+      {renderContent()}
+
     </section>
   );
 };

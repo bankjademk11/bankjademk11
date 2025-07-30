@@ -96,21 +96,19 @@ const App = () => {
 
   
 
-  const handleVote = async (foodPackIndex) => {
+  const handleVote = async (foodPackIndex, date) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, foodPackIndex }),
+        body: JSON.stringify({ userId, foodPackIndex, date }),
       });
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to vote');
       }
-      // No setDailyMenu here, as VotePage now fetches its own dailyMenu
       const data = await response.json();
       setShowThankYouPopup(true); // Show popup on success
-      // No showMessage here, as popup will handle the message
       return data; // Return the updated dailyMenu data
     } catch (error) {
       console.error("Error voting:", error);
@@ -119,11 +117,12 @@ const App = () => {
     }
   };
 
-  const handleCancelVote = async () => {
+  const handleCancelVote = async (date) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote/${userId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ date }), // Send date in the body
       });
       if (!response.ok) {
         const errorData = await response.json();
