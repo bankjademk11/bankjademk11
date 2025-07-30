@@ -29,6 +29,10 @@ const AdminDashboard = ({
   const [editingVoteOptions, setEditingVoteOptions] = useState(null); // New state for editing
   const [editingDate, setEditingDate] = useState(null); // New state for editing date
 
+  // New states for lifting state up from VoteSelection
+  const [adminFinalVotePacks, setAdminFinalVotePacks] = useState([]);
+  const [adminSelectedFoodForPack, setAdminSelectedFoodForPack] = useState([]);
+
   useEffect(() => {
     const fetchDailyMenu = async () => {
       try {
@@ -80,6 +84,8 @@ const AdminDashboard = ({
       showMessage('ເລີ່ມການໂຫວດຊຸດອາຫານປະຈຳວັນແລ້ວ!', 'success');
       setEditingVoteOptions(null); // Clear editing state after starting new vote
       setEditingDate(null);
+      setAdminFinalVotePacks([]); // Clear vote packs after starting vote
+      setAdminSelectedFoodForPack([]); // Clear selected food for pack
     } catch (error) {
       console.error("Error starting voting:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');
@@ -131,6 +137,8 @@ const AdminDashboard = ({
     setAdminView('voting');
     setEditingVoteOptions(null); // Clear editing state when creating new
     setEditingDate(null);
+    setAdminFinalVotePacks([]); // Clear vote packs when creating new
+    setAdminSelectedFoodForPack([]); // Clear selected food for pack
   };
 
   const handleEditMenuAndNavigateToVoting = (date, voteOptions) => {
@@ -138,6 +146,15 @@ const AdminDashboard = ({
     setEditingVoteOptions(voteOptions);
     setEditingDate(date);
     setAdminView('voting');
+    // Pre-populate adminFinalVotePacks and adminSelectedFoodForPack for editing
+    if (voteOptions) {
+      const packsToLoad = voteOptions.map(pack => pack.foodIds);
+      setAdminFinalVotePacks(packsToLoad);
+      setAdminSelectedFoodForPack([]); // Clear current selection for pack
+    } else {
+      setAdminFinalVotePacks([]);
+      setAdminSelectedFoodForPack([]);
+    }
   };
 
   return (
@@ -214,6 +231,10 @@ const AdminDashboard = ({
               selectedDate={selectedDate} // Pass selectedDate to VoteSelection
               editingVoteOptions={editingVoteOptions} // Pass editingVoteOptions
               editingDate={editingDate} // Pass editingDate
+              adminFinalVotePacks={adminFinalVotePacks} // Pass lifted state
+              setAdminFinalVotePacks={setAdminFinalVotePacks} // Pass setter
+              adminSelectedFoodForPack={adminSelectedFoodForPack} // Pass lifted state
+              setAdminSelectedFoodForPack={setAdminSelectedFoodForPack} // Pass setter
             />
           )}
 

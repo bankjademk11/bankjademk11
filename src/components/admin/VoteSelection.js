@@ -11,20 +11,22 @@ const VoteSelection = ({
   selectedDate, // Receive selectedDate prop
   editingVoteOptions, // New prop for editing
   editingDate, // New prop for editing date
+  adminFinalVotePacks, // Lifted state
+  setAdminFinalVotePacks, // Lifted setter
+  adminSelectedFoodForPack, // Lifted state
+  setAdminSelectedFoodForPack, // Lifted setter
 }) => {
   const [searchTerm, setSearchTerm] = useState(''); // New state for search term
-  const [selectedFoodForPack, setSelectedFoodForPack] = useState([]); // Stores up to 2 food IDs for a pack
-  const [finalVotePacks, setFinalVotePacks] = useState([]); // Stores array of [foodId1, foodId2] pairs
 
   useEffect(() => {
     if (editingVoteOptions && editingDate === selectedDate) {
       // Convert vote_options from objects to arrays of foodIds
       const packsToLoad = editingVoteOptions.map(pack => pack.foodIds);
-      setFinalVotePacks(packsToLoad);
+      setAdminFinalVotePacks(packsToLoad);
     } else {
-      setFinalVotePacks([]); // Clear if not editing or date doesn't match
+      setAdminFinalVotePacks([]); // Clear if not editing or date doesn't match
     }
-  }, [editingVoteOptions, editingDate, selectedDate]);
+  }, [editingVoteOptions, editingDate, selectedDate, setAdminFinalVotePacks]);
 
   const filteredAdminFoodItems = foodItems.filter(food => {
     const matchesCategory = selectedAdminCategory.trim() === 'ທັງໝົດ' || food.tags.includes(selectedAdminCategory);
@@ -33,23 +35,23 @@ const VoteSelection = ({
   });
 
   const handleFoodSelectForPack = (foodId) => {
-    if (selectedFoodForPack.includes(foodId)) {
+    if (adminSelectedFoodForPack.includes(foodId)) {
       // Deselect if already selected
-      setSelectedFoodForPack(selectedFoodForPack.filter(id => id !== foodId));
-    } else if (selectedFoodForPack.length < 2) {
+      setAdminSelectedFoodForPack(adminSelectedFoodForPack.filter(id => id !== foodId));
+    } else if (adminSelectedFoodForPack.length < 2) {
       // Select if less than 2 items are selected
-      setSelectedFoodForPack([...selectedFoodForPack, foodId]);
+      setAdminSelectedFoodForPack([...adminSelectedFoodForPack, foodId]);
     } else {
       // If 2 items are already selected, replace the first one with the new selection
-      setSelectedFoodForPack([selectedFoodForPack[1], foodId]);
+      setAdminSelectedFoodForPack([adminSelectedFoodForPack[1], foodId]);
     }
   };
 
   const handleAddPack = () => {
-    if (selectedFoodForPack.length === 2) {
+    if (adminSelectedFoodForPack.length === 2) {
       // Ensure the pack is not already added
-      const newPack = [...selectedFoodForPack].sort((a, b) => a - b); // Sort to ensure consistent order
-      const isDuplicate = finalVotePacks.some(pack =>
+      const newPack = [...adminSelectedFoodForPack].sort((a, b) => a - b); // Sort to ensure consistent order
+      const isDuplicate = adminFinalVotePacks.some(pack =>
         pack[0] === newPack[0] && pack[1] === newPack[1]
       );
 
@@ -58,23 +60,23 @@ const VoteSelection = ({
         return;
       }
 
-      setFinalVotePacks([...finalVotePacks, newPack]);
-      setSelectedFoodForPack([]); // Clear current selection after adding
+      setAdminFinalVotePacks([...adminFinalVotePacks, newPack]);
+      setAdminSelectedFoodForPack([]); // Clear current selection after adding
     } else {
       showMessage('ກະລຸນາເລືອກອາຫານ 2 ຊະນິດເພື່ອສ້າງຊຸດ.', 'error');
     }
   };
 
   const handleRemovePack = (indexToRemove) => {
-    setFinalVotePacks(finalVotePacks.filter((_, index) => index !== indexToRemove));
+    setAdminFinalVotePacks(adminFinalVotePacks.filter((_, index) => index !== indexToRemove));
   };
 
   const handleStartVotingWithPacks = () => {
-    if (finalVotePacks.length === 0) {
+    if (adminFinalVotePacks.length === 0) {
       showMessage('ກະລຸນາເພີ່ມຢ່າງໜ້ອຍໜຶ່ງຊຸດອາຫານເພື່ອເລີ່ມການໂຫວດ.', 'error');
       return;
     }
-    handleStartVoting(finalVotePacks, selectedDate);
+    handleStartVoting(adminFinalVotePacks, selectedDate);
   };
 
   return (
@@ -103,7 +105,7 @@ const VoteSelection = ({
             <div
               key={food.id}
               className={`p-3 border rounded-lg flex flex-col items-center shadow-md cursor-pointer ${
-                selectedFoodForPack.includes(food.id) ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-200'
+                adminSelectedFoodForPack.includes(food.id) ? 'bg-blue-100 border-blue-400' : 'bg-white border-gray-200'
               }`}
               onClick={() => handleFoodSelectForPack(food.id)}
             >
@@ -120,25 +122,25 @@ const VoteSelection = ({
         <div className="mt-4 flex justify-center space-x-4">
           <button
             onClick={handleAddPack}
-            disabled={selectedFoodForPack.length !== 2}
+            disabled={adminSelectedFoodForPack.length !== 2}
             className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-lg rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
           >
-            ເພີ່ມຊຸດອາຫານ ({selectedFoodForPack.length}/2)
+            ເພີ່ມຊຸດອາຫານ ({adminSelectedFoodForPack.length}/2)
           </button>
           <button
-            onClick={() => setSelectedFoodForPack([])}
-            disabled={selectedFoodForPack.length === 0}
+            onClick={() => setAdminSelectedFoodForPack([])}
+            disabled={adminSelectedFoodForPack.length === 0}
             className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-gray-500 shadow-lg rounded-xl hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
           >
             ລ້າງການເລືອກ
           </button>
         </div>
 
-        {finalVotePacks.length > 0 && (
+        {adminFinalVotePacks.length > 0 && (
           <div className="mt-6">
             <h4 className="mb-3 text-lg font-semibold text-gray-700">ຊຸດອາຫານສຳລັບການໂຫວດ:</h4>
             <div className="space-y-2">
-              {finalVotePacks.map((pack, index) => (
+              {adminFinalVotePacks.map((pack, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm">
                   <span className="font-medium text-gray-800">
                     {foodItems.find(f => f.id === pack[0])?.name} & {foodItems.find(f => f.id === pack[1])?.name}
