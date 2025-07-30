@@ -1,14 +1,20 @@
 import React from 'react';
 
-const VotingSection = ({ dailyMenu, userId, handleVote, foodItems }) => {
-  // Review form related states are removed for simplicity with pack voting
-  // If review for individual items in a pack is needed, it will require more complex logic
-
+const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteFromApp }) => {
   const hasVoted = dailyMenu.voted_users && dailyMenu.voted_users[userId] !== undefined; // Check if user has voted for any pack
   const userVotedPackIndex = hasVoted ? dailyMenu.voted_users[userId] : null; // Get the index of the pack the user voted for
 
   const onVote = (foodPackIndex) => {
     handleVote(foodPackIndex);
+  };
+
+  const onCancelVote = async () => {
+    try {
+      const updatedDailyMenu = await onCancelVoteFromApp();
+      // Optionally update local state if needed, but App.js's onCancelVoteFromApp should handle it
+    } catch (error) {
+      console.error("Error canceling vote in VotingSection:", error);
+    }
   };
 
   return (
@@ -64,7 +70,16 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems }) => {
         })}
       </div>
 
-      {/* Review form is hidden for pack voting for now */}
+      {hasVoted && (
+        <div className="text-center mt-6">
+          <button
+            onClick={onCancelVote}
+            className="px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
+          >
+            ຍົກເລີກການໂຫວດ
+          </button>
+        </div>
+      )}
     </div>
   );
 };

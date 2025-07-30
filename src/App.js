@@ -119,6 +119,26 @@ const App = () => {
     }
   };
 
+  const handleCancelVote = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote/${userId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to cancel vote');
+      }
+      const data = await response.json();
+      showMessage('ຍົກເລີກການໂຫວດສຳເລັດແລ້ວ!', 'success');
+      return data; // Return the updated dailyMenu data
+    } catch (error) {
+      console.error("Error canceling vote:", error);
+      showMessage('ເກີດຂໍ້ຜິດພາດໃນການຍົກເລີກການໂຫວດ', 'error');
+      throw error; // Re-throw the error so VotePage can catch it
+    }
+  };
+
   const handleReviewSubmit = useCallback(async (foodId, rating, comment) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/foods/${foodId}/reviews`, {
@@ -162,9 +182,10 @@ const App = () => {
           <Route path="/vote" element={
             <VotePage
               userId={userId}
-              onVoteFromApp={handleVote} // เปลี่ยนชื่อ prop
+              onVoteFromApp={handleVote}
               handleReviewSubmit={handleReviewSubmit}
               foodItems={foodItems}
+              onCancelVoteFromApp={handleCancelVote}
             />
           } />
           <Route path="/admin" element={

@@ -418,10 +418,12 @@ app.post('/api/daily-menu/vote', async (req, res) => {
 
     // Ensure vote_options is an array and contains valid objects
     let voteOptions = currentMenu.vote_options;
+    console.log('Raw vote_options from DB:', voteOptions);
     if (!Array.isArray(voteOptions)) {
         if (typeof voteOptions === 'string') {
             try {
                 voteOptions = JSON.parse(voteOptions);
+                console.log('Parsed vote_options from string:', voteOptions);
             } catch (e) {
                 console.error('Error parsing vote_options string:', e);
                 return res.status(500).json({ error: 'Internal Server Error: Invalid vote options data format.' });
@@ -447,11 +449,15 @@ app.post('/api/daily-menu/vote', async (req, res) => {
       }
     }
 
+    console.log('foodPackIndex received:', foodPackIndex);
+    console.log('updatedVoteOptions length:', updatedVoteOptions.length);
+
     // Validate the new foodPackIndex
     if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
       return res.status(400).json({ error: 'Invalid food pack index.' });
     }
 
+    console.log('Target vote option before check:', updatedVoteOptions[foodPackIndex]);
     // Ensure the target pack object exists and has a 'votes' property
     if (!updatedVoteOptions[foodPackIndex] || typeof updatedVoteOptions[foodPackIndex].votes === 'undefined') {
         console.error('Target vote option is malformed:', updatedVoteOptions[foodPackIndex]);
@@ -472,6 +478,71 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     res.status(200).json(updatedMenu.rows[0]);
   } catch (err) {
     console.error('Error casting vote:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+  }
+});
+
+// DELETE to cancel a vote
+app.delete('/api/daily-menu/vote/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const today = new Date().toISOString().split('T')[0];
+
+  try {
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Daily menu state for today not found.' });
+    }
+
+    const currentMenu = result.rows[0];
+
+    if (currentMenu.status !== 'voting') {
+      return res.status(400).json({ error: 'Voting is not active.' });
+    }
+
+    let votedUsers = currentMenu.voted_users;
+    let voteOptions = currentMenu.vote_options;
+
+    // Ensure voteOptions is an array and contains valid objects
+    if (!Array.isArray(voteOptions)) {
+        if (typeof voteOptions === 'string') {
+            try {
+                voteOptions = JSON.parse(voteOptions);
+            } catch (e) {
+                console.error('Error parsing vote_options string:', e);
+                return res.status(500).json({ error: 'Internal Server Error: Invalid vote options data format.' });
+            }
+        } else {
+            voteOptions = [];
+        }
+    }
+
+    const updatedVoteOptions = [...voteOptions];
+    const updatedVotedUsers = { ...votedUsers };
+
+    const previousFoodPackIndex = updatedVotedUsers[userId];
+
+    if (previousFoodPackIndex === undefined) {
+      return res.status(400).json({ error: 'User has not voted yet.' });
+    }
+
+    // Decrement votes for the previously voted pack
+    if (previousFoodPackIndex >= 0 && previousFoodPackIndex < updatedVoteOptions.length) {
+      if (updatedVoteOptions[previousFoodPackIndex] && updatedVoteOptions[previousFoodPackIndex].votes > 0) {
+        updatedVoteOptions[previousFoodPackIndex].votes -= 1;
+      }
+    }
+
+    // Remove user from voted_users
+    delete updatedVotedUsers[userId];
+
+    const updatedMenu = await pool.query(
+      'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
+      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), today]
+    );
+
+    res.status(200).json(updatedMenu.rows[0]);
+  } catch (err) {
+    console.error('Error canceling vote:', err.stack);
     res.status(500).json({ error: 'Internal Server Error: ' + err.message });
   }
 });

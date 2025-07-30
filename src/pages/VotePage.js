@@ -6,9 +6,10 @@ import {
 
 const VotePage = ({
   userId,
-  onVoteFromApp, // เปลี่ยนชื่อ prop จาก handleVote
+  onVoteFromApp,
   handleReviewSubmit,
   foodItems,
+  onCancelVoteFromApp,
 }) => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
@@ -178,6 +179,7 @@ const VotePage = ({
           userId={userId}
           handleVote={handleVote}
           foodItems={foodItems} // Pass foodItems to VotingSection to resolve names
+          onCancelVoteFromApp={onCancelVoteFromApp}
         />
       ) : (
         <DailyWinner
