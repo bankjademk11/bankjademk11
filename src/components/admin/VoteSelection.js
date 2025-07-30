@@ -23,8 +23,6 @@ const VoteSelection = ({
       // Convert vote_options from objects to arrays of foodIds
       const packsToLoad = editingVoteOptions.map(pack => pack.foodIds);
       setAdminFinalVotePacks(packsToLoad);
-    } else {
-      setAdminFinalVotePacks([]); // Clear if not editing or date doesn't match
     }
   }, [editingVoteOptions, editingDate, selectedDate, setAdminFinalVotePacks]);
 
