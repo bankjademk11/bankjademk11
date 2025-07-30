@@ -115,7 +115,9 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
     <div className="max-w-4xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h3 className="text-3xl font-bold text-center text-teal-700 mb-6">ລາຍລະອຽດລາຍງານປະຈຳວັນ</h3>
       <p className="text-lg font-semibold text-gray-800 mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
-      <p className="text-lg text-gray-700 mb-2">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
+      <p className="text-lg text-gray-700 mb-2">
+        ເມນູທີ່ຊະນະ: {typeof report.winning_food_name === 'object' && report.winning_food_name !== null ? report.winning_food_name.name : report.winning_food_name || 'ບໍ່ມີ'}
+      </p>
       <p className="text-lg text-gray-700 mb-4">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
 
       {chartData && report.total_votes > 0 && (
