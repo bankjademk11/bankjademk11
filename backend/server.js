@@ -326,10 +326,21 @@ app.post('/api/daily-menu/start', async (req, res) => {
 
     // Construct the new vote_options array with names and votes
     const newVoteOptions = voteOptions.map(pack => {
-      const foodNames = pack.map(foodId => foodMap.get(foodId)).filter(Boolean);
-      if (foodNames.length === 0) {
-        throw new Error('One or more food items in the pack not found.');
+      const foodNames = [];
+      const missingFoodIds = [];
+      pack.forEach(foodId => {
+        const foodName = foodMap.get(foodId);
+        if (foodName) {
+          foodNames.push(foodName);
+        } else {
+          missingFoodIds.push(foodId);
+        }
+      });
+
+      if (missingFoodIds.length > 0) {
+        throw new Error(`Food items with IDs ${missingFoodIds.join(', ')} not found.`);
       }
+
       const name = foodNames.length === 1 ? foodNames[0] : `${foodNames[0]} & ${foodNames[1]}`;
 
       return {
