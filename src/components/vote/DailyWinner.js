@@ -25,7 +25,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
               const food = foodItems.find(item => item.id === foodId);
               if (!food) return null;
               return (
-                <div key={food.id} className="bg-teal-50 p-6 rounded-xl shadow-2xl inline-block">
+                <div key={food.id} className="bg-amber-50 p-6 rounded-xl shadow-lg inline-block">
                   <img
                     src={food.image}
                     alt={food.name}

@@ -40,7 +40,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
           const isSelected = userVotedPackIndex === index; // Check if this pack is the one the user voted for
 
           return (
-            <div key={index} className={`bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center ${isSelected ? 'border-4 border-blue-500' : ''}`}>
+            <div key={index} className={`bg-amber-50 p-4 rounded-xl shadow-lg flex flex-col items-center ${isSelected ? 'border-4 border-blue-500' : ''}`}>
               <div className="flex space-x-2 mb-3">
                 {food1 && (
                   <img
@@ -63,9 +63,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
               <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {pack.votes}</p>
               <button
                 onClick={() => onVote(index)} // Pass the index of the pack
-                className={`px-6 py-2 text-white rounded-lg shadow-md transition ${isSelected ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'} ${hasVoted ? 'opacity-50 cursor-not-allowed' : ''}`}
-                disabled={hasVoted}
-              >
+                className={`px-6 py-2 text-white rounded-lg shadow-md transition ${isSelected ? 'bg-green-500 hover:bg-green-600' : 'bg-orange-500 hover:bg-orange-600'} ${hasVoted ? 'opacity-50 cursor-not-allowed' : ''}`}>
                 {isSelected ? 'ເລືອກແລ້ວ' : 'ໂຫວດ'}
               </button>
             </div>
