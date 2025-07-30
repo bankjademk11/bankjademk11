@@ -419,10 +419,33 @@ app.post('/api/daily-menu/vote', async (req, res) => {
       return res.status(400).json({ error: 'User has already voted.' });
     }
 
-    const updatedVoteOptions = [...currentMenu.vote_options]; // Create a shallow copy
+    // Ensure vote_options is an array and contains valid objects
+    let voteOptions = currentMenu.vote_options;
+    if (!Array.isArray(voteOptions)) {
+        // If it's not an array, it might be null, undefined, or a string that needs parsing
+        if (typeof voteOptions === 'string') {
+            try {
+                voteOptions = JSON.parse(voteOptions);
+            } catch (e) {
+                console.error('Error parsing vote_options string:', e);
+                return res.status(500).json({ error: 'Internal Server Error: Invalid vote options data format.' });
+            }
+        } else {
+            // If it's neither an array nor a string, treat as empty array
+            voteOptions = [];
+        }
+    }
+
+    const updatedVoteOptions = [...voteOptions]; // Create a shallow copy
 
     if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
       return res.status(400).json({ error: 'Invalid food pack index.' });
+    }
+
+    // Ensure the target pack object exists and has a 'votes' property
+    if (!updatedVoteOptions[foodPackIndex] || typeof updatedVoteOptions[foodPackIndex].votes === 'undefined') {
+        console.error('Target vote option is malformed:', updatedVoteOptions[foodPackIndex]);
+        return res.status(500).json({ error: 'Internal Server Error: Malformed vote option data.' });
     }
 
     // Increment votes for the selected pack
