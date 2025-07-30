@@ -326,21 +326,15 @@ app.post('/api/daily-menu/start', async (req, res) => {
 
     // Construct the new vote_options array with names and votes
     const newVoteOptions = voteOptions.map(pack => {
-      if (pack.length !== 2) {
-        throw new Error('Each vote pack must contain exactly two food items.');
-      }
-      const food1Id = pack[0];
-      const food2Id = pack[1];
-      const food1Name = foodMap.get(food1Id);
-      const food2Name = foodMap.get(food2Id);
-
-      if (!food1Name || !food2Name) {
+      const foodNames = pack.map(foodId => foodMap.get(foodId)).filter(Boolean);
+      if (foodNames.length === 0) {
         throw new Error('One or more food items in the pack not found.');
       }
+      const name = foodNames.length === 1 ? foodNames[0] : `${foodNames[0]} & ${foodNames[1]}`;
 
       return {
         foodIds: pack, // Store the array of food IDs
-        name: `${food1Name} & ${food2Name}`, // Generate a display name for the pack
+        name: name, // Generate a display name for the pack
         votes: 0
       };
     });
