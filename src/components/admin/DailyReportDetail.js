@@ -112,7 +112,7 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
   }
 
   return (
-    <div className="max-w-4xl md:max-w-6xl xl:max-w-screen-xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
+    <div className="max-w-4xl md:max-w-screen-xl xl:max-w-screen-2xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h3 className="text-3xl font-bold text-center text-teal-700 mb-6">ລາຍລະອຽດລາຍງານປະຈຳວັນ</h3>
       <p className="text-lg font-semibold text-gray-800 mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
       <p className="text-lg text-gray-700 mb-2">
