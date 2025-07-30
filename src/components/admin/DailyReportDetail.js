@@ -22,6 +22,8 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
         }
         const reportData = await reportResponse.json();
         setReport(reportData);
+        console.log('Report data:', reportData);
+        console.log('Report vote_details:', reportData.vote_details);
 
         // Fetch food details for vote_details
         if (reportData.vote_details) {
