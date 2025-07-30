@@ -1,33 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId, foodItems }) => {
-  const [showReviewForm, setShowReviewForm] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5); // Default to 5 stars
-  const [reviewComment, setReviewComment] = useState('');
-  const [hasReviewed, setHasReviewed] = useState(false);
-
-  // Check if user has already reviewed this specific winningFood
-  useEffect(() => {
-    const checkReviewStatus = async () => {
-      // Only check review status if winningFood is an individual food item (has an ID)
-      if (winningFood && userId && winningFood.id) {
-        try {
-          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/foods/${winningFood.id}/reviews`);
-          if (response.ok) {
-            const reviews = await response.json();
-            const userReview = reviews.find(review => review.user_id === userId);
-            setHasReviewed(!!userReview);
-          }
-        } catch (error) {
-          console.error("Error checking review status:", error);
-        }
-      } else {
-        // If it's a pack, or no winningFood, assume no review is possible for now
-        setHasReviewed(true); // Disable review form for packs
-      }
-    };
-    checkReviewStatus();
-  }, [winningFood, userId]);
 
   if (!winningFood) {
     return (
@@ -36,22 +9,6 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
       </p>
     );
   }
-
-  const onSubmitReview = (e) => {
-    e.preventDefault();
-    // Only allow review submission for individual food items
-    if (winningFood && winningFood.id) {
-      if (typeof handleReviewSubmit === 'function') {
-        handleReviewSubmit(winningFood.id, reviewRating, reviewComment);
-        setShowReviewForm(false);
-        setReviewComment('');
-        setReviewRating(5);
-        setHasReviewed(true);
-      } else {
-        console.error("handleReviewSubmit prop is not a function!");
-      }
-    }
-  };
 
   return (
     <div className="text-center">
