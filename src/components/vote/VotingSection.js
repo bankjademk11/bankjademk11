@@ -10,7 +10,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
 
   const onCancelVote = async () => {
     try {
-      const updatedDailyMenu = await onCancelVoteFromApp();
+      await onCancelVoteFromApp();
       // Optionally update local state if needed, but App.js's onCancelVoteFromApp should handle it
     } catch (error) {
       console.error("Error canceling vote in VotingSection:", error);
