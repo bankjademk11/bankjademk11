@@ -46,12 +46,13 @@ const VoteSelection = ({
   };
 
   const handleAddPack = () => {
-    if (adminSelectedFoodForPack.length === 2) {
+    if (adminSelectedFoodForPack.length > 0) {
       // Ensure the pack is not already added
       const newPack = [...adminSelectedFoodForPack].sort((a, b) => a - b); // Sort to ensure consistent order
-      const isDuplicate = adminFinalVotePacks.some(pack =>
-        pack[0] === newPack[0] && pack[1] === newPack[1]
-      );
+      const isDuplicate = adminFinalVotePacks.some(pack => {
+        if (pack.length !== newPack.length) return false;
+        return pack.every((value, index) => value === newPack[index]);
+      });
 
       if (isDuplicate) {
         showMessage('ຊຸດອາຫານນີ້ຖືກເພີ່ມແລ້ວ!', 'error');
@@ -61,7 +62,7 @@ const VoteSelection = ({
       setAdminFinalVotePacks([...adminFinalVotePacks, newPack]);
       setAdminSelectedFoodForPack([]); // Clear current selection after adding
     } else {
-      showMessage('ກະລຸນາເລືອກອາຫານ 2 ຊະນິດເພື່ອສ້າງຊຸດ.', 'error');
+      showMessage('ກະລຸນາເລືອກອາຫານຢ່າງໜ້ອຍ 1 ຊະນິດເພື່ອສ້າງຊຸດ.', 'error');
     }
   };
 
@@ -120,10 +121,10 @@ const VoteSelection = ({
         <div className="mt-4 flex justify-center space-x-4">
           <button
             onClick={handleAddPack}
-            disabled={adminSelectedFoodForPack.length !== 2}
+            disabled={adminSelectedFoodForPack.length === 0}
             className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-green-500 shadow-lg rounded-xl hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
           >
-            ເພີ່ມຊຸດອາຫານ ({adminSelectedFoodForPack.length}/2)
+            ເພີ່ມຊຸດອາຫານ ({adminSelectedFoodForPack.length})
           </button>
           <button
             onClick={() => setAdminSelectedFoodForPack([])}
