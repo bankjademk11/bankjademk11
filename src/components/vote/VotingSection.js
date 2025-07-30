@@ -5,6 +5,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems }) => {
   // If review for individual items in a pack is needed, it will require more complex logic
 
   const hasVoted = dailyMenu.voted_users && dailyMenu.voted_users[userId] !== undefined; // Check if user has voted for any pack
+  const userVotedPackIndex = hasVoted ? dailyMenu.voted_users[userId] : null; // Get the index of the pack the user voted for
 
   const onVote = (foodPackIndex) => {
     handleVote(foodPackIndex);
@@ -28,8 +29,10 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems }) => {
           const food1 = foodItems.find(item => item.id === pack.foodIds[0]);
           const food2 = foodItems.find(item => item.id === pack.foodIds[1]);
 
+          const isSelected = userVotedPackIndex === index; // Check if this pack is the one the user voted for
+
           return (
-            <div key={index} className="bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center">
+            <div key={index} className={`bg-gray-50 p-4 rounded-xl shadow-lg flex flex-col items-center ${isSelected ? 'border-4 border-blue-500' : ''}`}>
               <div className="flex space-x-2 mb-3">
                 {food1 && (
                   <img
@@ -50,14 +53,12 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems }) => {
               </div>
               <h3 className="text-xl font-semibold mb-2 text-center">{pack.name}</h3>
               <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {pack.votes}</p>
-              {!hasVoted && (
-                <button
-                  onClick={() => onVote(index)} // Pass the index of the pack
-                  className="px-6 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
-                >
-                  ໂຫວດ
-                </button>
-              )}
+              <button
+                onClick={() => onVote(index)} // Pass the index of the pack
+                className={`px-6 py-2 text-white rounded-lg shadow-md transition ${isSelected ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'}`}
+              >
+                {isSelected ? 'ເລືອກແລ້ວ' : 'ໂຫວດ'}
+              </button>
             </div>
           );
         })}

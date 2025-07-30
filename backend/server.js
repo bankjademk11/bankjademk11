@@ -415,14 +415,10 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     if (currentMenu.status !== 'voting') {
       return res.status(400).json({ error: 'Voting is not active.' });
     }
-    if (currentMenu.voted_users && currentMenu.voted_users[userId]) {
-      return res.status(400).json({ error: 'User has already voted.' });
-    }
 
     // Ensure vote_options is an array and contains valid objects
     let voteOptions = currentMenu.vote_options;
     if (!Array.isArray(voteOptions)) {
-        // If it's not an array, it might be null, undefined, or a string that needs parsing
         if (typeof voteOptions === 'string') {
             try {
                 voteOptions = JSON.parse(voteOptions);
@@ -431,13 +427,27 @@ app.post('/api/daily-menu/vote', async (req, res) => {
                 return res.status(500).json({ error: 'Internal Server Error: Invalid vote options data format.' });
             }
         } else {
-            // If it's neither an array nor a string, treat as empty array
             voteOptions = [];
         }
     }
 
     const updatedVoteOptions = [...voteOptions]; // Create a shallow copy
+    const updatedVotedUsers = { ...currentMenu.voted_users };
 
+    // Check if user has already voted
+    const hasVoted = updatedVotedUsers[userId] !== undefined;
+    const previousFoodPackIndex = hasVoted ? updatedVotedUsers[userId] : null;
+
+    // If user is changing their vote, decrement the previous vote
+    if (hasVoted && previousFoodPackIndex !== foodPackIndex) {
+      if (previousFoodPackIndex >= 0 && previousFoodPackIndex < updatedVoteOptions.length) {
+        if (updatedVoteOptions[previousFoodPackIndex] && updatedVoteOptions[previousFoodPackIndex].votes > 0) {
+          updatedVoteOptions[previousFoodPackIndex].votes -= 1;
+        }
+      }
+    }
+
+    // Validate the new foodPackIndex
     if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
       return res.status(400).json({ error: 'Invalid food pack index.' });
     }
@@ -451,7 +461,8 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     // Increment votes for the selected pack
     updatedVoteOptions[foodPackIndex].votes += 1;
 
-    const updatedVotedUsers = { ...currentMenu.voted_users, [userId]: foodPackIndex }; // Store the index of the voted pack
+    // Update the user's vote
+    updatedVotedUsers[userId] = foodPackIndex;
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
