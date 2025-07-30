@@ -8,6 +8,7 @@ const VoteSelection = ({
   showMessage,
   selectedAdminCategory,
   setSelectedAdminCategory,
+  selectedDate, // Receive selectedDate prop
 }) => {
   const [searchTerm, setSearchTerm] = useState(''); // New state for search term
   const [selectedFoodForPack, setSelectedFoodForPack] = useState([]); // Stores up to 2 food IDs for a pack
@@ -61,7 +62,7 @@ const VoteSelection = ({
       showMessage('ກະລຸນາເພີ່ມຢ່າງໜ້ອຍໜຶ່ງຊຸດອາຫານເພື່ອເລີ່ມການໂຫວດ.', 'error');
       return;
     }
-    handleStartVoting(finalVotePacks);
+    handleStartVoting(finalVotePacks, selectedDate);
   };
 
   return (

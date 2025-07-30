@@ -21,7 +21,7 @@ const AdminDashboard = ({
   showMessage,
   BACKEND_URL, // Receive BACKEND_URL prop
 }) => {
-  const [adminView, setAdminView] = useState('voting'); // 'voting' or 'report'
+  const [adminView, setAdminView] = useState('status'); // 'voting' or 'report'
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
@@ -123,6 +123,11 @@ const AdminDashboard = ({
     }
   };
 
+  const handleCreateMenuAndNavigateToVoting = (date) => {
+    setSelectedDate(date);
+    setAdminView('voting');
+  };
+
   return (
     <section className="p-8 mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ແຜງຄວບຄຸມແອັດມິນ</h2>
@@ -200,6 +205,7 @@ const AdminDashboard = ({
               showMessage={showMessage}
               selectedAdminCategory={selectedAdminCategory}
               setSelectedAdminCategory={setSelectedAdminCategory}
+              selectedDate={selectedDate} // Pass selectedDate to VoteSelection
             />
           )}
 
@@ -211,6 +217,7 @@ const AdminDashboard = ({
               setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
               handleAdminSetFood={handleAdminSetFood}
               foodItems={foodItems}
+              selectedDate={selectedDate} // Pass selectedDate to DailyMenuControl
             />
           )}
 
@@ -219,7 +226,14 @@ const AdminDashboard = ({
           )}
 
           {adminView === 'status' && (
-            <DailyMenuStatus BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} />
+            <DailyMenuStatus
+              BACKEND_URL={BACKEND_URL}
+              showMessage={showMessage}
+              foodItems={foodItems}
+              onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting} // Pass the new handler
+              selectedDate={selectedDate} // Pass selectedDate to DailyMenuStatus
+              setSelectedDate={setSelectedDate} // Pass setSelectedDate to DailyMenuStatus
+            />
           )}
 
           {adminView === 'food-management' && (
