@@ -242,6 +242,5 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
     </button>
   );
 };
-};
 
 export default DailyWinner;
