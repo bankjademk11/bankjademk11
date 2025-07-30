@@ -55,6 +55,13 @@ const AdminDashboard = ({
         }
         const data = await response.json();
         setDailyMenu(data);
+
+        // Load vote options if not in editing mode and dailyMenu has vote_options
+        if (adminView === 'voting' && !editingVoteOptions && data.vote_options && Array.isArray(data.vote_options)) {
+          const packsToLoad = data.vote_options.map(pack => pack.foodIds);
+          setAdminFinalVotePacks(packsToLoad);
+        }
+
       } catch (error) {
         console.error("Error fetching daily menu for date:", error);
         showMessage('ບໍ່ສາມາດໂຫຼດຂໍ້ມູນເມນູປະຈຳວັນໄດ້', 'error');
@@ -64,7 +71,7 @@ const AdminDashboard = ({
     if (selectedDate) {
       fetchDailyMenu();
     }
-  }, [BACKEND_URL, selectedDate, showMessage]);
+  }, [BACKEND_URL, selectedDate, showMessage, adminView, editingVoteOptions]);
 
   const handleStartVoting = async (votePacks) => {
     if (!votePacks || votePacks.length === 0) {
