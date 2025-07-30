@@ -309,8 +309,8 @@ app.get('/api/daily-menu', async (req, res) => {
 
 // POST to start the voting process (Admin)
 app.post('/api/daily-menu/start', async (req, res) => {
-  const { voteOptions } = req.body; // voteOptions will be an array of arrays, e.g., [[1, 2], [3, 4]]
-  const today = new Date().toISOString().split('T')[0];
+  const { voteOptions, date } = req.body; // voteOptions will be an array of arrays, e.g., [[1, 2], [3, 4]]
+  const targetDate = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
   if (!Array.isArray(voteOptions) || voteOptions.length === 0) {
     return res.status(400).json({ error: 'Vote options must be a non-empty array.' });
@@ -347,7 +347,7 @@ app.post('/api/daily-menu/start', async (req, res) => {
 
     const result = await pool.query(
       'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW() WHERE date = $4 RETURNING *'
-      , ['voting', JSON.stringify(newVoteOptions), {}, today]
+      , ['voting', JSON.stringify(newVoteOptions), {}, targetDate]
     );
 
     if (result.rows.length === 0) {
@@ -362,9 +362,10 @@ app.post('/api/daily-menu/start', async (req, res) => {
 
 // POST to close the voting process (Admin)
 app.post('/api/daily-menu/close', async (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
+  const { date } = req.body;
+  const targetDate = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
   try {
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
     if (result.rows.length === 0 || result.rows[0].status !== 'voting') {
       return res.status(400).json({ error: 'No voting is currently active for today.' });
     }
@@ -380,7 +381,7 @@ app.post('/api/daily-menu/close', async (req, res) => {
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET status = $1, winning_food_item_id = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
-      , ['closed', winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, today] // Store the first foodId of the winning pack
+      , ['closed', winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, targetDate] // Store the first foodId of the winning pack
     );
 
     // Save the result to the daily_results table
@@ -389,7 +390,7 @@ app.post('/api/daily-menu/close', async (req, res) => {
 
     await pool.query(
       'INSERT INTO daily_results (date, winning_food_id, winning_food_name, total_votes, vote_details) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (date) DO UPDATE SET winning_food_id = EXCLUDED.winning_food_id, winning_food_name = EXCLUDED.winning_food_name, total_votes = EXCLUDED.total_votes, vote_details = EXCLUDED.vote_details, created_at = NOW()'
-      , [today, winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, winningItem ? winningItem.name : null, totalVotes, JSON.stringify(voteDetails)]
+      , [targetDate, winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, winningItem ? winningItem.name : null, totalVotes, JSON.stringify(voteDetails)]
     );
 
     res.status(200).json(updatedMenu.rows[0]);
@@ -549,8 +550,8 @@ app.delete('/api/daily-menu/vote/:userId', async (req, res) => {
 
 // POST to set the menu by admin
 app.post('/api/daily-menu/admin-set', async (req, res) => {
-    const { foodId } = req.body;
-    const today = new Date().toISOString().split('T')[0];
+    const { foodId, date } = req.body;
+    const targetDate = date ? new Date(date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
 
     if (!foodId) {
         return res.status(400).json({ error: 'Food ID is required.' });
@@ -559,7 +560,7 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
     try {
         const result = await pool.query(
             'UPDATE daily_menu_states SET status = $1, admin_set_food_item_id = $2, winning_food_item_id = NULL, vote_options = $3, voted_users = $4, timestamp = NOW() WHERE date = $5 RETURNING *'
-            , ['admin_set', foodId, [], {}, today]
+            , ['admin_set', foodId, [], {}, targetDate]
         );
 
         if (result.rows.length === 0) {

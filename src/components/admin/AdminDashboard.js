@@ -70,7 +70,7 @@ const AdminDashboard = ({
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ voteOptions: votePacks }),
+        body: JSON.stringify({ voteOptions: votePacks, date: selectedDate }),
       });
       if (!response.ok) throw new Error('Failed to start voting');
       const data = await response.json();
