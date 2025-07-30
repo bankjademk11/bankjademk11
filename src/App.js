@@ -96,12 +96,12 @@ const App = () => {
 
   
 
-  const handleVote = async (foodItemId) => {
+  const handleVote = async (foodPackIndex) => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, foodItemId }),
+        body: JSON.stringify({ userId, foodPackIndex }),
       });
       if (!response.ok) {
         const errorData = await response.json();
