@@ -34,11 +34,6 @@ const VotePage = ({
 
     fetchMenuForDate();
 
-    // Optional: Set up a polling interval if you want real-time updates for the selected date
-    const intervalId = setInterval(fetchMenuForDate, 5000); // Poll every 5 seconds
-
-    return () => clearInterval(intervalId); // Cleanup on component unmount or when selectedDate changes
-
   }, [BACKEND_URL, selectedDate]);
 
   const handleVote = async (foodPackIndex) => {
