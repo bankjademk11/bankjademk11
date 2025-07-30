@@ -309,7 +309,7 @@ app.get('/api/daily-menu', async (req, res) => {
 
 // POST to start the voting process (Admin)
 app.post('/api/daily-menu/start', async (req, res) => {
-  const { voteOptions } = req.body;
+  const { voteOptions } = req.body; // voteOptions will be an array of arrays, e.g., [[1, 2], [3, 4]]
   const today = new Date().toISOString().split('T')[0];
 
   if (!Array.isArray(voteOptions) || voteOptions.length === 0) {
@@ -317,9 +317,37 @@ app.post('/api/daily-menu/start', async (req, res) => {
   }
 
   try {
+    // Extract all unique food IDs from the voteOptions
+    const allFoodIds = [...new Set(voteOptions.flat())];
+
+    // Fetch food names for these IDs
+    const foodsResult = await pool.query('SELECT id, name FROM foods WHERE id = ANY($1::int[])', [allFoodIds]);
+    const foodMap = new Map(foodsResult.rows.map(food => [food.id, food.name]));
+
+    // Construct the new vote_options array with names and votes
+    const newVoteOptions = voteOptions.map(pack => {
+      if (pack.length !== 2) {
+        throw new Error('Each vote pack must contain exactly two food items.');
+      }
+      const food1Id = pack[0];
+      const food2Id = pack[1];
+      const food1Name = foodMap.get(food1Id);
+      const food2Name = foodMap.get(food2Id);
+
+      if (!food1Name || !food2Name) {
+        throw new Error('One or more food items in the pack not found.');
+      }
+
+      return {
+        foodIds: pack, // Store the array of food IDs
+        name: `${food1Name} & ${food2Name}`, // Generate a display name for the pack
+        votes: 0
+      };
+    });
+
     const result = await pool.query(
       'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW() WHERE date = $4 RETURNING *'
-      , ['voting', JSON.stringify(voteOptions.map(opt => ({ ...opt, votes: 0 }))), {}, today]
+      , ['voting', JSON.stringify(newVoteOptions), {}, today]
     );
 
     if (result.rows.length === 0) {
@@ -328,7 +356,7 @@ app.post('/api/daily-menu/start', async (req, res) => {
     res.status(200).json(result.rows[0]);
   } catch (err) {
     console.error('Error starting voting:', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
   }
 });
 
@@ -344,6 +372,7 @@ app.post('/api/daily-menu/close', async (req, res) => {
     const currentMenu = result.rows[0];
     let winningItem = null;
     if (currentMenu.vote_options && currentMenu.vote_options.length > 0) {
+      // Find the winning pack based on votes
       winningItem = currentMenu.vote_options.reduce((prev, current) =>
         (prev.votes > current.votes) ? prev : current
       );
@@ -351,19 +380,16 @@ app.post('/api/daily-menu/close', async (req, res) => {
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET status = $1, winning_food_item_id = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
-      , ['closed', winningItem ? winningItem.foodItemId : null, today]
+      , ['closed', winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, today] // Store the first foodId of the winning pack
     );
 
-    // Optional: Save the result to the daily_results table as well
+    // Save the result to the daily_results table
     const totalVotes = currentMenu.vote_options.reduce((sum, option) => sum + option.votes, 0);
-    const voteDetails = currentMenu.vote_options.reduce((acc, option) => {
-      acc[option.foodItemId] = option.votes;
-      return acc;
-    }, {});
+    const voteDetails = currentMenu.vote_options; // vote_details now stores the entire vote_options array (packs with votes)
 
     await pool.query(
       'INSERT INTO daily_results (date, winning_food_id, winning_food_name, total_votes, vote_details) VALUES ($1, $2, $3, $4, $5) ON CONFLICT (date) DO UPDATE SET winning_food_id = EXCLUDED.winning_food_id, winning_food_name = EXCLUDED.winning_food_name, total_votes = EXCLUDED.total_votes, vote_details = EXCLUDED.vote_details, created_at = NOW()'
-      , [today, winningItem ? winningItem.foodItemId : null, winningItem ? winningItem.name : null, totalVotes, voteDetails]
+      , [today, winningItem && winningItem.foodIds && winningItem.foodIds.length > 0 ? winningItem.foodIds[0] : null, winningItem ? winningItem.name : null, totalVotes, JSON.stringify(voteDetails)]
     );
 
     res.status(200).json(updatedMenu.rows[0]);
@@ -375,7 +401,7 @@ app.post('/api/daily-menu/close', async (req, res) => {
 
 // POST to cast a vote
 app.post('/api/daily-menu/vote', async (req, res) => {
-  const { userId, foodItemId } = req.body;
+  const { userId, foodPackIndex } = req.body; // foodPackIndex is the index of the chosen pack in vote_options array
   const today = new Date().toISOString().split('T')[0];
 
   try {
@@ -393,13 +419,16 @@ app.post('/api/daily-menu/vote', async (req, res) => {
       return res.status(400).json({ error: 'User has already voted.' });
     }
 
-    const updatedVoteOptions = currentMenu.vote_options.map(option =>
-      option.foodItemId === foodItemId
-        ? { ...option, votes: option.votes + 1 }
-        : option
-    );
+    const updatedVoteOptions = [...currentMenu.vote_options]; // Create a shallow copy
 
-    const updatedVotedUsers = { ...currentMenu.voted_users, [userId]: foodItemId };
+    if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
+      return res.status(400).json({ error: 'Invalid food pack index.' });
+    }
+
+    // Increment votes for the selected pack
+    updatedVoteOptions[foodPackIndex].votes += 1;
+
+    const updatedVotedUsers = { ...currentMenu.voted_users, [userId]: foodPackIndex }; // Store the index of the voted pack
 
     const updatedMenu = await pool.query(
       'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
@@ -409,7 +438,7 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     res.status(200).json(updatedMenu.rows[0]);
   } catch (err) {
     console.error('Error casting vote:', err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
   }
 });
 

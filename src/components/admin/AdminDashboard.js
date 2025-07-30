@@ -60,28 +60,23 @@ const AdminDashboard = ({
     }
   }, [BACKEND_URL, selectedDate, showMessage]);
 
-  const handleStartVoting = async () => {
-    if (adminVoteSelections.length !== 5) {
-      showMessage('ຕ້ອງເລືອກ 5 ເມນູທີ່ບໍ່ຊ້ຳກັນສຳລັບການໂຫວດ', 'error');
+  const handleStartVoting = async (votePacks) => {
+    if (!votePacks || votePacks.length === 0) {
+      showMessage('ກະລຸນາເພີ່ມຢ່າງໜ້ອຍໜຶ່ງຊຸດອາຫານເພື່ອເລີ່ມການໂຫວດ.', 'error');
       return;
     }
-    const voteOptions = adminVoteSelections.map(item => ({
-      foodItemId: item.id,
-      name: item.name,
-      image: item.image,
-    }));
 
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: selectedDate, voteOptions }),
+        body: JSON.stringify({ voteOptions: votePacks }),
       });
       if (!response.ok) throw new Error('Failed to start voting');
       const data = await response.json();
       setDailyMenu(data);
-      showMessage('ເລີ່ມການໂຫວດເມນູປະຈຳວັນແລ້ວ!', 'success');
-      setAdminVoteSelections([]);
+      showMessage('ເລີ່ມການໂຫວດຊຸດອາຫານປະຈຳວັນແລ້ວ!', 'success');
+      // No need to clear adminVoteSelections here as it's handled in VoteSelection now
     } catch (error) {
       console.error("Error starting voting:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');

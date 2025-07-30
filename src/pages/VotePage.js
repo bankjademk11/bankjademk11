@@ -63,9 +63,9 @@ const VotePage = ({
   }, [BACKEND_URL]);
 
   // This handleVote will be passed to VotingSection
-  const handleVote = async (foodItemId) => {
+  const handleVote = async (foodPackIndex) => {
     try {
-      const updatedDailyMenu = await onVoteFromApp(foodItemId); // Call App.js's handleVote
+      const updatedDailyMenu = await onVoteFromApp(foodPackIndex); // Call App.js's handleVote with foodPackIndex
       setDailyMenu(updatedDailyMenu); // Update local state immediately
     } catch (error) {
       // Error handling is done in App.js's handleVote, but we can log here if needed
@@ -76,17 +76,29 @@ const VotePage = ({
   const getWinningFoodDetails = () => {
     if (!dailyMenu || dailyMenu.status === 'loading') return null;
 
-    const foodIdToFind = dailyMenu.status === 'closed' ? dailyMenu.winning_food_item_id : dailyMenu.admin_set_food_item_id;
-
-    if (foodIdToFind) {
-      return foodItems.find(item => item.id === foodIdToFind);
+    if (dailyMenu.status === 'closed') {
+      // If it's a pack, winning_food_name will be set, and vote_options will contain the pack details
+      if (dailyMenu.winning_food_name && dailyMenu.vote_options && dailyMenu.vote_options.length > 0) {
+        const winningPack = dailyMenu.vote_options.find(pack => pack.name === dailyMenu.winning_food_name);
+        if (winningPack) {
+          // Return the pack object with foodIds for image display
+          return {
+            name: winningPack.name,
+            foodIds: winningPack.foodIds,
+          };
+        }
+      }
+      // Fallback for individual food if winning_food_item_id is set (e.g., old data or admin set)
+      if (dailyMenu.winning_food_item_id) {
+        return foodItems.find(item => item.id === dailyMenu.winning_food_item_id);
+      }
+      // If closed but no winning food/pack found (e.g., no votes, or data inconsistency)
+      return null;
     }
 
-    // If status is 'closed' but no winning_food_item_id (e.g., no votes)
-    // Or if status is 'voting' and we need to show vote options
-    if (dailyMenu.status === 'voting' && dailyMenu.vote_options && dailyMenu.vote_options.length > 0) {
-      // For voting, we might want to return the options themselves or null if not applicable
-      return null; // Or return dailyMenu.vote_options if you want to display them here
+    // If admin set a food, find its details
+    if (dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id) {
+      return foodItems.find(item => item.id === dailyMenu.admin_set_food_item_id);
     }
 
     return null;
@@ -116,15 +128,24 @@ const VotePage = ({
           <h3 className="mb-4 text-xl font-semibold text-blue-800 text-center">ເມນູສຳລັບມື້ອື່ນ:</h3>
           {tomorrowMenu.status === 'voting' && tomorrowMenu.vote_options && tomorrowMenu.vote_options.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {tomorrowMenu.vote_options.map(food => (
-                <div key={food.foodItemId} className="bg-white p-3 rounded-lg shadow-md flex flex-col items-center">
-                  <img
-                    src={food.image}
-                    alt={food.name}
-                    className="w-24 h-24 object-cover rounded-md mb-2"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-                  />
-                  <span className="font-medium text-gray-800 text-center">{food.name}</span>
+              {tomorrowMenu.vote_options.map((pack, index) => (
+                <div key={index} className="bg-white p-3 rounded-lg shadow-md flex flex-col items-center">
+                  {/* Display images for the pack */}
+                  <div className="flex space-x-2 mb-2">
+                    {pack.foodIds.map(foodId => {
+                      const food = foodItems.find(item => item.id === foodId);
+                      return food ? (
+                        <img
+                          key={food.id}
+                          src={food.image}
+                          alt={food.name}
+                          className="w-16 h-16 object-cover rounded-md"
+                          onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
+                        />
+                      ) : null;
+                    })}
+                  </div>
+                  <span className="font-medium text-gray-800 text-center">{pack.name}</span>
                 </div>
               ))}
             </div>
@@ -156,8 +177,7 @@ const VotePage = ({
           dailyMenu={dailyMenu}
           userId={userId}
           handleVote={handleVote}
-          handleReviewSubmit={handleReviewSubmit}
-          foodItems={foodItems}
+          foodItems={foodItems} // Pass foodItems to VotingSection to resolve names
         />
       ) : (
         <DailyWinner

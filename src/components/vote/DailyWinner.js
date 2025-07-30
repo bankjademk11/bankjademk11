@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId, foodItems }) => {
-  console.log('DailyWinner: handleReviewSubmit prop:', handleReviewSubmit);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewRating, setReviewRating] = useState(5); // Default to 5 stars
   const [reviewComment, setReviewComment] = useState('');
@@ -10,12 +9,9 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
   // Check if user has already reviewed this specific winningFood
   useEffect(() => {
     const checkReviewStatus = async () => {
+      // Only check review status if winningFood is an individual food item (has an ID)
       if (winningFood && userId && winningFood.id) {
         try {
-          // Assuming you have a way to check if a user has reviewed a food item
-          // This might require a new backend endpoint or fetching all reviews
-          // For now, we'll simulate or assume a check
-          // In a real app, you'd fetch reviews for winningFood.id and check if userId exists
           const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/foods/${winningFood.id}/reviews`);
           if (response.ok) {
             const reviews = await response.json();
@@ -25,6 +21,9 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
         } catch (error) {
           console.error("Error checking review status:", error);
         }
+      } else {
+        // If it's a pack, or no winningFood, assume no review is possible for now
+        setHasReviewed(true); // Disable review form for packs
       }
     };
     checkReviewStatus();
@@ -40,16 +39,16 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
 
   const onSubmitReview = (e) => {
     e.preventDefault();
+    // Only allow review submission for individual food items
     if (winningFood && winningFood.id) {
-      if (typeof handleReviewSubmit === 'function') { // Defensive check
+      if (typeof handleReviewSubmit === 'function') {
         handleReviewSubmit(winningFood.id, reviewRating, reviewComment);
-        setShowReviewForm(false); // Hide form after submission
-        setReviewComment(''); // Clear comment
-        setReviewRating(5); // Reset rating
-        setHasReviewed(true); // Mark as reviewed after submission
+        setShowReviewForm(false);
+        setReviewComment('');
+        setReviewRating(5);
+        setHasReviewed(true);
       } else {
         console.error("handleReviewSubmit prop is not a function!");
-        // Optionally show a user-friendly error message
       }
     }
   };
@@ -60,23 +59,44 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
         ເມນູປະຈຳວັນນີ້ແມ່ນ:
       </p>
       <div className="bg-teal-50 p-6 rounded-xl shadow-2xl inline-block">
-        <img
-          src={winningFood.image}
-          alt={winningFood.name}
-          className="w-64 h-48 object-cover rounded-lg mb-4 mx-auto"
-          onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-        />
+        {winningFood.foodIds && winningFood.foodIds.length === 2 ? (
+          // Display for food pack
+          <div className="flex justify-center space-x-4 mb-4">
+            {winningFood.foodIds.map(foodId => {
+              const food = foodItems.find(item => item.id === foodId);
+              return food ? (
+                <img
+                  key={food.id}
+                  src={food.image}
+                  alt={food.name}
+                  className="w-32 h-24 object-cover rounded-lg"
+                  onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
+                />
+              ) : null;
+            })}
+          </div>
+        ) : (
+          // Display for individual food
+          <img
+            src={winningFood.image}
+            alt={winningFood.name}
+            className="w-64 h-48 object-cover rounded-lg mb-4 mx-auto"
+            onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
+          />
+        )}
         <h3 className="text-3xl font-extrabold text-teal-800">{winningFood.name}</h3>
-        <div className="flex flex-wrap justify-center gap-2 mt-3">
-          {winningFood.tags && winningFood.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="px-3 py-1 text-sm font-medium text-teal-700 bg-teal-200 rounded-full"
-            >
-              {tag}
-            </span>
-          ))}
-        </div>
+        {winningFood.tags && (
+          <div className="flex flex-wrap justify-center gap-2 mt-3">
+            {winningFood.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="px-3 py-1 text-sm font-medium text-teal-700 bg-teal-200 rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
       {dailyMenuStatus === 'closed' && (
         <p className="mt-4 text-gray-600">
@@ -89,7 +109,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
         </p>
       )}
 
-      {winningFood && !hasReviewed && (
+      {winningFood && winningFood.id && !hasReviewed && (
         <button
           onClick={() => setShowReviewForm(true)}
           className="mt-6 px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition"
@@ -98,11 +118,11 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
         </button>
       )}
 
-      {hasReviewed && (
+      {hasReviewed && winningFood.id && (
         <p className="mt-6 text-lg text-gray-600">ທ່ານໄດ້ຄຳເຫັນເມນູນີ້ແລ້ວ</p>
       )}
 
-      {showReviewForm && winningFood && (
+      {showReviewForm && winningFood && winningFood.id && (
         <div className="mt-8 p-6 bg-white rounded-xl shadow-lg">
           <h3 className="text-2xl font-bold text-center text-teal-700 mb-4">ຄຳເຫັນເມນູ {winningFood.name}</h3>
           <form onSubmit={onSubmitReview} className="space-y-4">
