@@ -124,7 +124,7 @@ const AdminDashboard = ({
   };
 
   return (
-    <section className="max-w-3xl md:max-w-screen-xl xl:max-w-screen-2xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
+    <section className="p-8 mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ແຜງຄວບຄຸມແອັດມິນ</h2>
 
       {!isAdmin ? (

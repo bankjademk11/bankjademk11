@@ -33,7 +33,7 @@ const DailySummary = ({ BACKEND_URL }) => {
     const { dailyState, dailyResult } = summary;
 
     return (
-        <div className="max-w-screen-xl xl:max-w-screen-2xl mx-auto p-4 bg-gray-50 rounded-lg shadow-md">
+        <div className="p-4 bg-gray-50 rounded-lg shadow-md">
             <h2 className="text-xl font-bold mb-4 text-teal-700">ສະຫຼຸບກິດຈະກຳປະຈຳວັນ</h2>
 
             <div className="mb-4">

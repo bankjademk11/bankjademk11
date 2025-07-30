@@ -121,7 +121,7 @@ const VotePage = ({
   };
 
   return (
-    <section className="max-w-full xl:max-w-screen-xl 2xl:max-w-screen-2xl p-8 mx-auto mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
+    <section className="p-8 mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h2 className="text-3xl font-bold text-center text-teal-700">ເມນູປະຈຳວັນ</h2>
         <div className="flex items-center gap-2">
