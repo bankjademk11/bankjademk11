@@ -27,37 +27,28 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
         {dailyMenu.vote_options && dailyMenu.vote_options.map((pack, index) => {
           console.log('Processing pack:', pack); // Add this line
           // Add defensive checks for pack.foodIds
-          if (!pack || !Array.isArray(pack.foodIds) || pack.foodIds.length !== 2) {
-            console.warn("Skipping malformed vote option or individual food item:", pack);
+          if (!pack || !Array.isArray(pack.foodIds) || pack.foodIds.length === 0) {
+            console.warn("Skipping malformed vote option or empty food item:", pack);
             return null; // Skip this item if it's not a valid pack
           }
-          console.log('Pack foodIds:', pack.foodIds); // Add this line
 
           // Find food details for each item in the pack
-          const food1 = foodItems.find(item => item.id === pack.foodIds[0]);
-          const food2 = foodItems.find(item => item.id === pack.foodIds[1]);
+          const foodsInPack = pack.foodIds.map(foodId => foodItems.find(item => item.id === foodId)).filter(Boolean);
 
           const isSelected = userVotedPackIndex === index; // Check if this pack is the one the user voted for
 
           return (
             <div key={index} className={`bg-amber-50 p-4 rounded-xl shadow-lg flex flex-col items-center ${isSelected ? 'border-4 border-blue-500' : ''}`}>
               <div className="flex space-x-2 mb-3">
-                {food1 && (
+                {foodsInPack.map(food => (
                   <img
-                    src={food1.image}
-                    alt={food1.name}
+                    key={food.id}
+                    src={food.image}
+                    alt={food.name}
                     className="w-24 h-24 object-cover rounded-lg"
                     onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                   />
-                )}
-                {food2 && (
-                  <img
-                    src={food2.image}
-                    alt={food2.name}
-                    className="w-24 h-24 object-cover rounded-lg"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-                  />
-                )}
+                ))}
               </div>
               <h3 className="text-xl font-semibold mb-2 text-center">{pack.name}</h3>
               <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {pack.votes}</p>
