@@ -25,11 +25,13 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {dailyMenu.vote_options && dailyMenu.vote_options.map((pack, index) => {
+          console.log('Processing pack:', pack); // Add this line
           // Add defensive checks for pack.foodIds
           if (!pack || !Array.isArray(pack.foodIds) || pack.foodIds.length !== 2) {
             console.warn("Skipping malformed vote option or individual food item:", pack);
             return null; // Skip this item if it's not a valid pack
           }
+          console.log('Pack foodIds:', pack.foodIds); // Add this line
 
           // Find food details for each item in the pack
           const food1 = foodItems.find(item => item.id === pack.foodIds[0]);
