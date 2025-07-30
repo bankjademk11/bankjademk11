@@ -87,18 +87,27 @@ const DailySummary = ({ BACKEND_URL }) => {
                     {dailyResult ? (
                         <>
                             <p><strong>ວັນທີ:</strong> {dailyResult.date}</p>
-                            <p><strong>ອາຫານທີ່ຊະນະ:</strong> {dailyResult.winning_food_name || 'ບໍ່ມີ'}</p>
+                            <p><strong>ອາຫານທີ່ຊະນະ:</strong> {typeof dailyResult.winning_food_name === 'object' && dailyResult.winning_food_name !== null ? dailyResult.winning_food_name.name : dailyResult.winning_food_name || 'ບໍ່ມີ'}</p>
                             <p><strong>ຈຳນວນໂຫວດທັງໝົດ:</strong> {dailyResult.total_votes}</p>
-                            {dailyResult.vote_details && Object.keys(dailyResult.vote_details).length > 0 && (
+                            {dailyResult.vote_details && Array.isArray(dailyResult.vote_details) ? (
                                 <div className="mt-2">
-                                    <p className="font-medium">ລາຍລະອຽດການໂຫວດ (ID ອາຫານ: ໂຫວດ):</p>
+                                    <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
                                     <ul className="list-disc list-inside ml-4">
-                                        {Object.keys(dailyResult.vote_details).map((foodId, index) => (
-                                            <li key={index}>ID ອາຫານ {foodId}: {dailyResult.vote_details[foodId]} ໂຫວດ</li>
+                                        {dailyResult.vote_details.map((pack, index) => (
+                                            <li key={index}>{pack.name}: {pack.votes} ໂຫວດ</li>
                                         ))}
                                     </ul>
                                 </div>
-                            )}
+                            ) : dailyResult.vote_details && typeof dailyResult.vote_details === 'object' && Object.keys(dailyResult.vote_details).length > 0 ? (
+                                <div className="mt-2">
+                                    <p className="font-medium">ລາຍລະອຽດການໂຫວດ (ID ອາຫານ: ໂຫວດ):</p>
+                                    <ul className="list-disc list-inside ml-4">
+                                        {Object.entries(dailyResult.vote_details).map(([foodId, votes]) => (
+                                            <li key={foodId}>ID ອາຫານ {foodId}: {votes} ໂຫວດ</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ) : null}
                         </>
                     ) : (
                         <p>ບໍ່ພົບຜົນການໂຫວດປະຈຳວັນສຳລັບວັນທີນີ້.</p>
