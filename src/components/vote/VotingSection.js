@@ -61,7 +61,8 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
               <p className="text-lg text-teal-600 mb-4">ຄະແນນໂຫວດ: {pack.votes}</p>
               <button
                 onClick={() => onVote(index)} // Pass the index of the pack
-                className={`px-6 py-2 text-white rounded-lg shadow-md transition ${isSelected ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'}`}
+                className={`px-6 py-2 text-white rounded-lg shadow-md transition ${isSelected ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'} ${hasVoted ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={hasVoted}
               >
                 {isSelected ? 'ເລືອກແລ້ວ' : 'ໂຫວດ'}
               </button>
