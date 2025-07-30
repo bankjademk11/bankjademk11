@@ -78,23 +78,26 @@ const VotePage = ({
     if (!dailyMenu || dailyMenu.status === 'loading') return null;
 
     if (dailyMenu.status === 'closed') {
-      // If it's a pack, winning_food_name will be set, and vote_options will contain the pack details
-      if (dailyMenu.winning_food_name && dailyMenu.vote_options && dailyMenu.vote_options.length > 0) {
-        const winningPack = dailyMenu.vote_options.find(pack => pack.name === dailyMenu.winning_food_name);
-        if (winningPack) {
-          // Return the pack object with foodIds for image display
+      // If status is closed, find the winner from the vote_options array
+      if (dailyMenu.vote_options && Array.isArray(dailyMenu.vote_options) && dailyMenu.vote_options.length > 0) {
+        // Check if there were any votes
+        const totalVotes = dailyMenu.vote_options.reduce((sum, pack) => sum + (pack.votes || 0), 0);
+        if (totalVotes > 0) {
+          // Find the pack with the most votes
+          const winningPack = dailyMenu.vote_options.reduce((prev, current) => {
+            return (prev.votes > current.votes) ? prev : current;
+          });
           return {
             name: winningPack.name,
             foodIds: winningPack.foodIds,
           };
         }
       }
-      // Fallback for individual food if winning_food_item_id is set (e.g., old data or admin set)
+      // Fallback for old data or if there were no votes
       if (dailyMenu.winning_food_item_id) {
         return foodItems.find(item => item.id === dailyMenu.winning_food_item_id);
       }
-      // If closed but no winning food/pack found (e.g., no votes, or data inconsistency)
-      return null;
+      return null; // No winner if no votes and no fallback ID
     }
 
     // If admin set a food, find its details
