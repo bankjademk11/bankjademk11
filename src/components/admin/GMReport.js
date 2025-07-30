@@ -104,13 +104,21 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
               onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
             >
               <p className="text-lg font-semibold text-teal-800">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
-              <p className="text-md text-gray-700">ເມນູທີ່ຊະນະ: {report.winning_food_name || 'ບໍ່ມີ'}</p>
+              <p className="text-md text-gray-700">
+                ເມນູທີ່ຊະນະ: {typeof report.winning_food_name === 'object' && report.winning_food_name !== null ? report.winning_food_name.name : report.winning_food_name || 'ບໍ່ມີ'}
+              </p>
               <p className="text-md text-gray-700">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
               <div className="mt-2">
                 <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
-                {report.vote_details && Object.entries(report.vote_details).map(([foodId, votes]) => (
-                  <p key={foodId} className="text-sm text-gray-600 ml-4">- {foodId} (ID): {votes} ໂຫວດ</p>
-                ))}
+                {report.vote_details && Array.isArray(report.vote_details) ? (
+                  report.vote_details.map((pack, index) => (
+                    <p key={index} className="text-sm text-gray-600 ml-4">- {pack.name}: {pack.votes} ໂຫວດ</p>
+                  ))
+                ) : report.vote_details && typeof report.vote_details === 'object' ? (
+                  Object.entries(report.vote_details).map(([foodId, votes]) => (
+                    <p key={foodId} className="text-sm text-gray-600 ml-4">- ID {foodId}: {votes} ໂຫວດ</p>
+                  ))
+                ) : null}
               </div>
             </div>
           ))}
