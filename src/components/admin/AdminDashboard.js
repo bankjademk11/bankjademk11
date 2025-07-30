@@ -26,6 +26,8 @@ const AdminDashboard = ({
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
   const [selectedAdminCategory, setSelectedAdminCategory] = useState('ທັງໝົດ');
+  const [editingVoteOptions, setEditingVoteOptions] = useState(null); // New state for editing
+  const [editingDate, setEditingDate] = useState(null); // New state for editing date
 
   useEffect(() => {
     const fetchDailyMenu = async () => {
@@ -76,7 +78,8 @@ const AdminDashboard = ({
       const data = await response.json();
       setDailyMenu(data);
       showMessage('ເລີ່ມການໂຫວດຊຸດອາຫານປະຈຳວັນແລ້ວ!', 'success');
-      // No need to clear adminVoteSelections here as it's handled in VoteSelection now
+      setEditingVoteOptions(null); // Clear editing state after starting new vote
+      setEditingDate(null);
     } catch (error) {
       console.error("Error starting voting:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');
@@ -125,6 +128,15 @@ const AdminDashboard = ({
 
   const handleCreateMenuAndNavigateToVoting = (date) => {
     setSelectedDate(date);
+    setAdminView('voting');
+    setEditingVoteOptions(null); // Clear editing state when creating new
+    setEditingDate(null);
+  };
+
+  const handleEditMenuAndNavigateToVoting = (date, voteOptions) => {
+    setSelectedDate(date);
+    setEditingVoteOptions(voteOptions);
+    setEditingDate(date);
     setAdminView('voting');
   };
 
@@ -206,6 +218,8 @@ const AdminDashboard = ({
               selectedAdminCategory={selectedAdminCategory}
               setSelectedAdminCategory={setSelectedAdminCategory}
               selectedDate={selectedDate} // Pass selectedDate to VoteSelection
+              editingVoteOptions={editingVoteOptions} // Pass editingVoteOptions
+              editingDate={editingDate} // Pass editingDate
             />
           )}
 
@@ -233,6 +247,8 @@ const AdminDashboard = ({
               onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting} // Pass the new handler
               selectedDate={selectedDate} // Pass selectedDate to DailyMenuStatus
               setSelectedDate={setSelectedDate} // Pass setSelectedDate to DailyMenuStatus
+              handleCloseVoting={handleCloseVoting} // Pass handleCloseVoting to DailyMenuStatus
+              handleEditMenuAndNavigateToVoting={handleEditMenuAndNavigateToVoting} // Pass handleEditMenuAndNavigateToVoting
             />
           )}
 

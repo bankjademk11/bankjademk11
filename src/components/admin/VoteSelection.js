@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CategoryFilter from '../myfoods/CategoryFilter'; // Reusing CategoryFilter component
 
 const VoteSelection = ({
@@ -9,10 +9,22 @@ const VoteSelection = ({
   selectedAdminCategory,
   setSelectedAdminCategory,
   selectedDate, // Receive selectedDate prop
+  editingVoteOptions, // New prop for editing
+  editingDate, // New prop for editing date
 }) => {
   const [searchTerm, setSearchTerm] = useState(''); // New state for search term
   const [selectedFoodForPack, setSelectedFoodForPack] = useState([]); // Stores up to 2 food IDs for a pack
   const [finalVotePacks, setFinalVotePacks] = useState([]); // Stores array of [foodId1, foodId2] pairs
+
+  useEffect(() => {
+    if (editingVoteOptions && editingDate === selectedDate) {
+      // Convert vote_options from objects to arrays of foodIds
+      const packsToLoad = editingVoteOptions.map(pack => pack.foodIds);
+      setFinalVotePacks(packsToLoad);
+    } else {
+      setFinalVotePacks([]); // Clear if not editing or date doesn't match
+    }
+  }, [editingVoteOptions, editingDate, selectedDate]);
 
   const filteredAdminFoodItems = foodItems.filter(food => {
     const matchesCategory = selectedAdminCategory.trim() === 'ທັງໝົດ' || food.tags.includes(selectedAdminCategory);

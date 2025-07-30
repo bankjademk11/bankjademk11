@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate }) => {
+const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate, handleCloseVoting, handleEditMenuAndNavigateToVoting }) => {
   const [dailyMenu, setDailyMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -120,6 +120,14 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
                   </div>
                 ))}
               </div>
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => handleCloseVoting(dailyMenu.date)} // Add Close Voting button
+                  className="px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
+                >
+                  ປິດໂຫວດ
+                </button>
+              </div>
             </div>
           )}
 
@@ -154,6 +162,14 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             >
               ລຶບ
             </button>
+            {dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled' && (
+              <button
+                onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
+                className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              >
+                ແກ້ໄຂ
+              </button>
+            )}
           </div>
         </div>
       )}
