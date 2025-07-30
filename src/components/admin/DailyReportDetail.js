@@ -26,7 +26,28 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
         console.log('Report vote_details:', reportData.vote_details);
 
         // Fetch food details for vote_details
-        if (reportData.vote_details) {
+        if (reportData.vote_details && Array.isArray(reportData.vote_details) && reportData.vote_details.length > 0) {
+          const allFoodIdsInPacks = [...new Set(reportData.vote_details.flatMap(pack => pack.foodIds))];
+          if (allFoodIdsInPacks.length > 0) {
+            const foodDetailsResponse = await fetch(`${BACKEND_URL}/api/foods/batch`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ foodIds: allFoodIdsInPacks }),
+            });
+            if (foodDetailsResponse.ok) {
+              const foodDetailsData = await foodDetailsResponse.json();
+              const detailsMap = foodDetailsData.reduce((acc, food) => {
+                acc[food.id] = food;
+                return acc;
+              }, {});
+              setFoodDetails(detailsMap);
+            } else {
+              console.error('Error fetching batch food details:', foodDetailsResponse.statusText);
+            }
+          }
+        } else if (reportData.vote_details) { // Handle old format if it exists
           const foodIds = Object.keys(reportData.vote_details).map(Number);
           if (foodIds.length > 0) {
             const foodDetailsResponse = await fetch(`${BACKEND_URL}/api/foods/batch`, {
@@ -59,12 +80,12 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
   }, [id, BACKEND_URL, showMessage]);
 
   // Prepare data for the Pie Chart
-  const chartData = report && report.vote_details ? {
-    labels: Object.keys(report.vote_details).map(foodId => foodDetails[foodId] ? foodDetails[foodId].name : `ID ອາຫານ: ${foodId}`),
+  const chartData = report && report.vote_details && Array.isArray(report.vote_details) && report.vote_details.length > 0 ? {
+    labels: report.vote_details.map(pack => pack.name),
     datasets: [
       {
         label: 'ຈຳນວນໂຫວດ',
-        data: Object.values(report.vote_details),
+        data: report.vote_details.map(pack => pack.votes),
         backgroundColor: [
           'rgba(255, 99, 132, 0.6)',
           'rgba(54, 162, 235, 0.6)',
@@ -107,7 +128,34 @@ const DailyReportDetail = ({ BACKEND_URL, showMessage }) => {
       )}
 
       <h4 className="text-xl font-semibold text-teal-700 mb-4">ຜົນການໂຫວດແຕ່ລະເມນູ:</h4>
-      {report.vote_details && Object.entries(report.vote_details).length > 0 ? (
+      {report.vote_details && Array.isArray(report.vote_details) && report.vote_details.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {report.vote_details.map((pack, index) => (
+            <div key={index} className="bg-gray-50 p-4 rounded-xl shadow-lg flex items-center space-x-4">
+              <div className="flex space-x-2">
+                {pack.foodIds.map(foodId => {
+                  const food = foodDetails[foodId];
+                  return food ? (
+                    <img
+                      key={food.id}
+                      src={food.image}
+                      alt={food.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                      onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/CCCCCC/000000?text=Image+Not+Found`; }}
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">ບໍ່ມີຮູບ</div>
+                  );
+                })}
+              </div>
+              <div className="flex-grow">
+                <p className="text-lg font-semibold">{pack.name}</p>
+                <p className="text-md text-gray-700">ໂຫວດ: {pack.votes}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : report.vote_details && Object.entries(report.vote_details).length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(report.vote_details).map(([foodId, votes]) => {
             const food = foodDetails[foodId];
