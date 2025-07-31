@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link } from 'react-router-dom';
 import AdminLogin from './AdminLogin';
 import VoteSelection from './VoteSelection';
 import DailyMenuControl from './DailyMenuControl';
-import GMReport from './GMReport'; // Import GMReport
+import GMReport from './GMReport';
 import DailyMenuStatus from './DailyMenuStatus';
-import FoodManagement from './FoodManagement'; // Import FoodManagement
+import FoodManagement from './FoodManagement';
 
 const AdminDashboard = ({
   isAdmin,
@@ -19,17 +19,16 @@ const AdminDashboard = ({
   setAdminVoteSelections,
   toggleAdminVoteSelection,
   showMessage,
-  BACKEND_URL, // Receive BACKEND_URL prop
+  BACKEND_URL,
 }) => {
-  const [adminView, setAdminView] = useState('status'); // 'voting' or 'report'
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]); // YYYY-MM-DD
+  const [adminView, setAdminView] = useState('status');
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
   const [selectedAdminCategory, setSelectedAdminCategory] = useState('ທັງໝົດ');
-  const [editingVoteOptions, setEditingVoteOptions] = useState(null); // New state for editing
-  const [editingDate, setEditingDate] = useState(null); // New state for editing date
+  const [editingVoteOptions, setEditingVoteOptions] = useState(null);
+  const [editingDate, setEditingDate] = useState(null);
 
-  // New states for lifting state up from VoteSelection
   const [adminFinalVotePacks, setAdminFinalVotePacks] = useState([]);
   const [adminSelectedFoodForPack, setAdminSelectedFoodForPack] = useState([]);
 
@@ -38,7 +37,6 @@ const AdminDashboard = ({
       try {
         const response = await fetch(`${BACKEND_URL}/api/daily-menu/${selectedDate}`);
         if (response.status === 404) {
-          // If no entry for this date, set to idle
           setDailyMenu({
             status: 'idle',
             vote_options: [],
@@ -56,7 +54,6 @@ const AdminDashboard = ({
         const data = await response.json();
         setDailyMenu(data);
 
-        // Load vote options if not in editing mode and dailyMenu has vote_options
         if (adminView === 'voting' && !editingVoteOptions && data.vote_options && Array.isArray(data.vote_options)) {
           const packsToLoad = data.vote_options.map(pack => pack.foodIds);
           setAdminFinalVotePacks(packsToLoad);
@@ -89,10 +86,10 @@ const AdminDashboard = ({
       const data = await response.json();
       setDailyMenu(data);
       showMessage('ເລີ່ມການໂຫວດຊຸດອາຫານປະຈຳວັນແລ້ວ!', 'success');
-      setEditingVoteOptions(null); // Clear editing state after starting new vote
+      setEditingVoteOptions(null);
       setEditingDate(null);
-      setAdminFinalVotePacks([]); // Clear vote packs after starting vote
-      setAdminSelectedFoodForPack([]); // Clear selected food for pack
+      setAdminFinalVotePacks([]);
+      setAdminSelectedFoodForPack([]);
     } catch (error) {
       console.error("Error starting voting:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');
@@ -142,10 +139,10 @@ const AdminDashboard = ({
   const handleCreateMenuAndNavigateToVoting = (date) => {
     setSelectedDate(date);
     setAdminView('voting');
-    setEditingVoteOptions(null); // Clear editing state when creating new
+    setEditingVoteOptions(null);
     setEditingDate(null);
-    setAdminFinalVotePacks([]); // Clear vote packs when creating new
-    setAdminSelectedFoodForPack([]); // Clear selected food for pack
+    setAdminFinalVotePacks([]);
+    setAdminSelectedFoodForPack([]);
   };
 
   const handleEditMenuAndNavigateToVoting = (date, voteOptions) => {
@@ -153,11 +150,10 @@ const AdminDashboard = ({
     setEditingVoteOptions(voteOptions);
     setEditingDate(date);
     setAdminView('voting');
-    // Pre-populate adminFinalVotePacks and adminSelectedFoodForPack for editing
     if (voteOptions) {
       const packsToLoad = voteOptions.map(pack => pack.foodIds);
       setAdminFinalVotePacks(packsToLoad);
-      setAdminSelectedFoodForPack([]); // Clear current selection for pack
+      setAdminSelectedFoodForPack([]);
     } else {
       setAdminFinalVotePacks([]);
       setAdminSelectedFoodForPack([]);
@@ -165,8 +161,8 @@ const AdminDashboard = ({
   };
 
   return (
-    <section className="p-8 mb-10 bg-white border border-teal-200 shadow-2xl rounded-2xl">
-      <h2 className="mb-6 text-3xl font-bold text-center text-teal-700">ແຜງຄວບຄຸມແອັດມິນ</h2>
+    <section className="p-8 mb-10 bg-surface rounded-2xl shadow-lg">
+      <h2 className="mb-6 text-3xl font-bold text-center text-primary">ແຜງຄວບຄຸມແອັດມິນ</h2>
 
       {!isAdmin ? (
         <AdminLogin
@@ -176,49 +172,59 @@ const AdminDashboard = ({
         />
       ) : (
         <>
-          <div className="flex flex-wrap justify-between items-center mb-4">
-            <div className="flex flex-wrap space-x-2 space-y-2 sm:space-y-0">
-              <button
-                onClick={() => setAdminView('report')}
-                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'report' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-              >
-                ລາຍງານ
-              </button>
+          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
+            <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setAdminView('status')}
-                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'status' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+                  ${adminView === 'status' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
+                `}
               >
                 ສະຖານະເມນູ
               </button>
               <button
+                onClick={() => setAdminView('voting')}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+                  ${adminView === 'voting' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
+                `}
+              >
+                ຈັດການໂຫວດ
+              </button>
+              <button
                 onClick={() => setAdminView('food-management')}
-                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'food-management' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+                  ${adminView === 'food-management' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
+                `}
               >
                 ຈັດການອາຫານ
               </button>
               <button
-                onClick={() => setAdminView('admin-set-menu')}
-                className={`px-4 py-2 rounded-lg shadow-lg transition ${adminView === 'admin-set-menu' ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                onClick={() => setAdminView('report')}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+                  ${adminView === 'report' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
+                `}
               >
-                ຕັ້ງຄ່າເມນູປະຈຳວັນ
+                ລາຍງານ
               </button>
-              <Link to="/admin/dashboard" className="px-4 py-2 rounded-lg shadow-lg transition bg-blue-500 text-white hover:bg-blue-600">
-                ເບິ່ງ Dashboard
+              <Link to="/admin/dashboard"
+                className="px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out bg-gray-100 text-secondary hover:bg-gray-200"
+              >
+                Dashboard
               </Link>
             </div>
-            <div className="flex items-center space-x-2">
-              <label htmlFor="date-picker" className="text-gray-700">ເລືອກວັນທີ:</label>
+            <div className="flex items-center space-x-3">
+              <label htmlFor="date-picker" className="text-secondary font-semibold">ເລືອກວັນທີ:</label>
               <input
                 type="date"
                 id="date-picker"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="p-2 border border-gray-300 rounded-md"
+                className="p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition-colors"
               />
             </div>
             <button
               onClick={handleAdminLogout}
-              className="px-4 py-2 text-sm font-bold text-white transition duration-300 bg-red-500 rounded-lg hover:bg-red-600"
+              className="px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out bg-red-500 text-white shadow-md hover:bg-red-600"
             >
               ອອກຈາກລະບົບ
             </button>
@@ -235,13 +241,13 @@ const AdminDashboard = ({
               showMessage={showMessage}
               selectedAdminCategory={selectedAdminCategory}
               setSelectedAdminCategory={setSelectedAdminCategory}
-              selectedDate={selectedDate} // Pass selectedDate to VoteSelection
-              editingVoteOptions={editingVoteOptions} // Pass editingVoteOptions
-              editingDate={editingDate} // Pass editingDate
-              adminFinalVotePacks={adminFinalVotePacks} // Pass lifted state
-              setAdminFinalVotePacks={setAdminFinalVotePacks} // Pass setter
-              adminSelectedFoodForPack={adminSelectedFoodForPack} // Pass lifted state
-              setAdminSelectedFoodForPack={setAdminSelectedFoodForPack} // Pass setter
+              selectedDate={selectedDate}
+              editingVoteOptions={editingVoteOptions}
+              editingDate={editingDate}
+              adminFinalVotePacks={adminFinalVotePacks}
+              setAdminFinalVotePacks={setAdminFinalVotePacks}
+              adminSelectedFoodForPack={adminSelectedFoodForPack}
+              setAdminSelectedFoodForPack={setAdminSelectedFoodForPack}
             />
           )}
 
@@ -253,7 +259,7 @@ const AdminDashboard = ({
               setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
               handleAdminSetFood={handleAdminSetFood}
               foodItems={foodItems}
-              selectedDate={selectedDate} // Pass selectedDate to DailyMenuControl
+              selectedDate={selectedDate}
             />
           )}
 
@@ -266,11 +272,11 @@ const AdminDashboard = ({
               BACKEND_URL={BACKEND_URL}
               showMessage={showMessage}
               foodItems={foodItems}
-              onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting} // Pass the new handler
-              selectedDate={selectedDate} // Pass selectedDate to DailyMenuStatus
-              setSelectedDate={setSelectedDate} // Pass setSelectedDate to DailyMenuStatus
-              handleCloseVoting={handleCloseVoting} // Pass handleCloseVoting to DailyMenuStatus
-              handleEditMenuAndNavigateToVoting={handleEditMenuAndNavigateToVoting} // Pass handleEditMenuAndNavigateToVoting
+              onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              handleCloseVoting={handleCloseVoting}
+              handleEditMenuAndNavigateToVoting={handleEditMenuAndNavigateToVoting}
             />
           )}
 

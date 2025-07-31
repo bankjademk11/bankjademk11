@@ -6,12 +6,18 @@ module.exports = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'food-bg': "url('/BG.png')",
+      colors: {
+        primary: '#1a3a3a',
+        secondary: '#6b7280',
+        background: '#f9f9f7',
+        surface: '#ffffff',
+        accent: '#f59e0b',
       },
       fontFamily: {
-        playfair: ['Playfair Display', 'serif'],
-        montserrat: ['Montserrat', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+      },
+      backgroundImage: {
+        'food-bg': "url('/BG.png')",
       },
     },
   },

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 const GMReport = ({ BACKEND_URL, showMessage }) => {
   const [reports, setReports] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i); // Last 5 years
@@ -59,17 +59,17 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
   }, [BACKEND_URL, selectedMonth, selectedYear, showMessage]);
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg">
-      <h3 className="text-2xl font-bold text-center text-teal-700 mb-6">ລາຍງານຜົນໂຫວດປະຈຳວັນ</h3>
+    <div className="p-6 bg-surface rounded-2xl shadow-lg">
+      <h3 className="text-3xl font-bold text-center text-primary mb-6">ລາຍງານຜົນໂຫວດປະຈຳວັນ</h3>
 
-      <div className="flex justify-center space-x-4 mb-6">
+      <div className="flex flex-wrap justify-center gap-6 mb-8">
         <div>
-          <label htmlFor="month-select" className="block text-sm font-medium text-gray-700">ເລືອກເດືອນ:</label>
+          <label htmlFor="month-select" className="block text-secondary text-lg font-semibold mb-2">ເລືອກເດືອນ:</label>
           <select
             id="month-select"
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md"
+            className="block w-full px-4 py-3 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
           >
             <option value="">ທັງໝົດ</option>
             {months.map(month => (
@@ -78,12 +78,12 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
           </select>
         </div>
         <div>
-          <label htmlFor="year-select" className="block text-sm font-medium text-gray-700">ເລືອກປີ:</label>
+          <label htmlFor="year-select" className="block text-secondary text-lg font-semibold mb-2">ເລືອກປີ:</label>
           <select
             id="year-select"
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm rounded-md"
+            className="block w-full px-4 py-3 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
           >
             <option value="">ທັງໝົດ</option>
             {years.map(year => (
@@ -94,29 +94,29 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
       </div>
 
       {reports.length === 0 ? (
-        <p className="text-center text-gray-600">ບໍ່ມີລາຍງານສຳລັບຊ່ວງເວລາທີ່ເລືອກ</p>
+        <p className="text-center text-secondary text-xl">ບໍ່ມີລາຍງານສຳລັບຊ່ວງເວລາທີ່ເລືອກ</p>
       ) : (
         <div className="space-y-6">
           {reports.map(report => (
             <div
               key={report.id}
-              className="bg-gray-50 p-4 rounded-xl shadow-lg cursor-pointer hover:bg-gray-100 transition"
-              onClick={() => navigate(`/report/${report.id}`)} // Navigate to detail page
+              className="bg-background p-6 rounded-xl shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
+              onClick={() => navigate(`/report/${report.id}`)}
             >
-              <p className="text-lg font-semibold text-teal-800">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
-              <p className="text-md text-gray-700">
+              <p className="text-xl font-semibold text-primary mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
+              <p className="text-lg text-secondary mb-1">
                 ເມນູທີ່ຊະນະ: {typeof report.winning_food_name === 'object' && report.winning_food_name !== null ? report.winning_food_name.name : report.winning_food_name || 'ບໍ່ມີ'}
               </p>
-              <p className="text-md text-gray-700">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
-              <div className="mt-2">
-                <p className="font-medium">ລາຍລະອຽດການໂຫວດ:</p>
+              <p className="text-lg text-secondary">ຈຳນວນໂຫວດທັງໝົດ: {report.total_votes}</p>
+              <div className="mt-4">
+                <p className="font-semibold text-primary mb-2">ລາຍລະອຽດການໂຫວດ:</p>
                 {report.vote_details && Array.isArray(report.vote_details) ? (
                   report.vote_details.map((pack, index) => (
-                    <p key={index} className="text-sm text-gray-600 ml-4">- {pack.name}: {pack.votes} ໂຫວດ</p>
+                    <p key={index} className="text-base text-secondary ml-4">- {pack.name}: {pack.votes} ໂຫວດ</p>
                   ))
                 ) : report.vote_details && typeof report.vote_details === 'object' ? (
                   Object.entries(report.vote_details).map(([foodId, votes]) => (
-                    <p key={foodId} className="text-sm text-gray-600 ml-4">- ID {foodId}: {votes} ໂຫວດ</p>
+                    <p key={foodId} className="text-base text-secondary ml-4">- ID {foodId}: {votes} ໂຫວດ</p>
                   ))
                 ) : null}
               </div>

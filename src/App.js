@@ -4,7 +4,7 @@ import {
   Header,
   Navigation,
   MessageDisplay,
-  ThankYouPopup, // Import ThankYouPopup
+  ThankYouPopup,
 } from './components';
 import MyFoodsPage from './pages/MyFoodsPage';
 import VotePage from './pages/VotePage';
@@ -16,7 +16,7 @@ const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [showThankYouPopup, setShowThankYouPopup] = useState(false); // New state for popup
+  const [showThankYouPopup, setShowThankYouPopup] = useState(false);
 
   const showMessage = useCallback((text, type) => {
     setMessage({ text, type });
@@ -108,12 +108,12 @@ const App = () => {
         throw new Error(errorData.error || 'Failed to vote');
       }
       const data = await response.json();
-      setShowThankYouPopup(true); // Show popup on success
-      return data; // Return the updated dailyMenu data
+      setShowThankYouPopup(true);
+      return data;
     } catch (error) {
       console.error("Error voting:", error);
       showMessage(error.message === 'User has already voted.' ? 'ທ່ານໂຫວດໄປແລ້ວສຳລັບມື້ນີ້!' : 'ເກີດຂໍ້ຜິດພາດໃນການໂຫວດ', 'error');
-      throw error; // Re-throw the error so VotePage can catch it
+      throw error;
     }
   };
 
@@ -122,7 +122,7 @@ const App = () => {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/vote/${userId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date }), // Send date in the body
+        body: JSON.stringify({ date }),
       });
       if (!response.ok) {
         const errorData = await response.json();
@@ -130,11 +130,11 @@ const App = () => {
       }
       const data = await response.json();
       showMessage('ຍົກເລີກການໂຫວດສຳເລັດແລ້ວ!', 'success');
-      return data; // Return the updated dailyMenu data
+      return data;
     } catch (error) {
       console.error("Error canceling vote:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການຍົກເລີກການໂຫວດ', 'error');
-      throw error; // Re-throw the error so VotePage can catch it
+      throw error;
     }
   };
 
@@ -165,7 +165,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen p-4 text-gray-800 bg-cover bg-center bg-fixed font-montserrat" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/BG.png)` }}>
+      <div className="min-h-screen text-primary bg-background font-sans">
         <Header userId={userId} />
         <MessageDisplay message={message} />
         <Navigation isAdmin={isAdmin} />

@@ -18,7 +18,7 @@ const VotePage = ({
   useEffect(() => {
     const fetchMenuForDate = async () => {
       if (!selectedDate) return;
-      setDailyMenu({ status: 'loading' }); // Set loading state
+      setDailyMenu({ status: 'loading' });
       try {
         const response = await fetch(`${BACKEND_URL}/api/daily-menu/${selectedDate}`);
         if (!response.ok) {
@@ -28,7 +28,7 @@ const VotePage = ({
         setDailyMenu(data);
       } catch (error) {
         console.error(`Error fetching menu for ${selectedDate}:`, error);
-        setDailyMenu({ status: 'error' }); // Set error state
+        setDailyMenu({ status: 'error' });
       }
     };
 
@@ -38,9 +38,8 @@ const VotePage = ({
 
   const handleVote = async (foodPackIndex) => {
     try {
-      // Pass the selectedDate to the voting function
       const updatedDailyMenu = await onVoteFromApp(foodPackIndex, selectedDate);
-      setDailyMenu(updatedDailyMenu); // Update local state immediately
+      setDailyMenu(updatedDailyMenu);
     } catch (error) {
       console.error("Error voting in VotePage:", error);
     }
@@ -48,7 +47,6 @@ const VotePage = ({
 
   const handleCancelVote = async () => {
     try {
-      // Pass the selectedDate to the cancel vote function
       const updatedDailyMenu = await onCancelVoteFromApp(selectedDate);
       setDailyMenu(updatedDailyMenu);
     } catch (error) {
@@ -89,13 +87,13 @@ const VotePage = ({
 
   const renderContent = () => {
     if (dailyMenu.status === 'loading') {
-      return <p className="text-center text-xl text-gray-500">ກຳລັງໂຫຼດຂໍ້ມູນ...</p>;
+      return <p className="text-center text-xl text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</p>;
     }
     if (dailyMenu.status === 'error') {
       return <p className="text-center text-xl text-red-500">ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນ.</p>;
     }
     if (dailyMenu.status === 'idle') {
-      return <p className="text-center text-xl text-gray-600">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>;
+      return <p className="text-center text-xl text-secondary">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>;
     }
     if (dailyMenu.status === 'voting') {
       return (
@@ -104,11 +102,10 @@ const VotePage = ({
           userId={userId}
           handleVote={handleVote}
           foodItems={foodItems}
-          onCancelVoteFromApp={handleCancelVote} // Use the new handleCancelVote
+          onCancelVoteFromApp={handleCancelVote}
         />
       );
     }
-    // For 'closed' or 'admin_set' status
     return (
       <DailyWinner
         winningFood={winningFood}
@@ -121,23 +118,24 @@ const VotePage = ({
   };
 
   return (
-    <section className="p-8 mb-10 bg-white border border-teal-200 shadow-xl rounded-2xl">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-3xl font-bold text-center text-teal-700">ເມນູປະຈຳວັນ</h2>
-        <div className="flex items-center gap-2">
-          <label htmlFor="vote-date-picker" className="font-semibold text-gray-700">ເລືອກວັນທີ:</label>
-          <input
-            type="date"
-            id="vote-date-picker"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="p-2 border border-gray-300 rounded-md shadow-sm focus:ring-teal-500 focus:border-teal-500"
-          />
+    <section className="min-h-screen bg-background py-10">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+          <h2 className="text-4xl font-bold text-primary text-center sm:text-left">ເມນູປະຈຳວັນ</h2>
+          <div className="flex items-center gap-3">
+            <label htmlFor="vote-date-picker" className="font-semibold text-secondary text-lg">ເລືອກວັນທີ:</label>
+            <input
+              type="date"
+              id="vote-date-picker"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-transparent transition-colors"
+            />
+          </div>
         </div>
+
+        {renderContent()}
       </div>
-
-      {renderContent()}
-
     </section>
   );
 };

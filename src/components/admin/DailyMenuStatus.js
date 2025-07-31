@@ -26,7 +26,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
   useEffect(() => {
     fetchDailyMenuForSelectedDate();
-  }, [fetchDailyMenuForSelectedDate, selectedDate]); // Added selectedDate to dependency array
+  }, [fetchDailyMenuForSelectedDate, selectedDate]);
 
   const handleCreateMenu = () => {
     if (onCreateMenuAndNavigate) {
@@ -45,7 +45,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
         throw new Error(`Failed to update status for ${date}`);
       }
       showMessage(`ອັບເດດສະຖານະເມນູສຳລັບ ${date} ເປັນ ${newStatus} ສຳເລັດແລ້ວ!`, 'success');
-      fetchDailyMenuForSelectedDate(); // Re-fetch to update UI
+      fetchDailyMenuForSelectedDate();
     } catch (err) {
       console.error(`Error updating status for ${date}:`, err);
       showMessage(`ເກີດຂໍ້ຜິດພາດໃນການອັບເດດສະຖານະເມນູສຳລັບ ${date}`, 'error');
@@ -64,7 +64,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
         throw new Error(`Failed to delete menu for ${date}`);
       }
       showMessage(`ລຶບເມນູສຳລັບວັນທີ ${date} ສຳເລັດແລ້ວ!`, 'success');
-      fetchDailyMenuForSelectedDate(); // Re-fetch to update UI
+      fetchDailyMenuForSelectedDate();
     } catch (err) {
       console.error(`Error deleting menu for ${date}:`, err);
       showMessage(`ເກີດຂໍ້ຜິດພາດໃນການລຶບເມນູສຳລັບວັນທີ ${date}`, 'error');
@@ -77,33 +77,33 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
   };
 
   return (
-    <div className="daily-menu-status-container p-4 bg-white rounded-lg shadow-md">
-      <h3 className="mb-4 text-2xl font-bold text-teal-700">ສະຖານະເມນູປະຈຳວັນ</h3>
+    <div className="p-6 bg-surface rounded-2xl shadow-lg">
+      <h3 className="mb-6 text-3xl font-bold text-center text-primary">ສະຖານະເມນູປະຈຳວັນ</h3>
 
-      <div className="mb-4">
-        <label htmlFor="status-date-picker" className="block text-gray-700 text-sm font-bold mb-2">ເລືອກວັນທີ:</label>
+      <div className="mb-6">
+        <label htmlFor="status-date-picker" className="block text-secondary text-lg font-semibold mb-2">ເລືອກວັນທີ:</label>
         <input
           type="date"
           id="status-date-picker"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
         />
       </div>
 
-      {loading && <p className="text-center text-gray-600">ກຳລັງໂຫຼດສະຖານະເມນູ...</p>}
+      {loading && <p className="text-center text-secondary">ກຳລັງໂຫຼດສະຖານະເມນູ...</p>}
       {error && <p className="text-center text-red-500">ຂໍ້ຜິດພາດ: {error}</p>}
 
       {!loading && !error && dailyMenu && (
-        <div className="bg-teal-50 p-4 rounded-lg shadow-lg">
-          <h4 className="mb-2 text-xl font-semibold text-teal-800">ສະຖານະເມນູສຳລັບວັນທີ {new Date(dailyMenu.date).toLocaleDateString()}:</h4>
-          <p><strong>ສະຖານະ:</strong> <span className={`font-bold ${dailyMenu.status === 'voting' ? 'text-blue-600' : dailyMenu.status === 'closed' ? 'text-red-600' : 'text-gray-600'}`}>{dailyMenu.status === 'idle' ? 'ບໍ່ມີກິດຈະກຳ' : dailyMenu.status === 'voting' ? 'ກຳລັງໂຫວດ' : dailyMenu.status === 'closed' ? 'ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ແອັດມິນກຳນົດ' : dailyMenu.status}</span></p>
+        <div className="bg-background p-6 rounded-lg shadow-md">
+          <h4 className="mb-4 text-xl font-semibold text-primary">ສະຖານະເມນູສຳລັບວັນທີ {new Date(dailyMenu.date).toLocaleDateString()}:</h4>
+          <p className="mb-4 text-lg"><strong>ສະຖານະ:</strong> <span className={`font-bold ${dailyMenu.status === 'voting' ? 'text-blue-600' : dailyMenu.status === 'closed' ? 'text-red-600' : dailyMenu.status === 'admin_set' ? 'text-green-600' : 'text-secondary'}`}>{dailyMenu.status === 'idle' ? 'ບໍ່ມີກິດຈະກຳ' : dailyMenu.status === 'voting' ? 'ກຳລັງໂຫວດ' : dailyMenu.status === 'closed' ? 'ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ແອັດມິນກຳນົດ' : dailyMenu.status}</span></p>
 
           {dailyMenu.status === 'idle' && (
-            <div className="mt-4 text-center">
+            <div className="mt-6 text-center">
               <button
                 onClick={handleCreateMenu}
-                className="px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition"
+                className="px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
               >
                 ສ້າງເມນູສຳລັບວັນທີນີ້
               </button>
@@ -111,19 +111,20 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           {dailyMenu.status === 'voting' && dailyMenu.vote_options && dailyMenu.vote_options.length > 0 && (
-            <div className="mt-4">
-              <p><strong>ເມນູທີ່ກຳລັງໂຫວດ:</strong></p>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-6">
+              <p className="text-lg font-semibold text-primary mb-3">ເມນູທີ່ກຳລັງໂຫວດ:</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dailyMenu.vote_options.map((pack, index) => (
-                  <div key={index} className="flex items-center bg-white rounded-lg p-2 shadow-sm">
-                    <span className="text-sm font-medium">{pack.name} ({pack.votes} ໂຫວດ)</span>
+                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+                    <span className="text-base font-medium text-primary">{pack.name}</span>
+                    <span className="text-base font-semibold text-accent">{pack.votes} ໂຫວດ</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 text-center">
+              <div className="mt-6 text-center">
                 <button
-                  onClick={() => handleCloseVoting(dailyMenu.date)} // Add Close Voting button
-                  className="px-6 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 transition"
+                  onClick={() => handleCloseVoting(dailyMenu.date)}
+                  className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
                 >
                   ປິດໂຫວດ
                 </button>
@@ -132,18 +133,17 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           {dailyMenu.status === 'closed' && dailyMenu.winning_food_item_id && (
-            <p className="mt-4"><strong>ເມນູທີ່ຊະນະ:</strong> {getFoodNameById(dailyMenu.winning_food_item_id)}</p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ຊະນະ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.winning_food_item_id)}</span></p>
           )}
           {dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id && (
-            <p className="mt-4"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> {getFoodNameById(dailyMenu.admin_set_food_item_id)}</p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.admin_set_food_item_id)}</span></p>
           )}
 
-          {/* Action buttons for status change and delete */}
-          <div className="mt-4 flex space-x-2">
+          <div className="mt-6 flex flex-wrap gap-3 justify-center">
             {dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled' && (
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'disabled')}
-                className="px-3 py-1 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
+                className="px-6 py-3 text-sm bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
               >
                 ປິດໃຊ້ງານ
               </button>
@@ -151,21 +151,21 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             {dailyMenu.status === 'disabled' && (
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
-                className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
               >
                 ເປີດໃຊ້ງານ
               </button>
             )}
             <button
               onClick={() => handleDeleteMenu(dailyMenu.date)}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+              className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
             >
               ລຶບ
             </button>
             {dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled' && (
               <button
                 onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
-                className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
               >
                 ແກ້ໄຂ
               </button>
@@ -175,7 +175,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
       )}
 
       {!loading && !error && !dailyMenu && (
-        <p className="text-center text-xl text-gray-600">ບໍ່ພົບສະຖານະເມນູສຳລັບວັນທີນີ້.</p>
+        <p className="text-center text-xl text-secondary">ບໍ່ພົບສະຖານະເມນູສຳລັບວັນທີນີ້.</p>
       )}
     </div>
   );

@@ -10,7 +10,7 @@ const AdminPage = ({
   handleAdminLogin,
   handleAdminLogout,
   foodItems,
-  setFoodItems, // เพิ่มบรรทัดนี้
+  setFoodItems,
   adminVoteSelections,
   setAdminVoteSelections,
   toggleAdminVoteSelection,
@@ -20,22 +20,24 @@ const AdminPage = ({
   BACKEND_URL,
 }) => {
   return (
-    <AdminDashboard
-      isAdmin={isAdmin}
-      adminPasswordInput={adminPasswordInput}
-      setAdminPasswordInput={setAdminPasswordInput}
-      handleAdminLogin={handleAdminLogin}
-      handleAdminLogout={handleAdminLogout}
-      foodItems={foodItems}
-      setFoodItems={setFoodItems} // เพิ่มบรรทัดนี้
-      adminVoteSelections={adminVoteSelections}
-      setAdminVoteSelections={setAdminVoteSelections}
-      toggleAdminVoteSelection={toggleAdminVoteSelection}
-      showMessage={showMessage}
-      selectedAdminCategory={selectedAdminCategory}
-      setSelectedAdminCategory={setSelectedAdminCategory}
-      BACKEND_URL={BACKEND_URL}
-    />
+    <div className="min-h-screen bg-background py-10">
+      <AdminDashboard
+        isAdmin={isAdmin}
+        adminPasswordInput={adminPasswordInput}
+        setAdminPasswordInput={setAdminPasswordInput}
+        handleAdminLogin={handleAdminLogin}
+        handleAdminLogout={handleAdminLogout}
+        foodItems={foodItems}
+        setFoodItems={setFoodItems}
+        adminVoteSelections={adminVoteSelections}
+        setAdminVoteSelections={setAdminVoteSelections}
+        toggleAdminVoteSelection={toggleAdminVoteSelection}
+        showMessage={showMessage}
+        selectedAdminCategory={selectedAdminCategory}
+        setSelectedAdminCategory={setSelectedAdminCategory}
+        BACKEND_URL={BACKEND_URL}
+      />
+    </div>
   );
 };
 

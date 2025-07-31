@@ -1,22 +1,25 @@
 import React from 'react';
 
-const CategoryFilter = ({ selectedCategory, setSelectedCategory, label, idPrefix = "" }) => {
+const categories = ['ທັງໝົດ', 'ອາຫານລາບໜ້າ', 'ທົ່ວໄປ', 'ເສັ້ນ'];
+
+const CategoryFilter = ({ selectedCategory, setSelectedCategory }) => {
   return (
-    <div className="mb-6 text-center">
-      <label htmlFor={`${idPrefix}-category-filter`} className="block mb-2 text-lg font-medium text-gray-700">
-        {label}
-      </label>
-      <select
-        id={`${idPrefix}-category-filter`}
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-        className="block w-full max-w-xs mx-auto px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-xl focus:ring-teal-500 focus:border-teal-500"
-      >
-        <option value="ທັງໝົດ">ທັງໝົດ</option>
-        <option value="ອາຫານລາບໜ້າ">ອາຫານລາບໜ້າ</option>
-        <option value="ທົ່ວໄປ">ທົ່ວໄປ</option>
-        <option value="ເສັ້ນ">ເສັ້ນ</option>
-      </select>
+    <div className="flex flex-wrap justify-center gap-3 mb-6">
+      {categories.map((category) => (
+        <button
+          key={category}
+          onClick={() => setSelectedCategory(category)}
+          className={`
+            px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+            ${selectedCategory === category
+              ? 'bg-primary text-white shadow-md'
+              : 'bg-surface text-secondary border border-gray-200 hover:bg-gray-100'
+            }
+          `}
+        >
+          {category}
+        </button>
+      ))}
     </div>
   );
 };

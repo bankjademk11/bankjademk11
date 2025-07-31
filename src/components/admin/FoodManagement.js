@@ -3,19 +3,16 @@ import {
   FoodForm,
   FoodList,
   CategoryFilter,
-} from '../../components'; // Adjust path as needed
+} from '../../components';
 
 const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) => {
-  // State for the form inputs (for adding/editing food items)
   const [foodName, setFoodName] = useState('');
   const [foodImage, setFoodImage] = useState('');
   const [foodTags, setFoodTags] = useState('');
   const [editingFoodId, setEditingFoodId] = useState(null);
 
-  // State for filtering food items in this management view
   const [selectedCategory, setSelectedCategory] = useState('ທັງໝົດ');
 
-  // --- CRUD Operations for Food Items (using backend API) ---
   const handleAddOrUpdateFood = async (e) => {
     e.preventDefault();
 
@@ -32,11 +29,9 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
       let url;
 
       if (editingFoodId) {
-        // Update existing food item
         method = 'PUT';
         url = `${BACKEND_URL}/api/foods/${editingFoodId}`;
       } else {
-        // Add new food item
         method = 'POST';
         url = `${BACKEND_URL}/api/foods`;
       }
@@ -53,13 +48,11 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const foodItem = await response.json(); // Get the newly added/updated food item
+      const foodItem = await response.json();
 
       if (editingFoodId) {
-        // Update existing item in state
         setFoodItems(foodItems.map(item => (item.id === foodItem.id ? foodItem : item)));
       } else {
-        // Add new item to state
         setFoodItems([...foodItems, foodItem]);
       }
 
@@ -67,7 +60,6 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
 
       showMessage(editingFoodId ? 'ອັບເດດເມນູອາຫານສຳເລັດແລ້ວ!' : 'ເພີ່ມເມນູອາຫານສຳເລັດແລ້ວ!', 'success');
 
-      // Clear form fields
       setFoodName('');
       setFoodImage('');
       setFoodTags('');
@@ -102,7 +94,6 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Re-fetch all food items to update the list
         const updatedFoodItemsResponse = await fetch(`${BACKEND_URL}/api/foods`);
         const updatedFoodItems = await updatedFoodItemsResponse.json();
         setFoodItems(updatedFoodItems);
@@ -116,7 +107,8 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
   };
 
   return (
-    <>
+    <div className="container mx-auto px-4 py-8 bg-background rounded-lg shadow-lg">
+      <h2 className="text-4xl font-bold text-primary text-center mb-8">ຈັດການເມນູອາຫານ</h2>
       <FoodForm
         foodName={foodName}
         setFoodName={setFoodName}
@@ -129,23 +121,24 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         setEditingFoodId={setEditingFoodId}
         showMessage={showMessage}
       />
-      <CategoryFilter
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        label="ກັ່ນຕອງຕາມໝວດໝູ່:"
-      />
+      <div className="my-8">
+        <CategoryFilter
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      </div>
       <FoodList
         filteredFoodItems={foodItems.filter(food => {
           if (selectedCategory === 'ທັງໝົດ') {
             return true;
           }
-          return food.tags.includes(selectedCategory);
+          return food.tags && food.tags.includes(selectedCategory);
         })}
         handleEditFood={handleEditFood}
         handleDeleteFood={handleDeleteFood}
         BACKEND_URL={BACKEND_URL}
       />
-    </>
+    </div>
   );
 };
 
