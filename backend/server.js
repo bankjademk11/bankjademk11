@@ -261,7 +261,7 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     res.status(200).json({ imageUrl: result.secure_url });
   } catch (error) {
     console.error('Error uploading image to Cloudinary:', error);
-    res.status(500).json({ error: 'Image upload failed.' });
+    res.status(500).json({ error: 'Image upload failed.', details: error.message });
   }
 });
 
