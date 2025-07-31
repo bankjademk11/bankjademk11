@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const FoodForm = ({
   foodName,
@@ -12,12 +12,29 @@ const FoodForm = ({
   setEditingFoodId,
   showMessage,
 }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+    // Optionally, display a preview of the image
+    if (e.target.files[0]) {
+      setFoodImage(URL.createObjectURL(e.target.files[0]));
+    } else {
+      setFoodImage('');
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    handleAddOrUpdateFood(e, selectedFile);
+  };
+
   return (
     <section className="max-w-3xl p-8 mx-auto mb-10 bg-surface shadow-lg rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-primary">
                 {editingFoodId ? 'ແກ້ໄຂເມນູອາຫານສ່ວນຕົວ' : 'ເພີ່ມເມນູອາຫານສ່ວນຕົວໃໝ່'}
       </h2>
-      <form onSubmit={handleAddOrUpdateFood} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label htmlFor="foodName" className="block mb-2 text-lg font-medium text-secondary">
             ຊື່ອາຫານ:
@@ -34,17 +51,18 @@ const FoodForm = ({
         </div>
         <div>
           <label htmlFor="foodImage" className="block mb-2 text-lg font-medium text-secondary">
-            URL ຮູບພາບ:
+            ຮູບພາບ:
           </label>
           <input
-            type="url"
+            type="file"
             id="foodImage"
-            value={foodImage}
-            onChange={(e) => setFoodImage(e.target.value)}
+            onChange={handleFileChange}
             className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent"
-            placeholder="https://example.com/padthai.jpg"
-            required
+            accept="image/*"
           />
+          {foodImage && (
+            <img src={foodImage} alt="Food Preview" className="mt-4 w-32 h-32 object-cover rounded-lg" />
+          )}
         </div>
         <div>
           <label htmlFor="foodTags" className="block mb-2 text-lg font-medium text-secondary">
@@ -74,6 +92,7 @@ const FoodForm = ({
                 setFoodName('');
                 setFoodImage('');
                 setFoodTags('');
+                setSelectedFile(null);
                 showMessage('ຍົກເລີກການແກ້ໄຂ', 'info');
               }}
               className="px-8 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-gray-400 shadow-lg rounded-lg hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"

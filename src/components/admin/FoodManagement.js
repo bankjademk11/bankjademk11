@@ -13,10 +13,39 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
 
   const [selectedCategory, setSelectedCategory] = useState('ທັງໝົດ');
 
-  const handleAddOrUpdateFood = async (e) => {
+  const handleAddOrUpdateFood = async (e, selectedFile) => {
     e.preventDefault();
 
-    if (!foodName.trim() || !foodImage.trim()) {
+    if (!foodName.trim()) {
+      showMessage('ກະລຸນາປ້ອນຊື່ອາຫານ', 'error');
+      return;
+    }
+
+    let imageUrl = foodImage; // Default to existing image URL
+
+    // If a new file is selected, upload it to Cloudinary
+    if (selectedFile) {
+      try {
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+
+        const uploadResponse = await fetch(`${BACKEND_URL}/api/upload-image`, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Image upload failed with status: ${uploadResponse.status}`);
+        }
+
+        const uploadData = await uploadResponse.json();
+        imageUrl = uploadData.imageUrl; // Get the URL from Cloudinary
+      } catch (uploadError) {
+        console.error("Error uploading image:", uploadError);
+        showMessage('ເກີດຂໍ້ຜິດພາດໃນການອັບໂຫຼດຮູບພາບ', 'error');
+        return;
+      }
+    } else if (!foodImage.trim()) {
       showMessage('ກະລຸນາປ້ອນຊື່ ແລະ ຮູບພາບອາຫານ', 'error');
       return;
     }
@@ -41,7 +70,7 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: foodName, image: foodImage, tags: tagsArray }),
+        body: JSON.stringify({ name: foodName, image: imageUrl, tags: tagsArray }),
       });
 
       if (!response.ok) {
