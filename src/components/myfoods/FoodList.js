@@ -61,7 +61,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredFoodItems.map((food) => (
-            <div key={food.id} className="bg-surface rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out flex flex-col cursor-pointer" onClick={() => handleToggleReviews(food.id)}>
+            <div key={food.id} className="bg-surface rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out flex flex-col">
               <div className="relative">
                 <img
                   src={food.image}
@@ -78,22 +78,24 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 <h3 className="text-2xl font-bold text-primary mb-2 font-sans truncate">{food.name}</h3>
                 <p className="text-secondary text-sm mb-4 flex-grow">{food.tags && food.tags.length > 0 ? food.tags.join(', ') : 'ບໍ່ມີໝວດໝູ່'}</p>
                 
-                <div className="mt-auto pt-4 border-t border-gray-100 flex justify-between space-x-2">
+                <div className="mt-auto pt-4 border-t border-gray-100">
+                  <div className="flex justify-between space-x-2 mb-2">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleEditFood(food.id); }}
+                      className="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition-colors duration-300"
+                    >
+                      ແກ້ໄຂ
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeleteFood(food.id); }}
+                      className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-full shadow-md hover:bg-red-600 transition-colors duration-300"
+                    >
+                      ລຶບ
+                    </button>
+                  </div>
                   <button
-                    onClick={() => handleEditFood(food.id)}
-                    className="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition-colors duration-300"
-                  >
-                    ແກ້ໄຂ
-                  </button>
-                  <button
-                    onClick={() => handleDeleteFood(food.id)}
-                    className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-full shadow-md hover:bg-red-600 transition-colors duration-300"
-                  >
-                    ລຶບ
-                  </button>
-                  <button
-                    onClick={() => handleToggleReviews(food.id)}
-                    className="flex-1 px-4 py-2 bg-primary text-white font-semibold rounded-full shadow-md hover:bg-opacity-90 transition-colors duration-300"
+                    onClick={(e) => { e.stopPropagation(); handleToggleReviews(food.id); }}
+                    className="w-full px-4 py-2 bg-primary text-white font-semibold rounded-full shadow-md hover:bg-opacity-90 transition-colors duration-300"
                   >
                     {expandedFoodId === food.id ? 'ເຊື່ອງຄຳເຫັນ' : 'ເບິ່ງຄຳເຫັນ'}
                   </button>
