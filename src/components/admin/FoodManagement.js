@@ -40,6 +40,7 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
 
         const uploadData = await uploadResponse.json();
         imageUrl = uploadData.imageUrl; // Get the URL from Cloudinary
+        setFoodImage(imageUrl); // Update foodImage state with Cloudinary URL
       } catch (uploadError) {
         console.error("Error uploading image:", uploadError);
         showMessage('ເກີດຂໍ້ຜິດພາດໃນການອັບໂຫຼດຮູບພາບ', 'error');
