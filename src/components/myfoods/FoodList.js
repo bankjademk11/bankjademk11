@@ -78,10 +78,22 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 <h3 className="text-2xl font-bold text-primary mb-2 font-sans truncate">{food.name}</h3>
                 <p className="text-secondary text-sm mb-4 flex-grow">{food.tags && food.tags.length > 0 ? food.tags.join(', ') : 'ບໍ່ມີໝວດໝູ່'}</p>
                 
-                <div className="mt-auto pt-4 border-t border-gray-100">
+                <div className="mt-auto pt-4 border-t border-gray-100 flex justify-between space-x-2">
+                  <button
+                    onClick={() => handleEditFood(food.id)}
+                    className="flex-1 px-4 py-2 bg-blue-500 text-white font-semibold rounded-full shadow-md hover:bg-blue-600 transition-colors duration-300"
+                  >
+                    ແກ້ໄຂ
+                  </button>
+                  <button
+                    onClick={() => handleDeleteFood(food.id)}
+                    className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-full shadow-md hover:bg-red-600 transition-colors duration-300"
+                  >
+                    ລຶບ
+                  </button>
                   <button
                     onClick={() => handleToggleReviews(food.id)}
-                    className="w-full px-4 py-2 bg-primary text-white font-semibold rounded-full shadow-md hover:bg-opacity-90 transition-colors duration-300"
+                    className="flex-1 px-4 py-2 bg-primary text-white font-semibold rounded-full shadow-md hover:bg-opacity-90 transition-colors duration-300"
                   >
                     {expandedFoodId === food.id ? 'ເຊື່ອງຄຳເຫັນ' : 'ເບິ່ງຄຳເຫັນ'}
                   </button>
