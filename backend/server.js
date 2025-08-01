@@ -249,7 +249,8 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     }
 
     // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.buffer.toString('base64'), {
+    const base64DataURI = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    const result = await cloudinary.uploader.upload(base64DataURI, {
       resource_type: "image",
       folder: "food_images", // Optional: specify a folder in Cloudinary
     });
