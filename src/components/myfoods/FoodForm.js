@@ -11,6 +11,7 @@ const FoodForm = ({
   handleAddOrUpdateFood,
   setEditingFoodId,
   showMessage,
+  isLoading, // Receive isLoading prop
 }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imageInputType, setImageInputType] = useState('file'); // 'file' or 'url'
@@ -141,8 +142,9 @@ const FoodForm = ({
           <button
             type="submit"
             className="px-8 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary shadow-lg rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+            disabled={isLoading} // Disable button when loading
           >
-                        {editingFoodId ? 'ບັນທຶກການແກ້ໄຂ' : 'ເພີ່ມເມນູອາຫານ'}
+                        {isLoading ? 'ກຳລັງດຳເນີນການ...' : (editingFoodId ? 'ບັນທຶກການແກ້ໄຂ' : 'ເພີ່ມເມນູອາຫານ')}
           </button>
           {editingFoodId && (
             <button

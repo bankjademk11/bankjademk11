@@ -10,14 +10,18 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
   const [foodImage, setFoodImage] = useState('');
   const [foodTags, setFoodTags] = useState('');
   const [editingFoodId, setEditingFoodId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   const [selectedCategory, setSelectedCategory] = useState('ທັງໝົດ');
 
   const handleAddOrUpdateFood = async (e, selectedFile) => {
     e.preventDefault();
 
+    setIsLoading(true); // Start loading
+
     if (!foodName.trim()) {
       showMessage('ກະລຸນາປ້ອນຊື່ອາຫານ', 'error');
+      setIsLoading(false); // Stop loading on validation error
       return;
     }
 
@@ -99,6 +103,8 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
       console.error("Error adding/updating food item:", error);
       console.log('Error object in catch:', error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເພີ່ມ/ອັບເດດເມນູອາຫານ', 'error');
+    } finally {
+      setIsLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -150,6 +156,7 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         handleAddOrUpdateFood={handleAddOrUpdateFood}
         setEditingFoodId={setEditingFoodId}
         showMessage={showMessage}
+        isLoading={isLoading} // Pass isLoading state to FoodForm
       />
       <div className="my-8">
         <CategoryFilter
