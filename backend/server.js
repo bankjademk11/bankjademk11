@@ -10,11 +10,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 // Multer setup for file uploads (memory storage for direct upload to Cloudinary)
 const storage = multer.memoryStorage();
