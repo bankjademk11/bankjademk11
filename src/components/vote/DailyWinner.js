@@ -52,42 +52,42 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
 
   if (!winningFood) {
     return (
-      <p className="text-center text-xl text-secondary p-8 bg-surface rounded-2xl shadow-lg">
-        ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູປະຈຳວັນ ຫຼື ກຳລັງລໍຖ້າແອັດມິນເລີ່ມການໂຫວດ
-      </p>
+      <div className="text-center p-8 bg-surface rounded-xl shadow-soft">
+        <h3 className="text-2xl font-bold text-primary">ບໍ່ມີເມນູປະຈຳວັນ</h3>
+        <p className="text-secondary mt-2">ກະລຸນາລໍຖ້າແອັດມິນຕັ້ງຄ່າເມນູ ຫຼື ເລີ່ມການໂຫວດ</p>
+      </div>
     );
   }
 
   return (
-    <div className="p-8 bg-surface rounded-2xl shadow-lg text-center">
-      <p className="text-3xl font-bold text-primary mb-6">
-        {dailyMenuStatus === 'closed' ? 'ເມນູທີ່ຊະນະໃນມື້ນີ້ແມ່ນ:' : 'ເມນູປະຈຳວັນນີ້ແມ່ນ:'}
+    <div className="p-6 bg-surface rounded-xl shadow-soft text-center">
+      <h2 className="text-3xl font-bold text-primary mb-2">
+        {dailyMenuStatus === 'closed' ? '🎉 ເມນູທີ່ຊະນະໃນມື້ນີ້ແມ່ນ 🎉' : 'เมนูประจำวันนี้'}
+      </h2>
+      <p className="text-secondary mb-6">
+        {dailyMenuStatus === 'closed' ? '(ມາຈາກຜົນໂຫວດ)' : '(ຕັ້ງຄ່າໂດຍແອັດມິນ)'}
       </p>
 
-      {/* Display logic for winning pair */}
       {winningFood.foodIds && winningFood.foodIds.length > 0 ? (
-        <div className="space-y-8">
-          <h3 className="text-4xl font-extrabold text-primary">{winningFood.name}</h3>
-          <div className="flex flex-wrap justify-center gap-8">
+        <div className="space-y-6">
+          <h3 className="text-4xl font-bold text-accent">{winningFood.name}</h3>
+          <div className="flex flex-wrap justify-center gap-6">
             {winningFood.foodIds.map(foodId => {
               const food = foodItems.find(item => item.id === foodId);
               if (!food) return null;
               return (
-                <div key={food.id} className="bg-background p-8 rounded-xl shadow-lg inline-block">
+                <div key={food.id} className="bg-white p-6 rounded-xl shadow-soft max-w-sm">
                   <img
                     src={food.image}
                     alt={food.name}
-                    className="w-72 h-56 object-cover rounded-lg mb-6 mx-auto"
+                    className="w-full h-48 object-cover rounded-lg mb-4"
                     onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                   />
-                  <h4 className="text-3xl font-bold text-primary mb-3">{food.name}</h4>
+                  <h4 className="text-2xl font-bold text-primary">{food.name}</h4>
                   {food.tags && (
-                    <div className="flex flex-wrap justify-center gap-3 mt-4">
+                    <div className="flex flex-wrap justify-center gap-2 mt-3">
                       {food.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-4 py-1 text-sm font-medium text-secondary bg-gray-100 rounded-full"
-                        >
+                        <span key={index} className="px-3 py-1 text-xs font-medium text-secondary bg-gray-100 rounded-full">
                           {tag}
                         </span>
                       ))}
@@ -100,22 +100,18 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           </div>
         </div>
       ) : (
-        // Display logic for single food (admin_set or old data)
-        <div className="bg-background p-8 rounded-xl shadow-2xl inline-block">
+        <div className="bg-white p-6 rounded-xl shadow-soft inline-block max-w-sm">
           <img
             src={winningFood.image}
             alt={winningFood.name}
-            className="w-72 h-56 object-cover rounded-lg mb-6 mx-auto"
+            className="w-full h-48 object-cover rounded-lg mb-4"
             onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
           />
-          <h3 className="text-4xl font-extrabold text-primary mb-3">{winningFood.name}</h3>
+          <h3 className="text-3xl font-bold text-primary">{winningFood.name}</h3>
           {winningFood.tags && (
-            <div className="flex flex-wrap justify-center gap-3 mt-4">
+            <div className="flex flex-wrap justify-center gap-2 mt-3">
               {winningFood.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="px-4 py-1 text-sm font-medium text-secondary bg-gray-100 rounded-full"
-                >
+                <span key={index} className="px-3 py-1 text-xs font-medium text-secondary bg-gray-100 rounded-full">
                   {tag}
                 </span>
               ))}
@@ -123,17 +119,6 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           )}
           <ReviewButton foodId={winningFood.id} userId={userId} handleReviewSubmit={handleReviewSubmit} />
         </div>
-      )}
-
-      {dailyMenuStatus === 'closed' && (
-        <p className="mt-6 text-secondary">
-          (ມາຈາກຜົນໂຫວດ)
-        </p>
-      )}
-      {dailyMenuStatus === 'admin_set' && (
-        <p className="mt-6 text-secondary">
-          (ຕັ້ງຄ່າໂດຍແອັດມິນ)
-        </p>
       )}
     </div>
   );
@@ -185,45 +170,47 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
   };
 
   if (isLoading) {
-    return <div className="mt-8 h-12"></div>;
+    return <div className="mt-6 h-10"></div>; // Placeholder for loading state
   }
 
   if (hasReviewed) {
-    return <p className="mt-8 text-lg text-secondary">ທ່ານໄດ້ຄຳເຫັນເມນູນີ້ແລ້ວ</p>;
+    return <p className="mt-6 text-lg text-success font-medium">✔️ ທ່ານໄດ້ສະແດງຄຳເຫັນແລ້ວ</p>;
   }
 
   if (showReviewForm) {
     return (
-      <div className="mt-8 p-6 bg-background rounded-xl shadow-lg text-left">
-        <h4 className="text-2xl font-bold text-center text-primary mb-5">ຄຳເຫັນເມນູ</h4>
-        <form onSubmit={onSubmitReview} className="space-y-5">
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left">
+        <h4 className="text-lg font-semibold text-center text-primary mb-4">ໃຫ້ຄະແນນ ແລະ ສະແດງຄຳເຫັນ</h4>
+        <form onSubmit={onSubmitReview} className="space-y-4">
           <div>
-            <label htmlFor={`rating-${foodId}`} className="block text-lg font-medium text-secondary mb-2 text-center">ຄະແນນ:</label>
+            <label className="block text-sm font-medium text-secondary mb-2 text-center">ຄະແນນ</label>
             <StarRatingInput rating={reviewRating} setRating={setReviewRating} />
           </div>
           <div>
-            <label htmlFor={`comment-${foodId}`} className="block text-lg font-medium text-secondary mb-2">ຄຳເຫັນ (ບໍ່ບັງຄັບ):</label>
+            <label htmlFor={`comment-${foodId}`} className="block text-sm font-medium text-secondary mb-1">ຄຳເຫັນ (ບໍ່ບັງຄັບ)</label>
             <textarea
               id={`comment-${foodId}`}
-              rows="4"
+              rows="3"
               value={reviewComment}
               onChange={(e) => setReviewComment(e.target.value)}
-              className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
+              className="block w-full px-3 py-2 text-base border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary transition-colors"
             ></textarea>
           </div>
-          <button
-            type="submit"
-            className="w-full px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
-          >
-            ສົ່ງຄຳເຫັນ
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowReviewForm(false)}
-            className="w-full px-6 py-3 mt-3 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
-          >
-            ຍົກເລີກ
-          </button>
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              onClick={() => setShowReviewForm(false)}
+              className="w-full px-4 py-2 bg-gray-200 text-secondary font-semibold rounded-md hover:bg-gray-300 transition-colors"
+            >
+              ຍົກເລີກ
+            </button>
+            <button
+              type="submit"
+              className="w-full px-4 py-2 bg-primary text-white font-bold rounded-md shadow-sm hover:bg-opacity-90 transition-colors"
+            >
+              ສົ່ງຄຳເຫັນ
+            </button>
+          </div>
         </form>
       </div>
     );
@@ -232,9 +219,9 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
   return (
     <button
       onClick={() => setShowReviewForm(true)}
-      className="mt-8 px-8 py-4 bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+      className="mt-6 w-full px-4 py-2 bg-accent text-white font-bold rounded-md shadow-md hover:bg-opacity-90 transition-colors"
     >
-      ຄຳເຫັນເມນູນີ້
+      ໃຫ້ຄະແນນເມນູນີ້
     </button>
   );
 };

@@ -1,31 +1,37 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 const Navigation = ({ isAdmin }) => {
+  const navLinkClasses = "px-5 py-2 rounded-md text-base font-medium transition-colors duration-300";
+  const activeLinkClasses = "bg-primary text-white shadow-sm";
+  const inactiveLinkClasses = "text-secondary hover:bg-gray-200 hover:text-primary";
+
   return (
-    <nav className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 mb-10 p-4 bg-surface rounded-lg shadow-md">
-      {isAdmin && (
-        <Link
-          to="/admin/my-foods"
-          className="px-6 py-3 rounded-full font-bold transition duration-300 bg-primary text-white hover:bg-opacity-90 shadow-md text-center"
+    <nav className="flex justify-center mb-10">
+      <div className="flex space-x-2 p-2 bg-gray-100 rounded-lg">
+        {isAdmin && (
+          <NavLink
+            to="/admin/my-foods"
+            className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}
+          >
+            ເມນູສ່ວນຕົວ
+          </NavLink>
+        )}
+        <NavLink
+          to="/vote"
+          className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}
         >
-          ເມນູສ່ວນຕົວ
-        </Link>
-      )}
-      <Link
-        to="/vote"
-        className="px-6 py-3 rounded-full font-bold transition duration-300 bg-primary text-white hover:bg-opacity-90 shadow-md text-center"
-      >
-        ໂຫວດເມນູປະຈຳວັນ
-      </Link>
-      {isAdmin && (
-        <Link
-          to="/admin"
-          className="px-6 py-3 rounded-full font-bold transition duration-300 bg-primary text-white hover:bg-opacity-90 shadow-md text-center"
-        >
-          ແຜງຄວບຄຸມແອັດມິນ
-        </Link>
-      )}
+          ໂຫວດເມນູປະຈຳວັນ
+        </NavLink>
+        {isAdmin && (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}
+          >
+            ແຜງຄວບຄຸມແອັດມິນ
+          </NavLink>
+        )}
+      </div>
     </nav>
   );
 };

@@ -7,18 +7,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#1a3a3a',
-        secondary: '#6b7280',
-        background: '#f9f9f7',
-        surface: '#ffffff',
-        accent: '#f59e0b',
+        primary: '#2c3e50',       // Navy Blue
+        secondary: '#8e95a5',     // Muted Gray
+        accent: '#f39c12',        // Golden Yellow
+        background: '#f8f9fa',   // Off-white
+        surface: '#ffffff',       // Pure White for cards
+        success: '#27ae60',      // Green
+        danger: '#c0392b',       // Red
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
-      backgroundImage: {
-        'food-bg': "url('/BG.png')",
+      boxShadow: {
+        'soft': '0 4px 12px rgba(0, 0, 0, 0.08)',
+        'medium': '0 8px 24px rgba(0, 0, 0, 0.1)',
       },
+      borderRadius: {
+        'xl': '1rem',
+      }
     },
   },
   plugins: [],
