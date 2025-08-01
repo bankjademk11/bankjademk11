@@ -38,7 +38,10 @@ const App = () => {
     return id;
   });
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    const storedAdminStatus = localStorage.getItem('isAdmin');
+    return storedAdminStatus === 'true'; // Convert string to boolean
+  });
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
   const ADMIN_PASSWORD = 'admin';
 
@@ -69,6 +72,7 @@ const App = () => {
   const handleAdminLogin = () => {
     if (adminPasswordInput === ADMIN_PASSWORD) {
       setIsAdmin(true);
+      localStorage.setItem('isAdmin', 'true'); // Save admin status
       showMessage('ເຂົ້າສູ່ລະບົບແອັດມິນສຳເລັດແລ້ວ!', 'success');
     } else {
       showMessage('ລະຫັດຜ່ານແອັດມິນບໍ່ຖືກຕ້ອງ', 'error');
@@ -78,6 +82,7 @@ const App = () => {
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
+    localStorage.removeItem('isAdmin'); // Remove admin status
     showMessage('ອອກຈາກລະບົບແອັດມິນແລ້ວ', 'info');
   };
 
