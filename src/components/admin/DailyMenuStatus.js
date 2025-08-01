@@ -76,6 +76,9 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     return food ? food.name : 'ບໍ່ພົບເມນູ';
   };
 
+  const isActionButtonsDisabled = dailyMenu && dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled';
+  const actionButtonTitle = isActionButtonsDisabled ? 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນສະຖານະນີ້' : '';
+
   return (
     <div className="p-6 bg-surface rounded-2xl shadow-lg">
       <h3 className="mb-6 text-3xl font-bold text-center text-primary">ສະຖານະເມນູປະຈຳວັນ</h3>
@@ -159,14 +162,16 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             <button
               onClick={() => handleDeleteMenu(dailyMenu.date)}
               className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
-              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
+              disabled={isActionButtonsDisabled}
+              title={actionButtonTitle}
             >
               ລຶບ
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
               className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
-              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
+              disabled={isActionButtonsDisabled}
+              title={actionButtonTitle}
             >
               ແກ້ໄຂ
             </button>
