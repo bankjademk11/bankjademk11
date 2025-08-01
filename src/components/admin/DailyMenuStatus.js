@@ -140,7 +140,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
-            {dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled' && (
+            {dailyMenu.status !== 'disabled' && (
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'disabled')}
                 className="px-6 py-3 text-sm bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
@@ -159,17 +159,17 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             <button
               onClick={() => handleDeleteMenu(dailyMenu.date)}
               className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
+              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
             >
               ລຶບ
             </button>
-            {dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled' && (
-              <button
-                onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
-                className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
-              >
-                ແກ້ໄຂ
-              </button>
-            )}
+            <button
+              onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
+              className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
+            >
+              ແກ້ໄຂ
+            </button>
           </div>
         </div>
       )}
