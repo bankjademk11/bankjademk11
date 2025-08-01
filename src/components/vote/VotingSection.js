@@ -1,35 +1,5 @@
 import React from 'react';
 
-// SVG Star Icon Component
-const StarIcon = ({ filled, className }) => (
-  <svg
-    className={`w-6 h-6 ${filled ? 'text-yellow-400' : 'text-gray-300'} ${className}`}
-    fill="currentColor"
-    viewBox="0 0 20 20"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-  </svg>
-);
-
-// Star Rating Display Component
-const StarRating = ({ votes }) => {
-  // Simple logic: 1 vote = 1 star, up to a max of 5 for display
-  const totalStars = 5;
-  const filledStars = Math.min(votes, totalStars); // Ensure we don't exceed 5 stars
-
-  return (
-    <div className="flex items-center">
-      <span className="text-lg mr-2">ຄະແນນໂຫວດ:</span>
-      <div className="flex">
-        {[...Array(totalStars)].map((_, i) => (
-          <StarIcon key={i} filled={i < filledStars} />
-        ))}
-      </div>
-    </div>
-  );
-};
-
 const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteFromApp }) => {
   const hasVoted = dailyMenu.voted_users && dailyMenu.voted_users[userId] !== undefined;
   const userVotedPackIndex = hasVoted ? dailyMenu.voted_users[userId] : null;
@@ -80,10 +50,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
               </div>
               <h3 className={`text-2xl font-semibold mb-2 text-center ${isSelected ? 'text-white' : 'text-primary'}`}>{pack.name}</h3>
               
-              {/* Replace numeric votes with StarRating component */}
-              <div className={`mb-4 ${isSelected ? 'text-white' : 'text-accent'}`}>
-                <StarRating votes={pack.votes} />
-              </div>
+              <p className={`text-lg mb-4 ${isSelected ? 'text-white' : 'text-accent'}`}>ຄະແນນໂຫວດ: {pack.votes}</p>
 
               <button
                 onClick={() => onVote(index)}

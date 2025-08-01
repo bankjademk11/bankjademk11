@@ -1,5 +1,53 @@
 import React, { useState, useEffect } from 'react';
 
+// Star Icon for Rating Input
+const StarIcon = ({ filled, onClick, onMouseEnter, onMouseLeave }) => (
+  <svg
+    className={`w-8 h-8 cursor-pointer transition-colors duration-200`}
+    fill={filled ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    onClick={onClick}
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.518 4.674a1 1 0 00.95.69h4.904c.969 0 1.371 1.24.588 1.81l-3.968 2.88a1 1 0 00-.364 1.118l1.518 4.674c.3.921-.755 1.688-1.54 1.118l-3.968-2.88a1 1 0 00-1.175 0l-3.968 2.88c-.784.57-1.838-.197-1.539-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.05 10.1c-.783-.57-.38-1.81.588-1.81h4.904a1 1 0 00.95-.69L11.049 2.927z"
+    />
+  </svg>
+);
+
+// Interactive Star Rating Component for reviews
+const StarRatingInput = ({ rating, setRating }) => {
+  const [hoverRating, setHoverRating] = useState(0);
+
+  return (
+    <div className="flex justify-center items-center space-x-1">
+      {[...Array(5)].map((_, index) => {
+        const starRating = index + 1;
+        return (
+          <div
+            key={starRating}
+            className="relative"
+            onMouseEnter={() => setHoverRating(starRating)}
+            onMouseLeave={() => setHoverRating(0)}
+            onClick={() => setRating(starRating)}
+          >
+            <StarIcon
+              filled={starRating <= (hoverRating || rating)}
+              className={starRating <= (hoverRating || rating) ? 'text-yellow-400' : 'text-gray-300'}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId, foodItems }) => {
 
   if (!winningFood) {
@@ -150,17 +198,8 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
         <h4 className="text-2xl font-bold text-center text-primary mb-5">ຄຳເຫັນເມນູ</h4>
         <form onSubmit={onSubmitReview} className="space-y-5">
           <div>
-            <label htmlFor={`rating-${foodId}`} className="block text-lg font-medium text-secondary mb-2">ຄະແນນ (1-5):</label>
-            <input
-              type="number"
-              id={`rating-${foodId}`}
-              min="1"
-              max="5"
-              value={reviewRating}
-              onChange={(e) => setReviewRating(parseInt(e.target.value))}
-              className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
-              required
-            />
+            <label htmlFor={`rating-${foodId}`} className="block text-lg font-medium text-secondary mb-2 text-center">ຄະແນນ:</label>
+            <StarRatingInput rating={reviewRating} setRating={setReviewRating} />
           </div>
           <div>
             <label htmlFor={`comment-${foodId}`} className="block text-lg font-medium text-secondary mb-2">ຄຳເຫັນ (ບໍ່ບັງຄັບ):</label>
