@@ -318,7 +318,7 @@ app.delete('/api/foods/:id', async (req, res) => {
 app.get('/api/daily-menu', async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [today]);
+    let result = await pool.query('SELECT *, is_visible FROM daily_menu_states WHERE date = $1', [today]);
 
     if (result.rows.length === 0) {
       // If no entry for today, create a new idle one
@@ -346,6 +346,11 @@ app.post('/api/daily-menu/start', async (req, res) => {
   }
 
   try {
+    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
+    if (result.rows.length > 0 && !result.rows[0].is_visible) {
+      return res.status(400).json({ error: 'Cannot start voting for a disabled menu.' });
+    }
+
     // Extract all unique food IDs from the voteOptions
     const allFoodIds = [...new Set(voteOptions.flat())];
 
@@ -447,6 +452,10 @@ app.post('/api/daily-menu/vote', async (req, res) => {
 
     const currentMenu = result.rows[0];
 
+    if (!currentMenu.is_visible) {
+      return res.status(400).json({ error: 'Daily menu is currently disabled.' });
+    }
+
     if (currentMenu.status !== 'voting') {
       return res.status(400).json({ error: 'Voting is not active for the selected date.' });
     }
@@ -525,6 +534,10 @@ app.delete('/api/daily-menu/vote/:userId', async (req, res) => {
 
     const currentMenu = result.rows[0];
 
+    if (!currentMenu.is_visible) {
+      return res.status(400).json({ error: 'Daily menu is currently disabled.' });
+    }
+
     if (currentMenu.status !== 'voting') {
       return res.status(400).json({ error: 'Voting is not active for the selected date.' });
     }
@@ -587,6 +600,11 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
     }
 
     try {
+        let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
+        if (result.rows.length > 0 && !result.rows[0].is_visible) {
+          return res.status(400).json({ error: 'Cannot set menu for a disabled date.' });
+        }
+
         const result = await pool.query(
             'UPDATE daily_menu_states SET status = $1, admin_set_food_item_id = $2, winning_food_item_id = NULL, vote_options = $3, voted_users = $4, timestamp = NOW() WHERE date = $5 RETURNING *'
             , ['admin_set', foodId, [], {}, targetDate]
@@ -617,7 +635,7 @@ app.get('/api/daily-menu/all', async (req, res) => {
 app.get('/api/daily-menu/:date', async (req, res) => {
   const { date } = req.params;
   try {
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [date]);
+    let result = await pool.query('SELECT *, is_visible FROM daily_menu_states WHERE date = $1', [date]);
     if (result.rows.length === 0) {
       // If no entry for this date, create a new idle one
       const newEntry = await pool.query(
@@ -637,17 +655,28 @@ app.get('/api/daily-menu/:date', async (req, res) => {
 // PUT to update status of a daily menu state
 app.put('/api/daily-menu/:date/status', async (req, res) => {
   const { date } = req.params;
-  const { status } = req.body;
+  const { status: newStatus } = req.body; // Rename status to newStatus to avoid confusion
 
-  if (!status) {
+  if (!newStatus) {
     return res.status(400).json({ error: 'Status is required.' });
   }
 
   try {
-    const result = await pool.query(
-      'UPDATE daily_menu_states SET status = $1, timestamp = NOW() WHERE date = $2 RETURNING *'
-      , [status, date]
-    );
+    let query;
+    let params;
+
+    if (newStatus === 'disabled') {
+      query = 'UPDATE daily_menu_states SET is_visible = FALSE, timestamp = NOW() WHERE date = $1 RETURNING *'
+      params = [date];
+    } else if (newStatus === 'idle') { // This is for "ເປີດໃຊ້ງານ" button
+      query = 'UPDATE daily_menu_states SET is_visible = TRUE, timestamp = NOW() WHERE date = $1 RETURNING *'
+      params = [date];
+    } else { // For actual status changes like 'voting', 'closed', 'admin_set'
+      query = 'UPDATE daily_menu_states SET status = $1, timestamp = NOW() WHERE date = $2 RETURNING *'
+      params = [newStatus, date];
+    }
+
+    const result = await pool.query(query, params);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Daily menu state for this date not found.' });
     }

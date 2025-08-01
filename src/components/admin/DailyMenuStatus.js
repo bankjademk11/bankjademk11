@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
 const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate, handleCloseVoting, handleEditMenuAndNavigateToVoting }) => {
   const [dailyMenu, setDailyMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const fetchDailyMenuForSelectedDate = useCallback(async () => {
     setLoading(true);
@@ -52,10 +53,13 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     }
   };
 
-  const handleDeleteMenu = async (date) => {
-    if (!window.confirm(`ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ ${date} ແທ້ໆບໍ່?`)) {
-      return;
-    }
+  const openDeleteModal = () => setIsDeleteModalOpen(true);
+  const closeDeleteModal = () => setIsDeleteModalOpen(false);
+
+  const confirmDelete = async () => {
+    if (!dailyMenu) return;
+    const { date } = dailyMenu;
+    closeDeleteModal();
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/${date}`, {
         method: 'DELETE',
@@ -76,19 +80,31 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     return food ? food.name : 'ບໍ່ພົບເມນູ';
   };
 
-  const isActionButtonsDisabled = dailyMenu && dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled';
-  let actionButtonTitle = '';
-  if (dailyMenu) {
-    if (dailyMenu.status === 'voting') {
-      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ';
-    } else if (dailyMenu.status === 'admin_set') {
-      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອແອັດມິນກຳນົດເມນູ';
-    } else if (dailyMenu.status === 'closed') {
-      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອປິດໂຫວດແລ້ວ';
-    } else if (dailyMenu.status === 'disabled') {
-      actionButtonTitle = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອເມນູຖືກປິດໃຊ້ງານ';
+  const actionButtonProps = useMemo(() => {
+    if (!dailyMenu) return { disabled: true, title: '' };
+
+    const { status } = dailyMenu;
+    const disabled = status !== 'idle' && status !== 'disabled';
+    let title = '';
+
+    if (disabled) {
+      switch (status) {
+        case 'voting':
+          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ';
+          break;
+        case 'admin_set':
+          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອແອັດມິນກຳນົດເມນູ';
+          break;
+        case 'closed':
+          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອປິດໂຫວດແລ້ວ';
+          break;
+        default:
+          title = 'ບໍ່ສາມາດດຳເນີນການໄດ້ໃນສະຖານະນີ້';
+      }
     }
-  }
+    return { disabled, title };
+  }, [dailyMenu]);
+
 
   return (
     <div className="p-6 bg-surface rounded-2xl shadow-lg">
@@ -175,18 +191,18 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               </button>
             )}
             <button
-              onClick={() => handleDeleteMenu(dailyMenu.date)}
+              onClick={openDeleteModal}
               className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
-              disabled={isActionButtonsDisabled}
-              title={actionButtonTitle}
+              disabled={actionButtonProps.disabled}
+              title={actionButtonProps.title}
             >
               ລຶບ
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
               className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
-              disabled={isActionButtonsDisabled}
-              title={actionButtonTitle}
+              disabled={actionButtonProps.disabled}
+              title={actionButtonProps.title}
             >
               ແກ້ໄຂ
             </button>
@@ -196,6 +212,31 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
       {!loading && !error && !dailyMenu && (
         <p className="text-center text-xl text-secondary">ບໍ່ພົບສະຖານະເມນູສຳລັບວັນທີນີ້.</p>
+      )}
+
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-2xl max-w-sm w-full">
+            <h4 className="text-2xl font-bold text-center text-gray-800 mb-4">ຢືນຢັນການລຶບ</h4>
+            <p className="text-center text-gray-600 mb-8">
+              ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ {dailyMenu && new Date(dailyMenu.date).toLocaleDateString()} ແທ້ໆບໍ່?
+            </p>
+            <div className="flex justify-around">
+              <button
+                onClick={closeDeleteModal}
+                className="px-8 py-3 font-semibold rounded-lg bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
+              >
+                ຍົກເລີກ
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-8 py-3 font-semibold rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
+              >
+                ຢືນຢັນການລຶບ
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
