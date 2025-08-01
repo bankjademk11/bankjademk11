@@ -181,7 +181,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'disabled')}
                 className="px-6 py-3 text-sm bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
-                disabled={dailyMenu.status === 'closed' || dailyMenu.status === 'admin_set'}
+                disabled={dailyMenu.status === 'admin_set'}
                 title={dailyMenu.status === 'closed' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
                 ປິດໃຊ້ງານ
