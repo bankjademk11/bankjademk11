@@ -84,11 +84,15 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     if (!dailyMenu) return { disabled: true, title: '' };
 
     const { status } = dailyMenu;
-    const disabled = status !== 'idle' && status !== 'disabled';
+    // Buttons are enabled ONLY when status is 'disabled'
+    const disabled = status !== 'disabled';
     let title = '';
 
     if (disabled) {
       switch (status) {
+        case 'idle':
+          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນສະຖານະບໍ່ມີກິດຈະກຳ';
+          break;
         case 'voting':
           title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ';
           break;
@@ -101,6 +105,9 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
         default:
           title = 'ບໍ່ສາມາດດຳເນີນການໄດ້ໃນສະຖານະນີ້';
       }
+    } else {
+      // Enabled state title
+      title = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບເມນູທີ່ປິດໃຊ້ງານໄດ້';
     }
     return { disabled, title };
   }, [dailyMenu]);
@@ -182,17 +189,15 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             )}
             {dailyMenu.status === 'disabled' && (
               <button
-                onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
+                onClick={() => handleStatusChange(dailyMenu.date, 'voting')}
                 className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
-                disabled={dailyMenu.status === 'voting' || dailyMenu.status === 'admin_set'}
-                title={dailyMenu.status === 'voting' ? 'ບໍ່ສາມາດເປີດໃຊ້ງານເມນູທີ່ກຳລັງໂຫວດ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດເປີດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
-                ເປີດໃຊ້ງານ
+                ເປີດໃຊ້ງານ (ເລີ່ມໂຫວດ)
               </button>
             )}
             <button
               onClick={openDeleteModal}
-              className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
+              className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
@@ -200,7 +205,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
-              className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+              className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
