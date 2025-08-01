@@ -159,14 +159,14 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             <button
               onClick={() => handleDeleteMenu(dailyMenu.date)}
               className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
-              disabled={dailyMenu.status !== 'idle'}
+              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
             >
               ລຶບ
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
               className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
-              disabled={dailyMenu.status !== 'idle'}
+              disabled={dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled'}
             >
               ແກ້ໄຂ
             </button>
