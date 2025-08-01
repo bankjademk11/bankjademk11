@@ -77,7 +77,18 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
   };
 
   const isActionButtonsDisabled = dailyMenu && dailyMenu.status !== 'idle' && dailyMenu.status !== 'disabled';
-  const actionButtonTitle = isActionButtonsDisabled ? 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນສະຖານະນີ້' : '';
+  let actionButtonTitle = '';
+  if (dailyMenu) {
+    if (dailyMenu.status === 'voting') {
+      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ';
+    } else if (dailyMenu.status === 'admin_set') {
+      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອແອັດມິນກຳນົດເມນູ';
+    } else if (dailyMenu.status === 'closed') {
+      actionButtonTitle = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອປິດໂຫວດແລ້ວ';
+    } else if (dailyMenu.status === 'disabled') {
+      actionButtonTitle = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອເມນູຖືກປິດໃຊ້ງານ';
+    }
+  }
 
   return (
     <div className="p-6 bg-surface rounded-2xl shadow-lg">
@@ -147,6 +158,8 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'disabled')}
                 className="px-6 py-3 text-sm bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
+                disabled={dailyMenu.status === 'closed' || dailyMenu.status === 'admin_set'}
+                title={dailyMenu.status === 'closed' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
                 ປິດໃຊ້ງານ
               </button>
@@ -155,6 +168,8 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
                 className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
+                disabled={dailyMenu.status === 'voting' || dailyMenu.status === 'admin_set'}
+                title={dailyMenu.status === 'voting' ? 'ບໍ່ສາມາດເປີດໃຊ້ງານເມນູທີ່ກຳລັງໂຫວດ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດເປີດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
                 ເປີດໃຊ້ງານ
               </button>
