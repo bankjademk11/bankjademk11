@@ -189,7 +189,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             )}
             {dailyMenu.status === 'disabled' && (
               <button
-                onClick={() => handleStatusChange(dailyMenu.date, 'voting')}
+                onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
                 className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
               >
                 ເປີດໃຊ້ງານ (ເລີ່ມໂຫວດ)
