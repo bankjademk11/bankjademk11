@@ -82,7 +82,10 @@ const AdminDashboard = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ voteOptions: votePacks, date: selectedDate }),
       });
-      if (!response.ok) throw new Error('Failed to start voting');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to start voting');
+      }
       const data = await response.json();
       setDailyMenu(data);
       showMessage('ເລີ່ມການໂຫວດຊຸດອາຫານປະຈຳວັນແລ້ວ!', 'success');
