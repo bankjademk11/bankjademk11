@@ -110,13 +110,18 @@ pool.query(`
   );
 `).then(() => {
   console.log('Daily menu states table ensured.');
-  // Add is_visible column if it doesn't exist (for existing deployments)
-  return pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT TRUE');
-}).then(() => {
-  console.log('Ensured is_visible column exists in daily_menu_states.');
 }).catch(err => {
-  console.error('Error ensuring daily menu states table or is_visible column:', err.stack);
+  console.error('Error ensuring daily menu states table:', err.stack);
 });
+
+// Add is_visible column to daily_menu_states table if it doesn't exist
+pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT TRUE')
+  .then(() => {
+    console.log('Ensured is_visible column exists in daily_menu_states.');
+  })
+  .catch(err => {
+    console.error('Error ensuring is_visible column in daily_menu_states:', err.stack);
+  });
 
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {
