@@ -600,8 +600,8 @@ app.post('/api/daily-menu/admin-set', async (req, res) => {
     }
 
     try {
-        let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
-        if (result.rows.length > 0 && !result.rows[0].is_visible) {
+        let menuStateCheckResult = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
+        if (menuStateCheckResult.rows.length > 0 && !menuStateCheckResult.rows[0].is_visible) {
           return res.status(400).json({ error: 'Cannot set menu for a disabled date.' });
         }
 
