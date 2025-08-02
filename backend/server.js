@@ -105,12 +105,17 @@ pool.query(`
     voted_users JSONB DEFAULT '{}'::jsonb,
     winning_food_item_id INTEGER REFERENCES foods(id) ON DELETE SET NULL,
     admin_set_food_item_id INTEGER REFERENCES foods(id) ON DELETE SET NULL,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_visible BOOLEAN DEFAULT TRUE
   );
 `).then(() => {
   console.log('Daily menu states table ensured.');
+  // Add is_visible column if it doesn't exist (for existing deployments)
+  return pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BOOLEAN DEFAULT TRUE');
+}).then(() => {
+  console.log('Ensured is_visible column exists in daily_menu_states.');
 }).catch(err => {
-  console.error('Error ensuring daily menu states table:', err.stack);
+  console.error('Error ensuring daily menu states table or is_visible column:', err.stack);
 });
 
 // POST a new review for a food item
@@ -249,7 +254,7 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     }
 
     // Upload image to Cloudinary
-    const result = await cloudinary.uploader.upload(req.file.buffer.toString('base64'), {
+    const result = await cloudinary.uploader.upload(`data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`, {
       resource_type: "image",
       folder: "food_images", // Optional: specify a folder in Cloudinary
     });
