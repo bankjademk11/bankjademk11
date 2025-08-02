@@ -346,8 +346,8 @@ app.post('/api/daily-menu/start', async (req, res) => {
   }
 
   try {
-    let result = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
-    if (result.rows.length > 0 && !result.rows[0].is_visible) {
+    let menuStateResult = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
+    if (menuStateResult.rows.length > 0 && !menuStateResult.rows[0].is_visible) {
       return res.status(400).json({ error: 'Cannot start voting for a disabled menu.' });
     }
 
