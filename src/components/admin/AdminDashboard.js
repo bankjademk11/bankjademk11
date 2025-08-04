@@ -152,9 +152,11 @@ const AdminDashboard = ({
   };
 
   const handleEditMenuAndNavigateToVoting = (date, voteOptions) => {
-    setSelectedDate(date);
+    // Ensure the date is in YYYY-MM-DD format for the input field
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    setSelectedDate(formattedDate);
     setEditingVoteOptions(voteOptions);
-    setEditingDate(date);
+    setEditingDate(formattedDate);
     setAdminView('voting');
     if (voteOptions) {
       const packsToLoad = voteOptions.map(pack => pack.foodIds);

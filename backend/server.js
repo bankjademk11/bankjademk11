@@ -356,10 +356,11 @@ app.post('/api/daily-menu/start', async (req, res) => {
   }
 
   try {
-    let menuStateResult = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
-    if (menuStateResult.rows.length > 0 && !menuStateResult.rows[0].is_visible) {
-      return res.status(400).json({ error: 'Cannot start voting for a disabled menu.' });
-    }
+    // This check is removed as it conflicts with the edit workflow
+    // let menuStateResult = await pool.query('SELECT * FROM daily_menu_states WHERE date = $1', [targetDate]);
+    // if (menuStateResult.rows.length > 0 && !menuStateResult.rows[0].is_visible) {
+    //   return res.status(400).json({ error: 'Cannot start voting for a disabled menu.' });
+    // }
 
     // Extract all unique food IDs from the voteOptions
     const allFoodIds = [...new Set(voteOptions.flat())];
@@ -394,8 +395,9 @@ app.post('/api/daily-menu/start', async (req, res) => {
       };
     });
 
+    // When starting or updating a vote, always set the menu to be visible.
     const result = await pool.query(
-      'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW() WHERE date = $4 RETURNING *'
+      'UPDATE daily_menu_states SET status = $1, vote_options = $2, voted_users = $3, winning_food_item_id = NULL, admin_set_food_item_id = NULL, timestamp = NOW(), is_visible = TRUE WHERE date = $4 RETURNING *'
       , ['voting', JSON.stringify(newVoteOptions), {}, targetDate]
     );
 
