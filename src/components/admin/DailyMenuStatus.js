@@ -94,20 +94,15 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
   const actionButtonProps = useMemo(() => {
     if (!dailyMenu) return { disabled: true, title: '' };
 
-    const { status, is_visible } = dailyMenu;
+    const { is_visible } = dailyMenu;
 
-    // Buttons are disabled if the menu is visible (not disabled), or if voting is active/closed.
-    const disabled = is_visible || status === 'voting' || status === 'closed';
+    // The buttons should be enabled ONLY when the menu is NOT visible (i.e., disabled by the admin).
+    const disabled = is_visible;
     
     let title = '';
     if (disabled) {
-        if (status === 'voting' || status === 'closed') {
-            title = 'ບໍ່ສາມາດດຳເນີນການໄດ້ ເພາະກຳລັງໂຫວດ ຫຼື ປິດໂຫວດໄປແລ້ວ';
-        } else {
-            title = 'ກະລຸນາກົດ "ປິດໃຊ້ງານ" ກ່ອນຈຶ່ງຈະສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້';
-        }
+        title = 'ກະລຸນາກົດ "ປິດໃຊ້ງານ" ກ່ອນຈຶ່ງຈະສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້';
     } else {
-        // This case is when is_visible is false
         title = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບເມນູທີ່ປິດໃຊ້ງານໄດ້';
     }
 
