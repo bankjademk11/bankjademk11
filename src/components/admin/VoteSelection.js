@@ -4,7 +4,7 @@ import CategoryFilter from '../myfoods/CategoryFilter';
 const VoteSelection = ({
   foodItems,
   handleStartVoting,
-  dailyMenuStatus,
+  isStartingVote, // Receive the new prop
   showMessage,
   selectedAdminCategory,
   setSelectedAdminCategory,
@@ -151,10 +151,10 @@ const VoteSelection = ({
           </div>
           <button
             onClick={handleStartVotingWithPacks}
-            disabled={dailyMenuStatus === 'voting'}
+            disabled={isStartingVote}
             className="mt-6 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary shadow-md rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {dailyMenuStatus === 'voting' ? 'ກຳລັງໂຫວດ...' : 'ເລີ່ມການໂຫວດຊຸດອາຫານ'}
+            {isStartingVote ? 'ກຳລັງໂຫວດ...' : (editingDate ? 'ອັບເດດການໂຫວດ' : 'ເລີ່ມການໂຫວດຊຸດອາຫານ')}
           </button>
         </div>
       )}

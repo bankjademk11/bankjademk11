@@ -28,6 +28,7 @@ const AdminDashboard = ({
   const [selectedAdminCategory, setSelectedAdminCategory] = useState('ທັງໝົດ');
   const [editingVoteOptions, setEditingVoteOptions] = useState(null);
   const [editingDate, setEditingDate] = useState(null);
+  const [isStartingVote, setIsStartingVote] = useState(false);
 
   const [adminFinalVotePacks, setAdminFinalVotePacks] = useState([]);
   const [adminSelectedFoodForPack, setAdminSelectedFoodForPack] = useState([]);
@@ -75,7 +76,7 @@ const AdminDashboard = ({
       showMessage('ກະລຸນາເພີ່ມຢ່າງໜ້ອຍໜຶ່ງຊຸດອາຫານເພື່ອເລີ່ມການໂຫວດ.', 'error');
       return;
     }
-
+    setIsStartingVote(true);
     try {
       const response = await fetch(`${BACKEND_URL}/api/daily-menu/start`, {
         method: 'POST',
@@ -96,6 +97,8 @@ const AdminDashboard = ({
     } catch (error) {
       console.error("Error starting voting:", error);
       showMessage('ເກີດຂໍ້ຜິດພາດໃນການເລີ່ມໂຫວດ', 'error');
+    } finally {
+      setIsStartingVote(false);
     }
   };
 
@@ -243,7 +246,7 @@ const AdminDashboard = ({
               setAdminVoteSelections={setAdminVoteSelections}
               toggleAdminVoteSelection={toggleAdminVoteSelection}
               handleStartVoting={handleStartVoting}
-              dailyMenuStatus={dailyMenu.status}
+              isStartingVote={isStartingVote} // Pass the new state
               showMessage={showMessage}
               selectedAdminCategory={selectedAdminCategory}
               setSelectedAdminCategory={setSelectedAdminCategory}
