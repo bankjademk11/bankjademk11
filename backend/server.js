@@ -802,7 +802,10 @@ app.get('/api/reports/daily-food-votes', async (req, res) => {
                 SUM(CAST(pack_data->>'votes' AS INTEGER)) AS total_votes
             FROM
                 daily_results dr,
-                jsonb_array_elements(dr.vote_details) AS pack_data,
+                jsonb_array_elements(CASE
+                    WHEN jsonb_typeof(dr.vote_details) = 'array' THEN dr.vote_details
+                    ELSE '[]'::jsonb
+                END) AS pack_data,
                 jsonb_array_elements_text(pack_data->'foodIds') AS food_id_text
             JOIN
                 foods f ON f.id = CAST(food_id_text AS INTEGER)
