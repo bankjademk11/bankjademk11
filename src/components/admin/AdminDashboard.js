@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import AdminLogin from './AdminLogin';
 import VoteSelection from './VoteSelection';
 import DailyMenuControl from './DailyMenuControl';
 import GMReport from './GMReport';
 import DailyMenuStatus from './DailyMenuStatus';
 import FoodManagement from './FoodManagement';
+import DailySummary from './DailySummary';
 
 const AdminDashboard = ({
   isAdmin,
@@ -209,11 +209,14 @@ const AdminDashboard = ({
               >
                 ລາຍງານ
               </button>
-              <Link to="/admin/dashboard"
-                className="px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out bg-gray-100 text-secondary hover:bg-gray-200"
+              <button
+                onClick={() => setAdminView('dashboard')}
+                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
+                  ${adminView === 'dashboard' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
+                `}
               >
                 Dashboard
-              </Link>
+              </button>
             </div>
             <div className="flex items-center space-x-3">
               <label htmlFor="date-picker" className="text-secondary font-semibold">ເລືອກວັນທີ:</label>
@@ -285,6 +288,10 @@ const AdminDashboard = ({
 
           {adminView === 'food-management' && (
             <FoodManagement BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} setFoodItems={setFoodItems} />
+          )}
+
+          {adminView === 'dashboard' && (
+            <DailySummary BACKEND_URL={BACKEND_URL} />
           )}
         </>
       )}
