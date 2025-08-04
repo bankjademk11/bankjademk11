@@ -157,11 +157,11 @@ const DailySummary = ({ BACKEND_URL }) => {
                             }}
                         >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="food_name" />
+                            <XAxis dataKey="food_name" angle={-45} textAnchor="end" height={80} interval={0} />
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="total_votes" fill="#388E3C" name="ຈຳນວນໂຫວດ" />
+                            <Bar dataKey="total_votes" fill="#388E3C" name="ຈຳນວນໂຫວດ" barSize={20} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
