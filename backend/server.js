@@ -912,7 +912,9 @@ app.get('/', (req, res) => {
   res.send('Hello from Backend!');
 });
 
+const host = '0.0.0.0';
+
 // Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(port, host, () => {
+  console.log(`Server running on http://${host}:${port}`);
 });
