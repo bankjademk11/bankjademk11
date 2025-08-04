@@ -821,6 +821,99 @@ app.get('/api/reports/daily-food-votes', async (req, res) => {
     }
 });
 
+// GET least popular food items
+app.get('/api/reports/least-popular-foods', async (req, res) => {
+    const { startDate, endDate, limit = 5 } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required query parameters.' });
+    }
+
+    try {
+        const query = `
+            WITH food_votes AS (
+                SELECT
+                    CAST(jsonb_array_elements_text(pack_data->'foodIds') AS INTEGER) AS food_id,
+                    CAST(pack_data->>'votes' AS INTEGER) AS votes
+                FROM
+                    daily_results dr,
+                    jsonb_array_elements(dr.vote_details) AS pack_data
+                WHERE
+                    dr.date BETWEEN $1 AND $2
+            ),
+            aggregated_votes AS (
+                SELECT
+                    food_id,
+                    SUM(votes) as total_votes
+                FROM
+                    food_votes
+                GROUP BY
+                    food_id
+            )
+            SELECT
+                f.name AS food_name,
+                COALESCE(av.total_votes, 0) AS total_votes
+            FROM
+                foods f
+            LEFT JOIN
+                aggregated_votes av ON f.id = av.food_id
+            ORDER BY
+                total_votes ASC
+            LIMIT $3;
+        `;
+        const result = await pool.query(query, [startDate, endDate, limit]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching least popular foods:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// GET voter turnout over time
+app.get('/api/reports/voter-turnout', async (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required query parameters.' });
+    }
+
+    try {
+        const query = `
+            SELECT
+                date,
+                jsonb_object_keys(voted_users)::integer AS voter_count
+            FROM
+                daily_menu_states
+            WHERE
+                date BETWEEN $1 AND $2
+                AND status IN ('voting', 'closed')
+            ORDER BY
+                date ASC;
+        `;
+
+        // The query above has a flaw: jsonb_object_keys returns a SETOF text, which can't be cast to integer directly.
+        // A better approach is to get the length of the keys array.
+        const correctedQuery = `
+            SELECT 
+                date, 
+                jsonb_array_length(jsonb_object_keys(voted_users)) as voter_count
+            FROM 
+                daily_menu_states
+            WHERE 
+                date BETWEEN $1 AND $2
+                AND status IN ('voting', 'closed', 'admin_set')
+            ORDER BY 
+                date ASC;
+        `;
+
+        const result = await pool.query(correctedQuery, [startDate, endDate]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching voter turnout:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 // Basic route
 app.get('/', (req, res) => {
