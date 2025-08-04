@@ -885,12 +885,12 @@ app.get('/api/reports/voter-turnout', async (req, res) => {
     }
 
     try {
-        // This query is more robust and handles cases where voted_users might be null or not a JSON object.
+        // This query is now corrected to properly count keys from a JSONB object.
         const query = `
             SELECT 
                 date, 
                 CASE
-                    WHEN jsonb_typeof(voted_users) = 'object' THEN jsonb_array_length(jsonb_object_keys(voted_users))
+                    WHEN jsonb_typeof(voted_users) = 'object' THEN (SELECT count(*) FROM jsonb_object_keys(voted_users))
                     ELSE 0
                 END as voter_count
             FROM 
