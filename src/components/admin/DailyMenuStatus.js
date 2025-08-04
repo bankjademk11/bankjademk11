@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import FoodPackDetailPopup from './FoodPackDetailPopup';
 
 const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate, handleCloseVoting, handleEditMenuAndNavigateToVoting }) => {
+  const [selectedFoodPack, setSelectedFoodPack] = useState(null);
+  const [showFoodPackPopup, setShowFoodPackPopup] = useState(false);
   const [dailyMenu, setDailyMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -75,9 +78,18 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     }
   };
 
-  const getFoodNameById = (id) => {
-    const food = foodItems.find(item => item.id === id);
-    return food ? food.name : 'ບໍ່ພົບເມນູ';
+  const getFoodDetailsByIds = (foodIds) => {
+    return foodIds.map(id => foodItems.find(item => item.id === id)).filter(Boolean);
+  };
+
+  const handleFoodPackClick = (pack) => {
+    setSelectedFoodPack(pack);
+    setShowFoodPackPopup(true);
+  };
+
+  const handleCloseFoodPackPopup = () => {
+    setShowFoodPackPopup(false);
+    setSelectedFoodPack(null);
   };
 
   const actionButtonProps = useMemo(() => {
@@ -152,7 +164,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <p className="text-lg font-semibold text-primary mb-3">ເມນູທີ່ກຳລັງໂຫວດ:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dailyMenu.vote_options.map((pack, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between cursor-pointer" onClick={() => handleFoodPackClick(pack)}>
                     <span className="text-base font-medium text-primary">{pack.name}</span>
                     <span className="text-base font-semibold text-accent">{pack.votes} ໂຫວດ</span>
                   </div>
@@ -242,6 +254,13 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             </div>
           </div>
         </div>
+      )}
+
+      {showFoodPackPopup && selectedFoodPack && (
+        <FoodPackDetailPopup
+          foodPackDetails={getFoodDetailsByIds(selectedFoodPack.foodIds)}
+          onClose={handleCloseFoodPackPopup}
+        />
       )}
     </div>
   );
