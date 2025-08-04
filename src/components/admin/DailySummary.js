@@ -4,7 +4,7 @@ import { FaCalendarCheck, FaTrophy, FaUsers, FaChartLine, FaThumbsDown, FaUserCh
 
 // Reusable Stat Card Component
 const StatCard = ({ icon, title, value, bgColor, isLoading }) => (
-    <div className={`p-4 md:p-6 rounded-2xl shadow-lg flex items-center space-x-4 ${bgColor}`}>
+    <div className={`p-4 md:p-6 rounded-2xl flex items-center space-x-4 ${bgColor}`}>
         <div className="text-3xl md:text-4xl">{icon}</div>
         <div>
             <p className="text-sm md:text-base font-semibold">{title}</p>
@@ -21,7 +21,7 @@ const StatCard = ({ icon, title, value, bgColor, isLoading }) => (
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="p-3 bg-white border border-gray-300 rounded-lg shadow-lg">
+            <div className="p-3 bg-white border border-gray-300 rounded-lg">
                 <p className="font-bold text-primary">{`${label}`}</p>
                 {payload.map((pld, index) => (
                     <p key={index} style={{ color: pld.color }}>{`${pld.name}: ${pld.value}`}</p>
@@ -162,11 +162,11 @@ const DailySummary = ({ BACKEND_URL }) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                <div className="lg:col-span-1 bg-surface p-4 md:p-6 rounded-2xl shadow-lg space-y-4 self-start">
+                <div className="lg:col-span-1 bg-surface p-4 md:p-6 rounded-2xl border border-gray-200 space-y-4 self-start">
                     <h3 className="text-xl font-bold text-primary">ສະຫຼຸບປະຈຳວັນ</h3>
                     <div>
                         <label htmlFor="summary-date-picker" className="block text-secondary text-sm font-semibold mb-2">ເລືອກວັນທີ:</label>
-                        <input type="date" id="summary-date-picker" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
+                        <input type="date" id="summary-date-picker" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
                     </div>
                     {loading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
                     {error && <div className="text-center py-4 text-red-500">ຂໍ້ຜິດພາດ: {error}</div>}
@@ -188,17 +188,17 @@ const DailySummary = ({ BACKEND_URL }) => {
                     )}
                 </div>
 
-                <div className="lg:col-span-2 bg-surface p-4 md:p-6 rounded-2xl shadow-lg">
+                <div className="lg:col-span-2 bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
                     <h3 className="text-xl font-bold text-primary mb-4">ສະຖິຕິການໂຫວດອາຫານ</h3>
                     <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
                         <div className="flex-grow flex flex-col sm:flex-row gap-2 md:gap-4">
                             <div className="flex-1 min-w-[150px]">
                                 <label htmlFor="chart-start-date" className="block text-secondary text-sm font-semibold mb-1">ວັນທີເລີ່ມຕົ້ນ:</label>
-                                <input type="date" id="chart-start-date" value={chartStartDate} onChange={(e) => setChartStartDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-transparent transition-colors" />
+                                <input type="date" id="chart-start-date" value={chartStartDate} onChange={(e) => setChartStartDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
                             </div>
                             <div className="flex-1 min-w-[150px]">
                                 <label htmlFor="chart-end-date" className="block text-secondary text-sm font-semibold mb-1">ວັນທີສິ້ນສຸດ:</label>
-                                <input type="date" id="chart-end-date" value={chartEndDate} onChange={(e) => setChartEndDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-transparent transition-colors" />
+                                <input type="date" id="chart-end-date" value={chartEndDate} onChange={(e) => setChartEndDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
                             </div>
                         </div>
                         <div className="flex items-end gap-2 pt-5">
@@ -229,7 +229,7 @@ const DailySummary = ({ BACKEND_URL }) => {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                <div className="bg-surface p-4 md:p-6 rounded-2xl shadow-lg">
+                <div className="bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
                     <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaThumbsDown className="mr-2 text-red-500" /> 5 ເມນູທີ່ບໍ່ໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ</h3>
                     {dataLoading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
                     {!dataLoading && leastPopularFoods.length > 0 && (
@@ -247,7 +247,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                     )}
                 </div>
 
-                <div className="bg-surface p-4 md:p-6 rounded-2xl shadow-lg">
+                <div className="bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
                     <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaUserCheck className="mr-2 text-blue-500" /> ສະຖິຕິການມີສ່ວນຮ່ວມຂອງຜູ້ໃຊ້</h3>
                     <div className="h-60">
                         {dataLoading && <div className="text-center pt-16 text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}

@@ -74,11 +74,11 @@ const VoteSelection = ({
   };
 
   return (
-    <div className="p-6 bg-surface rounded-2xl shadow-lg">
+    <div className="p-6 bg-surface rounded-2xl border border-gray-200">
       <h3 className="mb-6 text-3xl font-bold text-center text-primary">ຈັດການການໂຫວດ</h3>
 
       {/* Select Food Packs for Voting */}
-      <div className="mb-8 p-6 bg-background rounded-lg shadow-md">
+      <div className="mb-8 p-6 bg-background rounded-lg border border-gray-200">
         <h4 className="mb-4 text-xl font-semibold text-primary">ເລືອກອາຫານສຳລັບຊຸດໂຫວດ:</h4>
         <div className="flex flex-wrap items-center gap-4 mb-6">
           <CategoryFilter
@@ -90,7 +90,7 @@ const VoteSelection = ({
             placeholder="ຄົ້ນຫາຊື່ເມນູ..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-grow px-4 py-3 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
+            className="flex-grow px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors"
           />
         </div>
 
@@ -98,7 +98,7 @@ const VoteSelection = ({
           {filteredAdminFoodItems.map(food => (
             <div
               key={food.id}
-              className={`p-3 border rounded-lg flex flex-col items-center shadow-sm cursor-pointer transition-all duration-200
+              className={`p-3 border rounded-lg flex flex-col items-center cursor-pointer transition-all duration-200
                 ${adminSelectedFoodForPack.includes(food.id) ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200 hover:bg-gray-50'}
               `}
               onClick={() => handleFoodSelectForPack(food.id)}
@@ -117,14 +117,14 @@ const VoteSelection = ({
           <button
             onClick={handleAddPack}
             disabled={adminSelectedFoodForPack.length === 0}
-            className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary shadow-md rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ເພີ່ມຊຸດອາຫານ ({adminSelectedFoodForPack.length})
           </button>
           <button
             onClick={() => setAdminSelectedFoodForPack([])}
             disabled={adminSelectedFoodForPack.length === 0}
-            className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-gray-400 shadow-md rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-gray-400 rounded-lg hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ລ້າງການເລືອກ
           </button>
@@ -132,11 +132,11 @@ const VoteSelection = ({
       </div>
 
       {adminFinalVotePacks.length > 0 && (
-        <div className="p-6 bg-background rounded-lg shadow-md">
+        <div className="p-6 bg-background rounded-lg border border-gray-200">
           <h4 className="mb-4 text-xl font-semibold text-primary">ຊຸດອາຫານສຳລັບການໂຫວດ:</h4>
           <div className="space-y-3">
             {adminFinalVotePacks.map((pack, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+              <div key={index} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
                 <span className="font-medium text-primary">
                   {foodItems.find(f => f.id === pack[0])?.name} {pack.length > 1 ? `& ${foodItems.find(f => f.id === pack[1])?.name}` : ''}
                 </span>
@@ -152,7 +152,7 @@ const VoteSelection = ({
           <button
             onClick={handleStartVotingWithPacks}
             disabled={isStartingVote}
-            className="mt-6 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary shadow-md rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-6 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isStartingVote ? 'ກຳລັງໂຫວດ...' : (editingDate ? 'ອັບເດດການໂຫວດ' : 'ເລີ່ມການໂຫວດຊຸດອາຫານ')}
           </button>

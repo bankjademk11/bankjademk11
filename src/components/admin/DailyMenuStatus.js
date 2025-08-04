@@ -111,7 +111,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
 
   return (
-    <div className="p-6 bg-surface rounded-2xl shadow-lg">
+    <div className="p-6 bg-surface rounded-2xl border border-gray-200">
       <h3 className="mb-6 text-3xl font-bold text-center text-primary">ສະຖານະເມນູປະຈຳວັນ</h3>
 
       <div className="mb-6">
@@ -121,7 +121,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           id="status-date-picker"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
+          className="block w-full px-4 py-3 mt-1 text-lg border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors"
         />
       </div>
 
@@ -129,7 +129,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
       {error && <p className="text-center text-red-500">ຂໍ້ຜິດພາດ: {error}</p>}
 
       {!loading && !error && dailyMenu && (
-        <div className="bg-background p-6 rounded-lg shadow-md">
+        <div className="bg-background p-6 rounded-lg border border-gray-200">
           <h4 className="mb-4 text-xl font-semibold text-primary">ສະຖານະເມນູສຳລັບວັນທີ {new Date(dailyMenu.date).toLocaleDateString()}:</h4>
           <p className="mb-4 text-lg"><strong>ສະຖານະ:</strong> <span className={`font-bold ${dailyMenu.status === 'voting' ? 'text-blue-600' : dailyMenu.status === 'closed' ? 'text-red-600' : dailyMenu.status === 'admin_set' ? 'text-green-600' : 'text-secondary'}`}>{dailyMenu.status === 'idle' ? 'ບໍ່ມີກິດຈະກຳ' : dailyMenu.status === 'voting' ? 'ກຳລັງໂຫວດ' : dailyMenu.status === 'closed' ? 'ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ແອັດມິນກຳນົດ' : dailyMenu.status}</span></p>
 
@@ -137,7 +137,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             <div className="mt-6 text-center">
               <button
                 onClick={handleCreateMenu}
-                className="px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+                className="px-6 py-3 bg-primary text-white font-bold rounded-lg hover:bg-opacity-90 transition-colors"
               >
                 ສ້າງເມນູສຳລັບວັນທີນີ້
               </button>
@@ -149,7 +149,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <p className="text-lg font-semibold text-primary mb-3 cursor-pointer" onClick={handleOpenAllVotedMenusPopup}>ເມນູທີ່ກຳລັງໂຫວດ:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dailyMenu.vote_options.map((pack, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
+                  <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 flex items-center justify-between">
                     <span className="text-base font-medium text-primary">{pack.name}</span>
                     <span className="text-base font-semibold text-accent">{pack.votes} ໂຫວດ</span>
                   </div>
@@ -158,7 +158,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <div className="mt-6 text-center">
                 <button
                   onClick={() => handleCloseVoting(dailyMenu.date)}
-                  className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors"
+                  className="px-6 py-3 bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors"
                 >
                   ປິດໂຫວດ
                 </button>
@@ -177,7 +177,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             {dailyMenu.status !== 'admin_set' && (
               <button
                 onClick={() => handleStatusChange(dailyMenu.date, dailyMenu.is_visible ? 'disabled' : 'idle')}
-                className={`px-6 py-3 text-sm font-bold rounded-lg shadow-md transition-colors
+                className={`px-6 py-3 text-sm font-bold rounded-lg transition-colors
                   ${dailyMenu.is_visible ? 'bg-gray-400 hover:bg-gray-500' : 'bg-green-500 hover:bg-green-600'}
                   text-white
                 `}
@@ -189,7 +189,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             )}
             <button
               onClick={openDeleteModal}
-              className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg shadow-md hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-6 py-3 text-sm bg-red-500 text-white font-bold rounded-lg hover:bg-red-600 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
@@ -197,7 +197,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
-              className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg shadow-md hover:bg-opacity-90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="px-6 py-3 text-sm bg-primary text-white font-bold rounded-lg hover:bg-opacity-90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
@@ -213,7 +213,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg shadow-2xl max-w-sm w-full">
+          <div className="bg-white p-8 rounded-lg max-w-sm w-full">
             <h4 className="text-2xl font-bold text-center text-gray-800 mb-4">ຢືນຢັນການລຶບ</h4>
             <p className="text-center text-gray-600 mb-8">
               ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ {dailyMenu && new Date(dailyMenu.date).toLocaleDateString()} ແທ້ໆບໍ່?
