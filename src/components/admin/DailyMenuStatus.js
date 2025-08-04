@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import AllVotedMenusSummaryPopup from './AllVotedMenusSummaryPopup';
+import { FaBan, FaTrash, FaEdit, FaCheckCircle } from 'react-icons/fa';
 
 const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate, handleCloseVoting, handleEditMenuAndNavigateToVoting }) => {
   const [dailyMenu, setDailyMenu] = useState(null);
@@ -194,7 +195,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
                 disabled={dailyMenu.status === 'admin_set'}
                 title={dailyMenu.status === 'closed' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
-                🚫
+                <FaBan />
               </button>
             )}
             {dailyMenu.status === 'disabled' && (
@@ -202,7 +203,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
                 onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
                 className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
               >
-                ✅
+                <FaCheckCircle />
               </button>
             )}
             <button
@@ -211,7 +212,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
-              🗑️
+              <FaTrash />
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
@@ -219,7 +220,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
-              ✏️
+              <FaEdit />
             </button>
           </div>
         </div>
