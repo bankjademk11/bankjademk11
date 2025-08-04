@@ -94,32 +94,24 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
   const actionButtonProps = useMemo(() => {
     if (!dailyMenu) return { disabled: true, title: '' };
 
-    const { status } = dailyMenu;
-    // Buttons are enabled ONLY when status is 'disabled'
-    const disabled = status !== 'disabled';
+    const { status, is_visible } = dailyMenu;
+
+    // Disable edit/delete if voting is active or has been closed
+    const isVotingActiveOrClosed = status === 'voting' || status === 'closed';
+    // Allow actions if the menu is idle, or if it has been set by admin, or if it's manually disabled
+    const canTakeAction = status === 'idle' || status === 'admin_set' || !is_visible;
+
+    const disabled = isVotingActiveOrClosed || !canTakeAction;
     let title = '';
 
-    if (disabled) {
-      switch (status) {
-        case 'idle':
-          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນສະຖານະບໍ່ມີກິດຈະກຳ';
-          break;
-        case 'voting':
-          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ';
-          break;
-        case 'admin_set':
-          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອແອັດມິນກຳນົດເມນູ';
-          break;
-        case 'closed':
-          title = 'ບໍ່ສາມາດແກ້ໄຂ ຫຼື ລຶບໄດ້ເມື່ອປິດໂຫວດແລ້ວ';
-          break;
-        default:
-          title = 'ບໍ່ສາມາດດຳເນີນການໄດ້ໃນສະຖານະນີ້';
-      }
+    if (isVotingActiveOrClosed) {
+      title = `ບໍ່ສາມາດດຳເນີນການໄດ້ໃນຂະນະທີ່ກຳລັງໂຫວດ ຫຼື ປິດໂຫວດໄປແລ້ວ`;
+    } else if (!canTakeAction) {
+      title = 'ບໍ່ສາມາດດຳເນີນການໄດ້ໃນສະຖານະນີ້';
     } else {
-      // Enabled state title
-      title = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບເມນູທີ່ປິດໃຊ້ງານໄດ້';
+      title = 'ສາມາດແກ້ໄຂ ຫຼື ລຶບເມນູໄດ້';
     }
+
     return { disabled, title };
   }, [dailyMenu]);
 
