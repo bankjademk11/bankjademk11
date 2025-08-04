@@ -188,22 +188,17 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
-            {dailyMenu.status !== 'disabled' && (
+            {dailyMenu.status !== 'admin_set' && (
               <button
-                onClick={() => handleStatusChange(dailyMenu.date, 'disabled')}
-                className="px-6 py-3 text-sm bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition-colors"
-                disabled={dailyMenu.status === 'admin_set'}
-                title={dailyMenu.status === 'closed' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
+                onClick={() => handleStatusChange(dailyMenu.date, dailyMenu.is_visible ? 'disabled' : 'idle')}
+                className={`px-6 py-3 text-sm font-bold rounded-lg shadow-md transition-colors
+                  ${dailyMenu.is_visible ? 'bg-gray-400 hover:bg-gray-500' : 'bg-green-500 hover:bg-green-600'}
+                  text-white
+                `}
+                title={dailyMenu.is_visible ? 'ປິດໃຊ້ງານເມນູ' : 'ເປີດໃຊ້ງານເມນູ'}
               >
-                <FaBan />
-              </button>
-            )}
-            {dailyMenu.status === 'disabled' && (
-              <button
-                onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
-                className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
-              >
-                <FaCheckCircle />
+                {dailyMenu.is_visible ? <FaBan /> : <FaCheckCircle />}
+                <span className="ml-2">{dailyMenu.is_visible ? 'ປິດໃຊ້ງານ' : 'ເປີດໃຊ້ງານ'}</span>
               </button>
             )}
             <button
