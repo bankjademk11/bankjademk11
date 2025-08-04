@@ -182,10 +182,10 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           {dailyMenu.status === 'closed' && dailyMenu.winning_food_item_id && (
-            <p className="mt-6 text-lg"><strong>ເມນູທີ່ຊະນະ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.winning_food_item_id)}</span></p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ຊະນະ:</strong> <span className="font-semibold text-primary">{foodItems.find(item => item.id === dailyMenu.winning_food_item_id)?.name}</span></p>
           )}
           {dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id && (
-            <p className="mt-6 text-lg"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.admin_set_food_item_id)}</span></p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> <span className="font-semibold text-primary">{foodItems.find(item => item.id === dailyMenu.admin_set_food_item_id)?.name}</span></p>
           )}
 
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
