@@ -830,6 +830,7 @@ app.get('/api/reports/least-popular-foods', async (req, res) => {
     }
 
     try {
+        // This query is more robust and handles cases where vote_details might be null or not a JSON array.
         const query = `
             WITH food_votes AS (
                 SELECT
@@ -837,7 +838,10 @@ app.get('/api/reports/least-popular-foods', async (req, res) => {
                     CAST(pack_data->>'votes' AS INTEGER) AS votes
                 FROM
                     daily_results dr,
-                    jsonb_array_elements(dr.vote_details) AS pack_data
+                    jsonb_array_elements(CASE
+                        WHEN jsonb_typeof(dr.vote_details) = 'array' THEN dr.vote_details
+                        ELSE '[]'::jsonb
+                    END) AS pack_data
                 WHERE
                     dr.date BETWEEN $1 AND $2
             ),
@@ -878,35 +882,23 @@ app.get('/api/reports/voter-turnout', async (req, res) => {
     }
 
     try {
+        // This query is more robust and handles cases where voted_users might be null or not a JSON object.
         const query = `
-            SELECT
-                date,
-                jsonb_object_keys(voted_users)::integer AS voter_count
-            FROM
-                daily_menu_states
-            WHERE
-                date BETWEEN $1 AND $2
-                AND status IN ('voting', 'closed')
-            ORDER BY
-                date ASC;
-        `;
-
-        // The query above has a flaw: jsonb_object_keys returns a SETOF text, which can't be cast to integer directly.
-        // A better approach is to get the length of the keys array.
-        const correctedQuery = `
             SELECT 
                 date, 
-                jsonb_array_length(jsonb_object_keys(voted_users)) as voter_count
+                CASE
+                    WHEN jsonb_typeof(voted_users) = 'object' THEN jsonb_array_length(jsonb_object_keys(voted_users))
+                    ELSE 0
+                END as voter_count
             FROM 
                 daily_menu_states
             WHERE 
                 date BETWEEN $1 AND $2
-                AND status IN ('voting', 'closed', 'admin_set')
             ORDER BY 
                 date ASC;
         `;
 
-        const result = await pool.query(correctedQuery, [startDate, endDate]);
+        const result = await pool.query(query, [startDate, endDate]);
         res.json(result.rows);
     } catch (err) {
         console.error('Error fetching voter turnout:', err.stack);
