@@ -1,13 +1,20 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import FoodPackDetailPopup from './FoodPackDetailPopup';
+import AllVotedMenusSummaryPopup from './AllVotedMenusSummaryPopup';
 
 const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndNavigate, selectedDate, setSelectedDate, handleCloseVoting, handleEditMenuAndNavigateToVoting }) => {
-  const [selectedFoodPack, setSelectedFoodPack] = useState(null);
-  const [showFoodPackPopup, setShowFoodPackPopup] = useState(false);
   const [dailyMenu, setDailyMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showAllVotedMenusPopup, setShowAllVotedMenusPopup] = useState(false);
+
+  const handleOpenAllVotedMenusPopup = () => {
+    setShowAllVotedMenusPopup(true);
+  };
+
+  const handleCloseAllVotedMenusPopup = () => {
+    setShowAllVotedMenusPopup(false);
+  };
 
   const fetchDailyMenuForSelectedDate = useCallback(async () => {
     setLoading(true);
@@ -78,18 +85,9 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
     }
   };
 
-  const getFoodDetailsByIds = (foodIds) => {
-    return foodIds.map(id => foodItems.find(item => item.id === id)).filter(Boolean);
-  };
-
-  const handleFoodPackClick = (pack) => {
-    setSelectedFoodPack(pack);
-    setShowFoodPackPopup(true);
-  };
-
-  const handleCloseFoodPackPopup = () => {
-    setShowFoodPackPopup(false);
-    setSelectedFoodPack(null);
+  const getFoodNameById = (id) => {
+    const food = foodItems.find(item => item.id === id);
+    return food ? food.name : 'ບໍ່ພົບເມນູ';
   };
 
   const actionButtonProps = useMemo(() => {
@@ -161,10 +159,10 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
           {dailyMenu.status === 'voting' && dailyMenu.vote_options && dailyMenu.vote_options.length > 0 && (
             <div className="mt-6">
-              <p className="text-lg font-semibold text-primary mb-3">ເມນູທີ່ກຳລັງໂຫວດ:</p>
+              <p className="text-lg font-semibold text-primary mb-3 cursor-pointer" onClick={handleOpenAllVotedMenusPopup}>ເມນູທີ່ກຳລັງໂຫວດ:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dailyMenu.vote_options.map((pack, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between cursor-pointer" onClick={() => handleFoodPackClick(pack)}>
+                  <div key={index} className="bg-white rounded-lg p-4 shadow-sm flex items-center justify-between">
                     <span className="text-base font-medium text-primary">{pack.name}</span>
                     <span className="text-base font-semibold text-accent">{pack.votes} ໂຫວດ</span>
                   </div>
@@ -182,10 +180,10 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           )}
 
           {dailyMenu.status === 'closed' && dailyMenu.winning_food_item_id && (
-            <p className="mt-6 text-lg"><strong>ເມນູທີ່ຊະນະ:</strong> <span className="font-semibold text-primary">{foodItems.find(item => item.id === dailyMenu.winning_food_item_id)?.name}</span></p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ຊະນະ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.winning_food_item_id)}</span></p>
           )}
           {dailyMenu.status === 'admin_set' && dailyMenu.admin_set_food_item_id && (
-            <p className="mt-6 text-lg"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> <span className="font-semibold text-primary">{foodItems.find(item => item.id === dailyMenu.admin_set_food_item_id)?.name}</span></p>
+            <p className="mt-6 text-lg"><strong>ເມນູທີ່ແອັດມິນຕັ້ງຄ່າ:</strong> <span className="font-semibold text-primary">{getFoodNameById(dailyMenu.admin_set_food_item_id)}</span></p>
           )}
 
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
@@ -256,10 +254,11 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
         </div>
       )}
 
-      {showFoodPackPopup && selectedFoodPack && (
-        <FoodPackDetailPopup
-          foodPackDetails={getFoodDetailsByIds(selectedFoodPack.foodIds)}
-          onClose={handleCloseFoodPackPopup}
+      {showAllVotedMenusPopup && (
+        <AllVotedMenusSummaryPopup
+          dailyMenu={dailyMenu}
+          foodItems={foodItems}
+          onClose={handleCloseAllVotedMenusPopup}
         />
       )}
     </div>
