@@ -156,9 +156,9 @@ const DailySummary = ({ BACKEND_URL }) => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(dailyState)} bgColor="bg-blue-100 text-blue-800" isLoading={loading} />
-                <StatCard icon={<FaTrophy />} title="ผู้ชนะวันนี้" value={dailyResult?.winning_food_name || '—'} bgColor="bg-yellow-100 text-yellow-800" isLoading={loading} />
-                <StatCard icon={<FaUsers />} title="คนโหวตวันนี้" value={dailyResult?.total_votes ?? '—'} bgColor="bg-green-100 text-green-800" isLoading={loading} />
-                <StatCard icon={<FaChartLine />} title="เมนูยอดนิยม (เดือนนี้)" value={overallSummary?.monthly?.winning_food_name || '—'} bgColor="bg-purple-100 text-purple-800" isLoading={overallLoading} />
+                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={dailyResult?.winning_food_name || '—'} bgColor="bg-yellow-100 text-yellow-800" isLoading={loading} />
+                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={dailyResult?.total_votes ?? '—'} bgColor="bg-green-100 text-green-800" isLoading={loading} />
+                <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} bgColor="bg-purple-100 text-purple-800" isLoading={overallLoading} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
@@ -248,7 +248,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                 </div>
 
                 <div className="bg-surface p-4 md:p-6 rounded-2xl shadow-lg">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaUserCheck className="mr-2 text-blue-500" /> สถิติการมีส่วนร่วมของผู้ใช้</h3>
+                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaUserCheck className="mr-2 text-blue-500" /> ສະຖິຕິການມີສ່ວນຮ່ວມຂອງຜູ້ໃຊ້</h3>
                     <div className="h-60">
                         {dataLoading && <div className="text-center pt-16 text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
                         {dataError && <div className="text-center pt-16 text-red-500">{dataError}</div>}
@@ -260,7 +260,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                                     <YAxis />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend wrapperStyle={{ bottom: -10, left: 20 }} />
-                                    <Line type="monotone" dataKey="voter_count" name="จำนวนผู้โหวต" stroke="#3B82F6" strokeWidth={2} />
+                                    <Line type="monotone" dataKey="voter_count" name="ຈຳນວນຜູ້ໂຫວດ" stroke="#3B82F6" strokeWidth={2} />
                                 </LineChart>
                             </ResponsiveContainer>
                         ) : (
