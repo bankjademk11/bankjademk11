@@ -7,16 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#2c3e50',       // Navy Blue
-        secondary: '#8e95a5',     // Muted Gray
-        accent: '#f39c12',        // Golden Yellow
-        background: '#f8f9fa',   // Off-white
-        surface: '#ffffff',       // Pure White for cards
-        success: '#27ae60',      // Green
-        danger: '#c0392b',       // Red
+        primary: '#388E3C',       // Dark Green
+        secondary: '#66BB6A',     // Medium Green
+        accent: '#FFC107',        // Amber
+        background: '#E8F5E9',   // Lightest Green
+        surface: '#FFFFFF',       // Pure White for cards
+        success: '#4CAF50',      // Standard Green
+        danger: '#F44336',       // Standard Red
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Noto Serif Lao', 'Inter', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 12px rgba(0, 0, 0, 0.08)',
