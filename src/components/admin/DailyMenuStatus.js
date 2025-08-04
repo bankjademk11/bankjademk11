@@ -194,7 +194,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
                 disabled={dailyMenu.status === 'admin_set'}
                 title={dailyMenu.status === 'closed' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ບໍ່ສາມາດປິດໃຊ້ງານເມນູທີ່ແອັດມິນກຳນົດ' : ''}
               >
-                ປິດໃຊ້ງານ
+                🚫
               </button>
             )}
             {dailyMenu.status === 'disabled' && (
@@ -202,7 +202,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
                 onClick={() => handleStatusChange(dailyMenu.date, 'idle')}
                 className="px-6 py-3 text-sm bg-green-500 text-white font-bold rounded-lg shadow-md hover:bg-green-600 transition-colors"
               >
-                ເປີດໃຊ້ງານ (ເລີ່ມໂຫວດ)
+                ✅
               </button>
             )}
             <button
@@ -211,7 +211,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
-              ລຶບ
+              🗑️
             </button>
             <button
               onClick={() => handleEditMenuAndNavigateToVoting(dailyMenu.date, dailyMenu.vote_options)}
@@ -219,7 +219,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               disabled={actionButtonProps.disabled}
               title={actionButtonProps.title}
             >
-              ແກ້ໄຂ
+              ✏️
             </button>
           </div>
         </div>
