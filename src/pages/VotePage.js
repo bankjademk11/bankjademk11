@@ -92,6 +92,9 @@ const VotePage = ({
     if (dailyMenu.status === 'error') {
       return <p className="text-center text-xl text-red-500">ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນ.</p>;
     }
+    if (!dailyMenu.is_visible) {
+      return <p className="text-center text-xl text-secondary">ເມນູສຳລັບວັນທີນີ້ຖືກປິດໃຊ້ງານ.</p>;
+    }
     if (dailyMenu.status === 'idle') {
       return <p className="text-center text-xl text-secondary">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>;
     }
