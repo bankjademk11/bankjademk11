@@ -786,6 +786,41 @@ app.get('/api/reports/daily-summary', async (req, res) => {
     }
 });
 
+// GET daily food votes summary for charting
+app.get('/api/reports/daily-food-votes', async (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required query parameters.' });
+    }
+
+    try {
+        const query = `
+            SELECT
+                f.id AS food_id,
+                f.name AS food_name,
+                SUM(CAST(pack_data->>'votes' AS INTEGER)) AS total_votes
+            FROM
+                daily_results dr,
+                jsonb_array_elements(dr.vote_details) AS pack_data,
+                jsonb_array_elements_text(pack_data->'foodIds') AS food_id_text
+            JOIN
+                foods f ON f.id = CAST(food_id_text AS INTEGER)
+            WHERE
+                dr.date BETWEEN $1 AND $2
+            GROUP BY
+                f.id, f.name
+            ORDER BY
+                total_votes DESC;
+        `;
+        const result = await pool.query(query, [startDate, endDate]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching daily food votes summary:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 // Basic route
 app.get('/', (req, res) => {
