@@ -292,7 +292,7 @@ app.post('/api/foods/batch', async (req, res) => {
 });
 
 // GET all food items
-app.get('/api/foods', async (req, res) => {
+app.get('/api/foods', async (req, res) => { 
   try {
     const result = await pool.query('SELECT * FROM foods ORDER BY id ASC');
     res.json(result.rows);
