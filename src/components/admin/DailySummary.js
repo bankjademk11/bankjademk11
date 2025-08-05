@@ -293,24 +293,6 @@ const DailySummary = ({ BACKEND_URL }) => {
                 </div>
 
                 <div className="bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaThumbsUp className="mr-2 text-green-500" /> 5 ເມນູໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ</h3>
-                    {dataLoading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
-                    {!dataLoading && mostPopularFoods.length > 0 && (
-                        <ul className="space-y-2">
-                            {mostPopularFoods.map((food, index) => (
-                                <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                    <span className="text-secondary font-medium">{food.food_name}</span>
-                                    <span className="font-bold text-green-600">{food.total_votes} ໂຫວດ</span>
-                                </li>
-                            ))}
-                        </ul>
-                    )}
-                    {!dataLoading && mostPopularFoods.length === 0 && (
-                        <div className="text-center py-4 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
-                    )}
-                </div>
-
-                <div className="bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
                     <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaUserCheck className="mr-2 text-blue-500" /> ສະຖິຕິການມີສ່ວນຮ່ວມຂອງຜູ້ໃຊ້</h3>
                     <div className="h-60">
                         {dataLoading && <div className="text-center pt-16 text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
