@@ -889,6 +889,57 @@ app.get('/api/reports/least-popular-foods', async (req, res) => {
     }
 });
 
+// GET most popular food items
+app.get('/api/reports/most-popular-foods', async (req, res) => {
+    const { startDate, endDate, limit = 5 } = req.query;
+
+    if (!startDate || !endDate) {
+        return res.status(400).json({ error: 'startDate and endDate are required query parameters.' });
+    }
+
+    try {
+        const query = `
+            WITH food_votes AS (
+                SELECT
+                    CAST(jsonb_array_elements_text(pack_data->'foodIds') AS INTEGER) AS food_id,
+                    CAST(pack_data->>'votes' AS INTEGER) AS votes
+                FROM
+                    daily_results dr,
+                    jsonb_array_elements(CASE
+                        WHEN jsonb_typeof(dr.vote_details) = 'array' THEN dr.vote_details
+                        ELSE '[]'::jsonb
+                    END) AS pack_data
+                WHERE
+                    dr.date BETWEEN $1 AND $2
+            ),
+            aggregated_votes AS (
+                SELECT
+                    food_id,
+                    SUM(votes) as total_votes
+                FROM
+                    food_votes
+                GROUP BY
+                    food_id
+            )
+            SELECT
+                f.name AS food_name,
+                COALESCE(av.total_votes, 0) AS total_votes
+            FROM
+                foods f
+            LEFT JOIN
+                aggregated_votes av ON f.id = av.food_id
+            ORDER BY
+                total_votes DESC
+            LIMIT $3;
+        `;
+        const result = await pool.query(query, [startDate, endDate, limit]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching most popular foods:', err.stack);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 // GET voter turnout over time
 app.get('/api/reports/voter-turnout', async (req, res) => {
     const { startDate, endDate } = req.query;

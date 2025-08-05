@@ -143,12 +143,14 @@ const DailySummary = ({ BACKEND_URL }) => {
 
             const chartPromise = fetch(`${BACKEND_URL}/api/reports/daily-food-votes?startDate=${chartStartDate}&endDate=${chartEndDate}`).then(res => res.json());
             const leastPopularPromise = fetch(`${BACKEND_URL}/api/reports/least-popular-foods?startDate=${chartStartDate}&endDate=${chartEndDate}&limit=5`).then(res => res.json());
+            const mostPopularPromise = fetch(`${BACKEND_URL}/api/reports/most-popular-foods?startDate=${chartStartDate}&endDate=${chartEndDate}&limit=5`).then(res => res.json()); // New promise
             const voterTurnoutPromise = fetch(`${BACKEND_URL}/api/reports/voter-turnout?startDate=${chartStartDate}&endDate=${chartEndDate}`).then(res => res.json());
 
             try {
-                const [chartResult, leastPopularResult, voterTurnoutResult] = await Promise.all([chartPromise, leastPopularPromise, voterTurnoutPromise]);
+                const [chartResult, leastPopularResult, voterTurnoutResult, mostPopularResult] = await Promise.all([chartPromise, leastPopularPromise, voterTurnoutPromise, mostPopularPromise]); // Add mostPopularResult
                 setChartData(chartResult);
                 setLeastPopularFoods(leastPopularResult);
+                setMostPopularFoods(mostPopularResult); // Set most popular foods
                 setVoterTurnoutData(voterTurnoutResult.map(d => ({...d, date: new Date(d.date).toLocaleDateString('en-CA')}))); // Format date for display
             } catch (err) {
                 setDataError('Failed to load dashboard data');
@@ -267,6 +269,24 @@ const DailySummary = ({ BACKEND_URL }) => {
                         </ul>
                     )}
                     {!dataLoading && leastPopularFoods.length === 0 && (
+                        <div className="text-center py-4 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
+                    )}
+                </div>
+
+                <div className="bg-surface p-4 md:p-6 rounded-2xl border border-gray-200">
+                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaThumbsUp className="mr-2 text-green-500" /> 5 ເມນູໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ</h3>
+                    {dataLoading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
+                    {!dataLoading && mostPopularFoods.length > 0 && (
+                        <ul className="space-y-2">
+                            {mostPopularFoods.map((food, index) => (
+                                <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                    <span className="text-secondary font-medium">{food.food_name}</span>
+                                    <span className="font-bold text-green-600">{food.total_votes} ໂຫວດ</span>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                    {!dataLoading && mostPopularFoods.length === 0 && (
                         <div className="text-center py-4 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
                     )}
                 </div>
