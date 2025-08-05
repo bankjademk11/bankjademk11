@@ -65,7 +65,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredFoodItems.map((food) => (
-            <div key={food.id} className="bg-surface rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out flex flex-col cursor-pointer" onClick={() => handleCardClick(food)}>
+            <div key={food.id} className="bg-surface rounded-2xl shadow-xl overflow-hidden transform hover:-translate-y-2 transition-transform duration-300 ease-in-out flex flex-col cursor-pointer" onClick={() => handleCardClick(food)}>
               <div className="relative">
                 <img
                   src={food.image}
