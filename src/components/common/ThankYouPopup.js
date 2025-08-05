@@ -9,7 +9,7 @@ const ThankYouPopup = ({ show, onClose, message }) => {
         <h2 className="text-3xl font-bold text-primary mb-6">{message}</h2>
         <button
           onClick={onClose}
-          className="px-8 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+          className="px-8 py-3 bg-primary text-white rounded-lg shadow-lg hover:bg-opacity-90 hover:shadow-xl transition-all duration-300"
         >
           ຕົກລົງ
         </button>

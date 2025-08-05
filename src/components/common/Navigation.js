@@ -8,7 +8,7 @@ const Navigation = ({ isAdmin }) => {
 
   return (
     <nav className="flex justify-center mb-10">
-      <div className="flex space-x-2 p-2 bg-gray-100 rounded-lg">
+      <div className="flex space-x-2 p-2 bg-gray-100 rounded-lg shadow-md">
         {isAdmin && (
           <NavLink
             to="/admin/my-foods"
@@ -17,12 +17,14 @@ const Navigation = ({ isAdmin }) => {
             ເມນູສ່ວນຕົວ
           </NavLink>
         )}
-        <NavLink
-          to="/vote"
-          className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}
-        >
-          ໂຫວດເມນູປະຈຳວັນ
-        </NavLink>
+        {isAdmin && (
+          <NavLink
+            to="/vote"
+            className={({ isActive }) => `${navLinkClasses} ${isActive ? activeLinkClasses : inactiveLinkClasses}`}
+          >
+            ໂຫວດເມນູປະຈຳວັນ
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink
             to="/admin"

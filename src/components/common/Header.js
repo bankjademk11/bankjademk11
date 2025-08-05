@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'; // Assuming you use React Router for na
 
 const Header = ({ userId }) => {
   return (
-    <header className="bg-surface shadow-soft mb-8">
+    <header className="bg-surface shadow-medium border-b border-gray-200 mb-8">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
         <Link to="/" className="flex items-center space-x-4">
           <img src="/FoodODG.png" alt="FoodODG Logo" className="h-12 w-auto" />

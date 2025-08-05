@@ -16,7 +16,7 @@ const FoodDetailPopup = ({ food, reviews, averageRating, onClose, BACKEND_URL })
           <img
             src={food.image}
             alt={food.name}
-            className="w-full h-64 object-cover rounded-md mb-4"
+            className="w-full h-64 object-cover rounded-lg mb-4"
             onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
           />
           <h2 className="text-3xl font-bold text-primary mb-2">{food.name}</h2>
@@ -32,7 +32,7 @@ const FoodDetailPopup = ({ food, reviews, averageRating, onClose, BACKEND_URL })
           {reviews && reviews.length > 0 ? (
             <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
               {reviews.map(review => (
-                <div key={review.id} className="bg-gray-100 p-3 rounded-lg shadow-sm">
+                <div key={review.id} className="bg-gray-100 p-3 rounded-lg shadow-md">
                   <div className="flex justify-between items-center mb-1">
                     <p className="font-semibold text-primary">ຄະແນນ: {review.rating} / 5</p>
                     <p className="text-xs text-gray-500">{new Date(review.created_at).toLocaleDateString()}</p>

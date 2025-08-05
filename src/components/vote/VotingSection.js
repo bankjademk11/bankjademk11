@@ -17,7 +17,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
   };
 
   return (
-    <div className="p-6 bg-surface rounded-xl shadow-soft">
+    <div className="p-6 bg-surface rounded-xl shadow-medium">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-primary">ໂຫວດເມນູປະຈຳວັນ</h2>
         <p className="text-secondary mt-1">ເລືອກຊຸດອາຫານທີ່ທ່ານຕ້ອງການ</p>
@@ -37,7 +37,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
           return (
             <div 
               key={index} 
-              className={`bg-white rounded-xl shadow-soft flex flex-col transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1
+              className={`bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1 hover:shadow-lg
                 ${isSelected ? 'ring-2 ring-primary' : 'border border-gray-200'}
               `}
             >
@@ -48,7 +48,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
                       key={food.id}
                       src={food.image}
                       alt={food.name}
-                      className="w-24 h-24 object-cover rounded-lg shadow-sm"
+                      className="w-24 h-24 object-cover rounded-lg shadow-md"
                       onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                     />
                   ))}
@@ -75,7 +75,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
         <div className="text-center mt-8">
           <button
             onClick={onCancelVote}
-            className="px-6 py-3 bg-danger text-white font-semibold rounded-lg shadow-md hover:bg-opacity-90 transition-colors"
+            className="px-6 py-3 bg-danger text-white font-semibold rounded-lg shadow-lg hover:bg-opacity-90 hover:shadow-xl transition-all duration-300"
           >
             ຍົກເລີກການໂຫວດ
           </button>

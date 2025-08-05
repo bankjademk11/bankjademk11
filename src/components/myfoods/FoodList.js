@@ -70,7 +70,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                 <img
                   src={food.image}
                   alt={food.name}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover rounded-lg"
                   onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
                 />
                 <div className="absolute top-2 right-2 bg-accent text-white text-sm font-bold px-3 py-1 rounded-full shadow-md">
@@ -91,7 +91,7 @@ const FoodList = ({ filteredFoodItems, handleEditFood, handleDeleteFood, BACKEND
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteFood(food.id); }}
-                    className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-full shadow-md hover:bg-red-600 transition-colors duration-300"
+                    className="flex-1 px-4 py-2 bg-red-500 text-white font-semibold rounded-full shadow-lg hover:bg-red-600 hover:shadow-xl transition-all duration-300"
                   >
                     ລຶບ
                   </button>

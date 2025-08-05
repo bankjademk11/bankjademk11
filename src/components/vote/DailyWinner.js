@@ -52,7 +52,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
 
   if (!winningFood) {
     return (
-      <div className="text-center p-8 bg-surface rounded-xl shadow-soft">
+      <div className="text-center p-8 bg-surface rounded-xl shadow-medium">
         <h3 className="text-2xl font-bold text-primary">ບໍ່ມີເມນູປະຈຳວັນ</h3>
         <p className="text-secondary mt-2">ກະລຸນາລໍຖ້າແອັດມິນຕັ້ງຄ່າເມນູ ຫຼື ເລີ່ມການໂຫວດ</p>
       </div>
@@ -100,7 +100,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           </div>
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-xl shadow-soft inline-block max-w-sm">
+        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 inline-block max-w-sm">
           <img
             src={winningFood.image}
             alt={winningFood.name}
@@ -206,7 +206,7 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
             </button>
             <button
               type="submit"
-              className="w-full px-4 py-2 bg-primary text-white font-bold rounded-md shadow-sm hover:bg-opacity-90 transition-colors"
+              className="w-full px-4 py-2 bg-primary text-white font-bold rounded-md shadow-md hover:bg-opacity-90 hover:shadow-lg transition-all duration-300"
             >
               ສົ່ງຄຳເຫັນ
             </button>
@@ -219,7 +219,7 @@ const ReviewButton = ({ foodId, userId, handleReviewSubmit }) => {
   return (
     <button
       onClick={() => setShowReviewForm(true)}
-      className="mt-6 w-full px-4 py-2 bg-accent text-white font-bold rounded-md shadow-md hover:bg-opacity-90 transition-colors"
+      className="mt-6 w-full px-4 py-2 bg-accent text-white font-bold rounded-md shadow-lg hover:bg-opacity-90 hover:shadow-xl transition-all duration-300"
     >
       ໃຫ້ຄະແນນເມນູນີ້
     </button>
