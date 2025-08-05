@@ -103,7 +103,6 @@ const DailySummary = ({ BACKEND_URL }) => {
     useEffect(() => {
         const fetchCurrentDaySummary = async () => {
             setCurrentDayLoading(true);
-            setCurrentDayError(null);
             const today = new Date().toISOString().split('T')[0];
             try {
                 const response = await fetch(`${BACKEND_URL}/api/reports/daily-summary?date=${today}`);
@@ -111,7 +110,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                 const data = await response.json();
                 setCurrentDaySummary(data);
             } catch (err) {
-                setCurrentDayError(err.message);
+                // setCurrentDayError(err.message); // Removed this line
             } finally {
                 setCurrentDayLoading(false);
             }
