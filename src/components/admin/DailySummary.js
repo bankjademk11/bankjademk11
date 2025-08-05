@@ -54,6 +54,7 @@ const DailySummary = ({ BACKEND_URL }) => {
     
     const [chartData, setChartData] = useState([]);
     const [leastPopularFoods, setLeastPopularFoods] = useState([]);
+    const [mostPopularFoods, setMostPopularFoods] = useState([]); // New state for most popular foods
     const [voterTurnoutData, setVoterTurnoutData] = useState([]);
     
     const [dataLoading, setDataLoading] = useState(true);
