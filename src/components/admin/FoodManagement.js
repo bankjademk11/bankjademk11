@@ -11,6 +11,7 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
   const [foodTags, setFoodTags] = useState('');
   const [editingFoodId, setEditingFoodId] = useState(null);
   const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [searchTerm, setSearchTerm] = useState(''); // New search term state
 
   const [selectedCategory, setSelectedCategory] = useState('ທັງໝົດ');
 
@@ -158,18 +159,24 @@ const FoodManagement = ({ BACKEND_URL, showMessage, foodItems, setFoodItems }) =
         showMessage={showMessage}
         isLoading={isLoading} // Pass isLoading state to FoodForm
       />
-      <div className="my-8">
+      <div className="my-8 flex flex-wrap items-center gap-4">
         <CategoryFilter
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
         />
+        <input
+          type="text"
+          placeholder="ຄົ້ນຫາຊື່ເມນູ..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-grow px-4 py-3 text-lg border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors"
+        />
       </div>
       <FoodList
         filteredFoodItems={foodItems.filter(food => {
-          if (selectedCategory === 'ທັງໝົດ') {
-            return true;
-          }
-          return food.tags && food.tags.includes(selectedCategory);
+          const matchesCategory = selectedCategory === 'ທັງໝົດ' || (food.tags && food.tags.includes(selectedCategory));
+          const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
+          return matchesCategory && matchesSearch;
         })}
         handleEditFood={handleEditFood}
         handleDeleteFood={handleDeleteFood}
