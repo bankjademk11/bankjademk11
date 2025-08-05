@@ -123,6 +123,45 @@ pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BO
     console.error('Error ensuring is_visible column in daily_menu_states:', err.stack);
   });
 
+// Create users table if it doesn't exist
+pool.query(`
+  CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  );
+`).then(() => {
+  console.log('Users table ensured.');
+}).catch(err => {
+  console.error('Error ensuring users table:', err.stack);
+});
+
+
+// POST a new user
+app.post('/api/users', async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ error: 'userId is required' });
+  }
+  try {
+    // Use ON CONFLICT to do nothing if the user already exists
+    const result = await pool.query(
+      'INSERT INTO users (user_id) VALUES ($1) ON CONFLICT (user_id) DO NOTHING RETURNING *',
+      [userId]
+    );
+    // Check if a new row was actually inserted
+    if (result.rows.length > 0) {
+      res.status(201).json(result.rows[0]);
+    } else {
+      res.status(200).json({ message: 'User already exists.' });
+    }
+  } catch (err) {
+    console.error('Error saving user:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {
   const { id } = req.params; // food_id

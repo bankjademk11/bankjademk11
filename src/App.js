@@ -67,6 +67,24 @@ const App = () => {
     fetchFoodItems();
   }, [BACKEND_URL, showMessage]);
 
+  useEffect(() => {
+    const registerUser = async () => {
+      if (userId) {
+        try {
+          await fetch(`${BACKEND_URL}/api/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId }),
+          });
+        } catch (error) {
+          console.error("Error registering user:", error);
+        }
+      }
+    };
+
+    registerUser();
+  }, [userId, BACKEND_URL]);
+
   
 
   const handleAdminLogin = () => {
