@@ -162,6 +162,17 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+// GET all users
+app.get('/api/users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Error fetching users:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {
