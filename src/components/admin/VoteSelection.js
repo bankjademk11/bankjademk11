@@ -16,61 +16,15 @@ const VoteSelection = ({
   adminSelectedFoodForPack,
   setAdminSelectedFoodForPack,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  useEffect(() => {
-    if (editingVoteOptions && editingDate === selectedDate) {
-      const packsToLoad = editingVoteOptions.map(pack => pack.foodIds);
-      setAdminFinalVotePacks(packsToLoad);
-    }
-  }, [editingVoteOptions, editingDate, selectedDate, setAdminFinalVotePacks]);
-
-  const filteredAdminFoodItems = foodItems.filter(food => {
-    const matchesCategory = selectedAdminCategory.trim() === 'ທັງໝົດ' || (food.tags && food.tags.includes(selectedAdminCategory));
-    const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const handleFoodSelectForPack = (foodId) => {
-    if (adminSelectedFoodForPack.includes(foodId)) {
-      setAdminSelectedFoodForPack(adminSelectedFoodForPack.filter(id => id !== foodId));
-    } else if (adminSelectedFoodForPack.length < 2) {
-      setAdminSelectedFoodForPack([...adminSelectedFoodForPack, foodId]);
-    } else {
-      setAdminSelectedFoodForPack([adminSelectedFoodForPack[1], foodId]);
-    }
-  };
-
-  const handleAddPack = () => {
-    if (adminSelectedFoodForPack.length > 0) {
-      const newPack = [...adminSelectedFoodForPack].sort((a, b) => a - b);
-      const isDuplicate = adminFinalVotePacks.some(pack => {
-        if (pack.length !== newPack.length) return false;
-        return pack.every((value, index) => value === newPack[index]);
-      });
-
-      if (isDuplicate) {
-        showMessage('ຊຸດອາຫານນີ້ຖືກເພີ່ມແລ້ວ!', 'error');
-        return;
-      }
-
-      setAdminFinalVotePacks([...adminFinalVotePacks, newPack]);
-      setAdminSelectedFoodForPack([]);
-    } else {
-      showMessage('ກະລຸນາເລືອກອາຫານຢ່າງໜ້ອຍ 1 ຊະນິດເພື່ອສ້າງຊຸດ.', 'error');
-    }
-  };
-
-  const handleRemovePack = (indexToRemove) => {
-    setAdminFinalVotePacks(adminFinalVotePacks.filter((_, index) => index !== indexToRemove));
-  };
+  const today = new Date().toISOString().split('T')[0];
+  const isPastDate = selectedDate < today;
 
   const handleStartVotingWithPacks = () => {
     if (adminFinalVotePacks.length === 0) {
       showMessage('ກະລຸນາເພີ່ມຢ່າງໜ້ອຍໜຶ່ງຊຸດອາຫານເພື່ອເລີ່ມການໂຫວດ.', 'error');
       return;
     }
-    handleStartVoting(adminFinalVotePacks, selectedDate);
+    handleStartVoting(adminFinalVotePacks);
   };
 
   return (
@@ -151,7 +105,7 @@ const VoteSelection = ({
           </div>
           <button
             onClick={handleStartVotingWithPacks}
-            disabled={isStartingVote}
+            disabled={isStartingVote || isPastDate}
             className="mt-6 w-full px-6 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary rounded-lg hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isStartingVote ? 'ກຳລັງໂຫວດ...' : (editingDate ? 'ອັບເດດການໂຫວດ' : 'ເລີ່ມການໂຫວດຊຸດອາຫານ')}

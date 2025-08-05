@@ -47,6 +47,9 @@ const AdminDashboard = ({
             timestamp: null,
             date: selectedDate,
           });
+          setEditingVoteOptions(null);
+          setEditingDate(null);
+          setAdminFinalVotePacks([]); // Clear packs if no data for the date
           return;
         }
         if (!response.ok) {
@@ -55,9 +58,16 @@ const AdminDashboard = ({
         const data = await response.json();
         setDailyMenu(data);
 
-        if (adminView === 'voting' && !editingVoteOptions && data.vote_options && Array.isArray(data.vote_options)) {
+        // Set editing options based on fetched data for the selected date
+        if (data.vote_options && Array.isArray(data.vote_options)) {
+          setEditingVoteOptions(data.vote_options);
+          setEditingDate(selectedDate);
           const packsToLoad = data.vote_options.map(pack => pack.foodIds);
           setAdminFinalVotePacks(packsToLoad);
+        } else {
+          setEditingVoteOptions(null);
+          setEditingDate(null);
+          setAdminFinalVotePacks([]); // Clear packs if no vote options for the date
         }
 
       } catch (error) {
