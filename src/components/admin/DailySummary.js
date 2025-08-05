@@ -38,6 +38,11 @@ const DailySummary = ({ BACKEND_URL }) => {
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
+    // New states for current day's summary
+    const [currentDaySummary, setCurrentDaySummary] = useState(null);
+    const [currentDayLoading, setCurrentDayLoading] = useState(true);
+    const [currentDayError, setCurrentDayError] = useState(null);
+
     const [overallSummary, setOverallSummary] = useState(null);
     const [overallLoading, setOverallLoading] = useState(true);
 
@@ -76,6 +81,7 @@ const DailySummary = ({ BACKEND_URL }) => {
         setChartEndDate(end.toISOString().split('T')[0]);
     };
 
+    // useEffect to fetch summary for the selected date (for the detailed card)
     useEffect(() => {
         const fetchDailySummary = async () => {
             setLoading(true);
@@ -93,6 +99,26 @@ const DailySummary = ({ BACKEND_URL }) => {
         };
         fetchDailySummary();
     }, [BACKEND_URL, selectedDate]);
+
+    // New useEffect to fetch summary for the current day (for the stat cards)
+    useEffect(() => {
+        const fetchCurrentDaySummary = async () => {
+            setCurrentDayLoading(true);
+            setCurrentDayError(null);
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/reports/daily-summary?date=${today}`);
+                if (!response.ok) throw new Error('Failed to fetch current day summary');
+                const data = await response.json();
+                setCurrentDaySummary(data);
+            } catch (err) {
+                setCurrentDayError(err.message);
+            } finally {
+                setCurrentDayLoading(false);
+            }
+        };
+        fetchCurrentDaySummary();
+    }, [BACKEND_URL]);
 
     useEffect(() => {
         const fetchOverallSummary = async () => {
@@ -136,28 +162,16 @@ const DailySummary = ({ BACKEND_URL }) => {
         fetchDashboardData();
     }, [BACKEND_URL, chartStartDate, chartEndDate]);
 
-    const { dailyState, dailyResult } = summary || {};
-
-    const getStatusText = (state) => {
-        if (!state) return "ບໍ່ມີຂໍ້ມູນ";
-        if (!state.is_visible) return "ປິດໃຊ້ງານ";
-        switch (state.status) {
-            case 'idle': return 'ບໍ່ມີກິດຈະກຳ';
-            case 'voting': return 'ກຳລັງໂຫວດ';
-            case 'closed': return 'ປິດໂຫວດແລ້ວ';
-            case 'admin_set': return 'ແອັດມິນກຳນົດ';
-            default: return state.status;
-        }
-    };
+    const { dailyState: currentDailyState, dailyResult: currentDailyResult } = currentDaySummary || {};
 
     return (
         <div className="p-4 md:p-6 space-y-6 md:space-y-8">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-primary">ພາບລວມ Dashboard</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(dailyState)} bgColor="bg-blue-100 text-blue-800" isLoading={loading} />
-                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={dailyResult?.winning_food_name || '—'} bgColor="bg-yellow-100 text-yellow-800" isLoading={loading} />
-                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={dailyResult?.total_votes ?? '—'} bgColor="bg-green-100 text-green-800" isLoading={loading} />
+                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(currentDailyState)} bgColor="bg-blue-100 text-blue-800" isLoading={currentDayLoading} />
+                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={currentDailyResult?.winning_food_name || '—'} bgColor="bg-yellow-100 text-yellow-800" isLoading={currentDayLoading} />
+                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={currentDailyResult?.total_votes ?? '—'} bgColor="bg-green-100 text-green-800" isLoading={currentDayLoading} />
                 <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} bgColor="bg-purple-100 text-purple-800" isLoading={overallLoading} />
             </div>
 
