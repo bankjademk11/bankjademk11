@@ -125,6 +125,7 @@ pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BO
 
 // Create users table if it doesn't exist
 pool.query(`
+  DROP TABLE IF EXISTS users;
   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) UNIQUE NOT NULL,
@@ -135,15 +136,6 @@ pool.query(`
 }).catch(err => {
   console.error('Error ensuring users table:', err.stack);
 });
-
-// Add user_id column to users table if it doesn't exist
-pool.query('ALTER TABLE users ADD COLUMN IF NOT EXISTS user_id VARCHAR(255) UNIQUE')
-  .then(() => {
-    console.log('Ensured user_id column exists in users.');
-  })
-  .catch(err => {
-    console.error('Error ensuring user_id column in users:', err.stack);
-  });
 
 
 // POST a new user
