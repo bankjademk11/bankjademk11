@@ -163,6 +163,19 @@ const DailySummary = ({ BACKEND_URL }) => {
     }, [BACKEND_URL, chartStartDate, chartEndDate]);
 
     const { dailyState: currentDailyState, dailyResult: currentDailyResult } = currentDaySummary || {};
+    const { dailyState, dailyResult } = summary || {};
+
+    const getStatusText = (state) => {
+        if (!state) return "ບໍ່ມີຂໍ້ມູນ";
+        if (!state.is_visible) return "ປິດໃຊ້ງານ";
+        switch (state.status) {
+            case 'idle': return 'ບໍ່ມີກິດຈະກຳ';
+            case 'voting': return 'ກຳລັງໂຫວດ';
+            case 'closed': return 'ປິດໂຫວດແລ້ວ';
+            case 'admin_set': return 'ແອັດມິນກຳນົດ';
+            default: return state.status;
+        }
+    };
 
     return (
         <div className="p-4 md:p-6 space-y-6 md:space-y-8">
@@ -177,7 +190,6 @@ const DailySummary = ({ BACKEND_URL }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                 <div className="lg:col-span-1 bg-surface p-4 md:p-6 rounded-2xl border border-gray-200 space-y-4 self-start">
-                    <h3 className="text-xl font-bold text-primary">ສະຫຼຸບປະຈຳວັນ</h3>
                     <div>
                         <label htmlFor="summary-date-picker" className="block text-secondary text-sm font-semibold mb-2">ເລືອກວັນທີ:</label>
                         <input type="date" id="summary-date-picker" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
