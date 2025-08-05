@@ -702,17 +702,28 @@ app.put('/api/daily-menu/:date/status', async (req, res) => {
 // DELETE a daily menu state
 app.delete('/api/daily-menu/:date', async (req, res) => {
   const { date } = req.params;
+  const client = await pool.connect(); // Get a client from the pool for transaction
   try {
-    const result = await pool.query('DELETE FROM daily_menu_states WHERE date = $1 RETURNING *'
-      , [date]
-    );
-    if (result.rows.length === 0) {
+    await client.query('BEGIN'); // Start transaction
+
+    // Delete from daily_menu_states
+    const deleteMenuStateResult = await client.query('DELETE FROM daily_menu_states WHERE date = $1 RETURNING *', [date]);
+
+    // Delete from daily_results
+    const deleteDailyResult = await client.query('DELETE FROM daily_results WHERE date = $1 RETURNING *', [date]);
+
+    await client.query('COMMIT'); // Commit transaction
+
+    if (deleteMenuStateResult.rows.length === 0) {
       return res.status(404).json({ error: 'Daily menu state for this date not found.' });
     }
     res.status(204).send(); // No content for successful deletion
   } catch (err) {
-    console.error('Error deleting daily menu state:', err.stack);
+    await client.query('ROLLBACK'); // Rollback transaction on error
+    console.error('Error deleting daily menu state and results:', err.stack);
     res.status(500).json({ error: 'Internal Server Error' });
+  } finally {
+    client.release(); // Release the client back to the pool
   }
 });
 
