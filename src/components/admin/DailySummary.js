@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FaCalendarCheck, FaTrophy, FaUsers, FaChartLine, FaThumbsDown, FaUserCheck } from 'react-icons/fa';
+import { FaCalendarCheck, FaTrophy, FaUsers, FaChartLine, FaThumbsDown, FaUserCheck, FaThumbsUp } from 'react-icons/fa';
 
 // Reusable Stat Card Component
 const StatCard = ({ icon, title, value, bgColor, isLoading }) => (
