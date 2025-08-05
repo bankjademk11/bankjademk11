@@ -41,7 +41,6 @@ const DailySummary = ({ BACKEND_URL }) => {
     // New states for current day's summary
     const [currentDaySummary, setCurrentDaySummary] = useState(null);
     const [currentDayLoading, setCurrentDayLoading] = useState(true);
-    const [currentDayError, setCurrentDayError] = useState(null);
 
     const [overallSummary, setOverallSummary] = useState(null);
     const [overallLoading, setOverallLoading] = useState(true);
