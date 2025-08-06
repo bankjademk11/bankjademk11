@@ -189,7 +189,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen text-primary bg-background font-sans">
+      <div className="min-h-screen text-primary bg-blackground-image bg-cover bg-center bg-fixed font-sans">
         <Header userId={userId} />
         <MessageDisplay message={message} />
         <Navigation isAdmin={isAdmin} />
