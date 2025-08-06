@@ -5,6 +5,7 @@ import {
   Navigation,
   MessageDisplay,
   ThankYouPopup,
+  Footer,
 } from './components';
 import MyFoodsPage from './pages/MyFoodsPage';
 import VotePage from './pages/VotePage';
@@ -15,6 +16,7 @@ import LineLoginHandler from './pages/LineLoginHandler';
 import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
+  
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -190,7 +192,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen text-primary bg-blackground-image bg-cover bg-center bg-fixed font-sans">
+      <div className="min-h-screen text-primary bg-cover bg-center bg-fixed font-sans" style={{ backgroundImage: `url(${blackgroundImage})` }}>
         <Header userId={userId} />
         <MessageDisplay message={message} />
         <Navigation isAdmin={isAdmin} />
@@ -240,6 +242,7 @@ const App = () => {
           <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
         </Routes>
+        <Footer userId={userId} />
       </div>
     </BrowserRouter>
   );

@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply font-sans bg-background text-secondary;
+    @apply font-sans text-secondary;
     font-family: 'Noto Serif Lao', sans-serif;
   }
 }

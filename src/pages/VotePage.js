@@ -121,7 +121,7 @@ const VotePage = ({
   };
 
   return (
-    <section className="min-h-screen bg-background py-10">
+    <section className="min-h-screen bg-black bg-opacity-40 py-10">
       <div className="container mx-auto px-4">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <h2 className="text-4xl font-bold text-primary text-center sm:text-left">ເມນູປະຈຳວັນ</h2>

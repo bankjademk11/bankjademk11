@@ -20,7 +20,7 @@ const AdminPage = ({
   BACKEND_URL,
 }) => {
   return (
-    <div className="min-h-screen bg-background py-10">
+    <div className="min-h-screen bg-black bg-opacity-40 py-10">
       <AdminDashboard
         isAdmin={isAdmin}
         adminPasswordInput={adminPasswordInput}

@@ -12,6 +12,7 @@ export { default as Header } from './common/Header';
 export { default as MessageDisplay } from './common/MessageDisplay';
 export { default as Navigation } from './common/Navigation';
 export { default as ThankYouPopup } from './common/ThankYouPopup';
+export { default as Footer } from './common/Footer';
 
 // MyFoods Components
 export { default as CategoryFilter } from './myfoods/CategoryFilter';
