@@ -12,6 +12,7 @@ import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
 import LineLoginHandler from './pages/LineLoginHandler';
+import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
