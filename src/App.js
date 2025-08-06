@@ -192,57 +192,70 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen text-primary bg-cover bg-center bg-fixed font-sans" style={{ backgroundImage: `url(${blackgroundImage})` }}>
-        <Header userId={userId} />
-        <MessageDisplay message={message} />
-        <Navigation isAdmin={isAdmin} />
+      <div className="relative min-h-screen font-sans text-neutral-800">
+        {/* Background Image with Blur */}
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-fixed filter blur-sm"
+          style={{ backgroundImage: `url(${blackgroundImage})` }}
+        ></div>
 
-        <ThankYouPopup
-          show={showThankYouPopup}
-          onClose={handleCloseThankYouPopup}
-          message="ขอบใจที่ท่านโหวต"
-        />
+        {/* Content Wrapper */}
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <Header userId={userId} />
+          <MessageDisplay message={message} />
+          <Navigation isAdmin={isAdmin} />
 
-        <Routes>
-          <Route path="/line_login" element={<LineLoginHandler />} />
-          <Route path="/" element={<Navigate to="/vote" replace />} />
-          <Route path="/vote" element={
-            <VotePage
-              userId={userId}
-              onVoteFromApp={handleVote}
-              handleReviewSubmit={handleReviewSubmit}
-              foodItems={foodItems}
-              onCancelVoteFromApp={handleCancelVote}
-            />
-          } />
-          <Route path="/admin" element={
-            <AdminPage
-              isAdmin={isAdmin}
-              adminPasswordInput={adminPasswordInput}
-              setAdminPasswordInput={setAdminPasswordInput}
-              handleAdminLogin={handleAdminLogin}
-              handleAdminLogout={handleAdminLogout}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-              adminVoteSelections={adminVoteSelections}
-              setAdminVoteSelections={setAdminVoteSelections}
-              toggleAdminVoteSelection={toggleAdminVoteSelection}
-              showMessage={showMessage}
-              BACKEND_URL={BACKEND_URL}
-            />
-          } />
-          <Route path="/admin/my-foods" element={
-            <MyFoodsPage
-              BACKEND_URL={BACKEND_URL}
-              showMessage={showMessage}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-            />
-          } />
-          <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
-        </Routes>
-        <Footer userId={userId} />
+          <ThankYouPopup
+            show={showThankYouPopup}
+            onClose={handleCloseThankYouPopup}
+            message="ຂອບໃຈທີ່ທ່ານໂຫວດ"
+          />
+
+          {/* Main content area that grows to push footer down */}
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/line_login" element={<LineLoginHandler />} />
+              <Route path="/" element={<Navigate to="/vote" replace />} />
+              <Route path="/vote" element={
+                <VotePage
+                  userId={userId}
+                  onVoteFromApp={handleVote}
+                  handleReviewSubmit={handleReviewSubmit}
+                  foodItems={foodItems}
+                  onCancelVoteFromApp={handleCancelVote}
+                />
+              } />
+              <Route path="/admin" element={
+                <AdminPage
+                  isAdmin={isAdmin}
+                  adminPasswordInput={adminPasswordInput}
+                  setAdminPasswordInput={setAdminPasswordInput}
+                  handleAdminLogin={handleAdminLogin}
+                  handleAdminLogout={handleAdminLogout}
+                  foodItems={foodItems}
+                  setFoodItems={setFoodItems}
+                  adminVoteSelections={adminVoteSelections}
+                  setAdminVoteSelections={setAdminVoteSelections}
+                  toggleAdminVoteSelection={toggleAdminVoteSelection}
+                  showMessage={showMessage}
+                  BACKEND_URL={BACKEND_URL}
+                />
+              } />
+              <Route path="/admin/my-foods" element={
+                <MyFoodsPage
+                  BACKEND_URL={BACKEND_URL}
+                  showMessage={showMessage}
+                  foodItems={foodItems}
+                  setFoodItems={setFoodItems}
+                />
+              } />
+              <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
+              <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
+            </Routes>
+          </main>
+          
+          <Footer userId={userId} />
+        </div>
       </div>
     </BrowserRouter>
   );

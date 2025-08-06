@@ -87,16 +87,34 @@ const VotePage = ({
 
   const renderContent = () => {
     if (dailyMenu.status === 'loading') {
-      return <p className="text-center text-xl text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</p>;
+      return (
+        <div className="text-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-light mx-auto"></div>
+          <p className="mt-4 text-lg text-neutral-500">ກຳລັງໂຫຼດຂໍ້ມູນ...</p>
+        </div>
+      );
     }
     if (dailyMenu.status === 'error') {
-      return <p className="text-center text-xl text-red-500">ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດຂໍ້ມູນ.</p>;
+      return (
+        <div className="text-center py-20 bg-danger/10 rounded-2xl">
+          <p className="text-xl text-danger">ເກີດຂໍ້ຜິດພາດ</p>
+          <p className="text-neutral-500 mt-2">ບໍ່ສາມາດໂຫຼດຂໍ້ມູນເມນູໄດ້, ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.</p>
+        </div>
+      );
     }
     if (!dailyMenu.is_visible) {
-      return <p className="text-center text-xl text-secondary">ເມນູສຳລັບວັນທີນີ້ຖືກປິດໃຊ້ງານ.</p>;
+      return (
+        <div className="text-center py-20 bg-neutral-100 rounded-2xl">
+           <p className="text-xl text-neutral-700">ເມນູສຳລັບວັນທີນີ້ຖືກປິດໃຊ້ງານ.</p>
+        </div>
+      );
     }
     if (dailyMenu.status === 'idle') {
-      return <p className="text-center text-xl text-secondary">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>;
+      return (
+        <div className="text-center py-20 bg-neutral-100 rounded-2xl">
+          <p className="text-xl text-neutral-700">ຍັງບໍ່ມີການຕັ້ງຄ່າເມນູສຳລັບມື້ນີ້.</p>
+        </div>
+      );
     }
     if (dailyMenu.status === 'voting') {
       return (
@@ -121,25 +139,30 @@ const VotePage = ({
   };
 
   return (
-    <section className="min-h-screen bg-black bg-opacity-40 py-10">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-          <h2 className="text-4xl font-bold text-primary text-center sm:text-left">ເມນູປະຈຳວັນ</h2>
-          <div className="flex items-center gap-3">
-            <label htmlFor="vote-date-picker" className="font-semibold text-secondary text-lg">ເລືອກວັນທີ:</label>
+    <main className="py-8 md:py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl md:text-5xl font-bold text-neutral-800">ເມນູປະຈຳວັນ</h1>
+            <p className="mt-2 text-lg text-neutral-500">ເລືອກເມນູທີ່ທ່ານຕ້ອງການຮັບປະທານໃນມື້ນີ້</p>
+          </div>
+          <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-subtle border border-neutral-200">
+            <label htmlFor="vote-date-picker" className="font-semibold text-neutral-600 text-md pl-2">ວັນທີ:</label>
             <input
               type="date"
               id="vote-date-picker"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-primary focus:border-transparent transition-colors"
+              className="p-2 border-none rounded-lg text-primary-dark font-semibold focus:ring-2 focus:ring-primary-light transition-all duration-300 w-full md:w-auto"
             />
           </div>
         </div>
 
-        {renderContent()}
+        <div className="animate-fade-in">
+          {renderContent()}
+        </div>
       </div>
-    </section>
+    </main>
   );
 };
 

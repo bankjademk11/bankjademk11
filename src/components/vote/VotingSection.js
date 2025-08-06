@@ -17,17 +17,18 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
   };
 
   return (
-    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-xl shadow-medium">
+    <div className="animate-slide-up">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-primary">ໂຫວດເມນູປະຈຳວັນ</h2>
-        <p className="text-secondary mt-1">ເລືອກຊຸດອາຫານທີ່ທ່ານຕ້ອງການ</p>
-        {hasVoted && <p className='text-success font-medium mt-2'>( ທ່ານໄດ້ทำการໂຫວດແລ້ວ )</p>}
+        {hasVoted && 
+          <p className='text-lg font-medium text-success animate-fade-in'>
+            ✓ ທ່ານໄດ້ທຳການໂຫວດແລ້ວ
+          </p>
+        }
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
         {dailyMenu.vote_options && dailyMenu.vote_options.map((pack, index) => {
           if (!pack || !Array.isArray(pack.foodIds) || pack.foodIds.length === 0) {
-            console.warn("Skipping malformed vote option or empty food item:", pack);
             return null;
           }
 
@@ -37,45 +38,59 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
           return (
             <div 
               key={index} 
-              className={`bg-gray-100 bg-opacity-90 rounded-xl shadow-md flex flex-col transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1 hover:shadow-lg
-                ${isSelected ? 'ring-2 ring-primary' : 'border border-gray-200'}
+              className={`bg-surface rounded-2xl shadow-md flex flex-col transition-all duration-300 ease-in-out group transform hover:-translate-y-2
+                ${isSelected ? 'ring-4 ring-primary-light shadow-xl' : 'border border-neutral-200'}
               `}
             >
-              <div className="flex-grow p-5">
-                <div className="flex justify-center space-x-3 mb-4">
-                  {foodsInPack.map(food => (
-                    <img
-                      key={food.id}
-                      src={food.image}
-                      alt={food.name}
-                      className="w-24 h-24 object-cover rounded-lg shadow-md"
-                      onError={(e) => { e.target.onerror = null; e.target.src = `/BG.png`; }}
-                    />
-                  ))}
+              <div className="relative pt-[60%] overflow-hidden rounded-t-2xl">
+                 {/* Assuming the first food item's image represents the pack */}
+                <img
+                  src={foodsInPack[0]?.image || '/BG.png'}
+                  alt={pack.name}
+                  className="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/BG.png'; }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 p-4">
+                    <h3 className="text-xl font-bold text-white">{pack.name}</h3>
                 </div>
-                <h3 className="text-xl font-semibold text-primary text-center mb-2">{pack.name}</h3>
-                <p className="text-center text-secondary mb-4">ຄະແນນໂຫວດ: <span className='font-bold text-accent'>{pack.votes}</span></p>
               </div>
-              
-              <button
-                onClick={() => onVote(index)}
-                disabled={hasVoted && !isSelected}
-                className={`w-full p-4 font-bold text-white transition-colors duration-300
-                  ${isSelected ? 'bg-success' : 'bg-primary hover:bg-opacity-90'}
-                  ${hasVoted && !isSelected ? 'bg-gray-300 cursor-not-allowed' : ''}
-                `}>
-                {isSelected ? '✔️ ເລືອກແລ້ວ' : 'ໂຫວດຊຸດນີ້'}
-              </button>
+
+              <div className="flex-grow p-4 flex flex-col">
+                <div className="flex-grow mb-4">
+                    <p className="text-neutral-500 text-sm mb-3">ປະກອບດ້ວຍ:</p>
+                    <ul className="space-y-2">
+                        {foodsInPack.map(food => (
+                            <li key={food.id} className="flex items-center text-neutral-700 text-sm">
+                                <span className="text-primary-dark mr-2">•</span>
+                                {food.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                <div className="text-center py-2 px-4 bg-neutral-100 rounded-lg mb-4">
+                    <p className="font-bold text-lg text-primary-dark">{pack.votes} <span className="text-sm font-normal text-neutral-500">ຄະແນນ</span></p>
+                </div>
+                <button
+                  onClick={() => onVote(index)}
+                  disabled={hasVoted && !isSelected}
+                  className={`w-full p-3 font-bold text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg disabled:shadow-none
+                    ${isSelected ? 'bg-success hover:bg-success/90' : 'bg-primary hover:bg-primary-dark'}
+                    ${hasVoted && !isSelected ? 'bg-neutral-300 cursor-not-allowed' : ''}
+                  `}>
+                  {isSelected ? '✓ ເລືອກຊຸດນີ້ແລ້ວ' : 'ໂຫວດຊຸດນີ້'}
+                </button>
+              </div>
             </div>
           );
         })}
       </div>
 
       {hasVoted && (
-        <div className="text-center mt-8">
+        <div className="text-center mt-12">
           <button
             onClick={onCancelVote}
-            className="px-6 py-3 bg-danger text-white font-semibold rounded-lg shadow-lg hover:bg-opacity-90 hover:shadow-xl transition-all duration-300"
+            className="px-8 py-3 bg-danger text-white font-semibold rounded-xl shadow-lg hover:bg-danger/90 transform hover:-translate-y-0.5 transition-all duration-300"
           >
             ຍົກເລີກການໂຫວດ
           </button>

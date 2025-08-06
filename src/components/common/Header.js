@@ -1,16 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Assuming you use React Router for navigation
+import { Link } from 'react-router-dom';
 
 const Header = ({ userId }) => {
   return (
-    <header className="bg-teal-700 shadow-medium border-b border-gray-200 mb-8">
-      <div className="container mx-auto px-6 py-4 flex justify-center items-center">
-        <Link to="/" className="flex items-center space-x-4">
-          <img src="/FoodODG.png" alt="FoodODG Logo" className="h-12 w-auto" />
-          <span className="text-xl font-bold text-white tracking-wider">
-            ODIEN COOKING
-          </span>
-        </Link>
+    <header className="bg-white/80 backdrop-blur-md shadow-subtle sticky top-0 z-50">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center space-x-3">
+              <img src="/FoodODG.png" alt="FoodODG Logo" className="h-10 w-auto" />
+              <span className="text-2xl font-bold text-neutral-800 tracking-tight">
+                ODIEN COOKING
+              </span>
+            </Link>
+          </div>
+        </div>
       </div>
     </header>
   );
