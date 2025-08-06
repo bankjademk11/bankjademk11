@@ -97,7 +97,7 @@ const App = () => {
     };
 
     registerUser();
-  }, [userId, BACKEND_URL]);
+  }, [userId, BACKEND_URL, setHasUserIdError]);
 
   
 
@@ -203,13 +203,6 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="min-h-screen text-primary bg-background font-sans">
-        <Header userId={userId} />
-        <MessageDisplay message={message} />
-        <Navigation isAdmin={isAdmin} />
-
-        return (
-    <BrowserRouter>
-      <div className="min-h-screen text-primary bg-background font-sans">
         {hasUserIdError ? (
           <div className="flex items-center justify-center h-screen text-red-500 text-xl font-bold text-center">
             Error: ไม่มี UID. กรุณาเข้าใช้งานผ่านลิงก์ที่มี UID.
@@ -266,48 +259,6 @@ const App = () => {
             </Routes>
           </>
         )}
-      </div>
-    </BrowserRouter>
-  );
-
-        <Routes>
-          <Route path="/" element={<Navigate to="/vote" replace />} />
-          <Route path="/vote" element={
-            <VotePage
-              userId={userId}
-              onVoteFromApp={handleVote}
-              handleReviewSubmit={handleReviewSubmit}
-              foodItems={foodItems}
-              onCancelVoteFromApp={handleCancelVote}
-            />
-          } />
-          <Route path="/admin" element={
-            <AdminPage
-              isAdmin={isAdmin}
-              adminPasswordInput={adminPasswordInput}
-              setAdminPasswordInput={setAdminPasswordInput}
-              handleAdminLogin={handleAdminLogin}
-              handleAdminLogout={handleAdminLogout}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-              adminVoteSelections={adminVoteSelections}
-              setAdminVoteSelections={setAdminVoteSelections}
-              toggleAdminVoteSelection={toggleAdminVoteSelection}
-              showMessage={showMessage}
-              BACKEND_URL={BACKEND_URL}
-            />
-          } />
-          <Route path="/admin/my-foods" element={
-            <MyFoodsPage
-              BACKEND_URL={BACKEND_URL}
-              showMessage={showMessage}
-              foodItems={foodItems}
-              setFoodItems={setFoodItems}
-            />
-          } />
-          <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
-        </Routes>
       </div>
     </BrowserRouter>
   );
