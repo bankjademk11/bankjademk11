@@ -13,7 +13,7 @@ const CategoryFilter = ({ selectedCategory, setSelectedCategory }) => {
             px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
             ${selectedCategory === category
               ? 'bg-primary text-white shadow-md'
-              : 'bg-surface text-secondary border border-gray-200 hover:bg-gray-100'
+              : 'bg-gray-100 bg-opacity-90 text-secondary border border-gray-200 hover:bg-gray-100'
             }
           `}
         >

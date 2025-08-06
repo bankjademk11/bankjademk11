@@ -5,7 +5,7 @@ const FoodDetailPopup = ({ food, reviews, averageRating, onClose, BACKEND_URL })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+      <div className="bg-gray-100 bg-opacity-90 rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl font-bold"

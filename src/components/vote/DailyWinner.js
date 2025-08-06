@@ -52,7 +52,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
 
   if (!winningFood) {
     return (
-      <div className="text-center p-8 bg-surface rounded-xl shadow-medium">
+      <div className="text-center p-8 bg-gray-100 bg-opacity-90 rounded-xl shadow-medium">
         <h3 className="text-2xl font-bold text-primary">ບໍ່ມີເມນູປະຈຳວັນ</h3>
         <p className="text-secondary mt-2">ກະລຸນາລໍຖ້າແອັດມິນຕັ້ງຄ່າເມນູ ຫຼື ເລີ່ມການໂຫວດ</p>
       </div>
@@ -60,7 +60,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
   }
 
   return (
-    <div className="p-6 bg-surface rounded-xl shadow-soft text-center">
+    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-xl shadow-soft text-center">
       <h2 className="text-3xl font-bold text-primary mb-2">
         {dailyMenuStatus === 'closed' ? '🎉 ເມນູທີ່ຊະນະໃນມື້ນີ້ແມ່ນ 🎉' : 'เมนูประจำวันนี้'}
       </h2>
@@ -76,7 +76,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
               const food = foodItems.find(item => item.id === foodId);
               if (!food) return null;
               return (
-                <div key={food.id} className="bg-white p-6 rounded-xl shadow-soft max-w-sm">
+                <div key={food.id} className="bg-gray-100 bg-opacity-90 p-6 rounded-xl shadow-soft max-w-sm">
                   <img
                     src={food.image}
                     alt={food.name}
@@ -100,7 +100,7 @@ const DailyWinner = ({ winningFood, dailyMenuStatus, handleReviewSubmit, userId,
           </div>
         </div>
       ) : (
-        <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 inline-block max-w-sm">
+        <div className="bg-gray-100 bg-opacity-90 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 inline-block max-w-sm">
           <img
             src={winningFood.image}
             alt={winningFood.name}

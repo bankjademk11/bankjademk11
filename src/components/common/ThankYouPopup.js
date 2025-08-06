@@ -5,7 +5,7 @@ const ThankYouPopup = ({ show, onClose, message }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-surface p-10 rounded-2xl shadow-2xl text-center max-w-sm mx-auto">
+      <div className="bg-gray-100 bg-opacity-90 p-10 rounded-2xl shadow-2xl text-center max-w-sm mx-auto">
         <h2 className="text-3xl font-bold text-primary mb-6">{message}</h2>
         <button
           onClick={onClose}

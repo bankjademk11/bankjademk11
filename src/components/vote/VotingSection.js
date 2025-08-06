@@ -17,7 +17,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
   };
 
   return (
-    <div className="p-6 bg-surface rounded-xl shadow-medium">
+    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-xl shadow-medium">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-primary">ໂຫວດເມນູປະຈຳວັນ</h2>
         <p className="text-secondary mt-1">ເລືອກຊຸດອາຫານທີ່ທ່ານຕ້ອງການ</p>
@@ -37,7 +37,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
           return (
             <div 
               key={index} 
-              className={`bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1 hover:shadow-lg
+              className={`bg-gray-100 bg-opacity-90 rounded-xl shadow-md flex flex-col transition-all duration-300 ease-in-out overflow-hidden transform hover:-translate-y-1 hover:shadow-lg
                 ${isSelected ? 'ring-2 ring-primary' : 'border border-gray-200'}
               `}
             >

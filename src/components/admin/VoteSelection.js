@@ -70,7 +70,7 @@ const VoteSelection = ({
   };
 
   return (
-    <div className="p-6 bg-surface rounded-2xl border border-gray-200">
+    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-2xl border border-gray-200">
       <h3 className="mb-6 text-3xl font-bold text-center text-primary">ຈັດການການໂຫວດ</h3>
 
       {/* Select Food Packs for Voting */}
@@ -90,12 +90,12 @@ const VoteSelection = ({
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-gray-100 bg-opacity-90">
           {filteredAdminFoodItems.map(food => (
             <div
               key={food.id}
               className={`p-3 border rounded-lg flex flex-col items-center cursor-pointer transition-all duration-200
-                ${adminSelectedFoodForPack.includes(food.id) ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200 hover:bg-gray-50'}
+                ${adminSelectedFoodForPack.includes(food.id) ? 'bg-primary text-white border-primary' : 'bg-gray-100 bg-opacity-90 border-gray-200 hover:bg-gray-50'}
               `}
               onClick={() => handleFoodSelectForPack(food.id)}
             >
@@ -132,7 +132,7 @@ const VoteSelection = ({
           <h4 className="mb-4 text-xl font-semibold text-primary">ຊຸດອາຫານສຳລັບການໂຫວດ:</h4>
           <div className="space-y-3">
             {adminFinalVotePacks.map((pack, index) => (
-              <div key={index} className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg">
+              <div key={index} className="flex items-center justify-between p-4 bg-gray-100 bg-opacity-90 border border-gray-200 rounded-lg">
                 <span className="font-medium text-primary">
                   {foodItems.find(f => f.id === pack[0])?.name} {pack.length > 1 ? `& ${foodItems.find(f => f.id === pack[1])?.name}` : ''}
                 </span>

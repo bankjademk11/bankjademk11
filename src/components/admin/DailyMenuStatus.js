@@ -111,7 +111,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
 
   return (
-    <div className="p-6 bg-surface rounded-2xl border border-gray-200">
+    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-2xl border border-gray-200">
       <h3 className="mb-6 text-3xl font-bold text-center text-primary">ສະຖານະເມນູປະຈຳວັນ</h3>
 
       <div className="mb-6">
@@ -149,7 +149,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
               <p className="text-lg font-semibold text-primary mb-3 cursor-pointer" onClick={handleOpenAllVotedMenusPopup}>ເມນູທີ່ກຳລັງໂຫວດ:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {dailyMenu.vote_options.map((pack, index) => (
-                  <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 flex items-center justify-between">
+                  <div key={index} className="bg-gray-100 bg-opacity-90 rounded-lg p-4 border border-gray-200 flex items-center justify-between">
                     <span className="text-base font-medium text-primary">{pack.name}</span>
                     <span className="text-base font-semibold text-accent">{pack.votes} ໂຫວດ</span>
                   </div>
@@ -213,7 +213,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-8 rounded-lg max-w-sm w-full">
+          <div className="bg-gray-100 bg-opacity-90 p-8 rounded-lg max-w-sm w-full">
             <h4 className="text-2xl font-bold text-center text-gray-800 mb-4">ຢືນຢັນການລຶບ</h4>
             <p className="text-center text-gray-600 mb-8">
               ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ {dailyMenu && new Date(dailyMenu.date).toLocaleDateString()} ແທ້ໆບໍ່?

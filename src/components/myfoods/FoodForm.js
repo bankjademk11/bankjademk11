@@ -55,7 +55,7 @@ const FoodForm = ({
   };
 
   return (
-    <section className="max-w-3xl p-8 mx-auto mb-10 bg-surface shadow-lg rounded-2xl">
+    <section className="max-w-3xl p-8 mx-auto mb-10 bg-gray-100 bg-opacity-90 shadow-lg rounded-2xl">
       <h2 className="mb-6 text-3xl font-bold text-center text-primary">
                 {editingFoodId ? 'ແກ້ໄຂເມນູອາຫານສ່ວນຕົວ' : 'ເພີ່ມເມນູອາຫານສ່ວນຕົວໃໝ່'}
       </h2>

@@ -59,7 +59,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
   }, [BACKEND_URL, selectedMonth, selectedYear, showMessage]);
 
   return (
-    <div className="p-6 bg-surface rounded-2xl shadow-lg">
+    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-2xl shadow-lg">
       <h3 className="text-3xl font-bold text-center text-primary mb-6">ລາຍງານຜົນໂຫວດປະຈຳວັນ</h3>
 
       <div className="flex flex-wrap justify-center gap-6 mb-8">

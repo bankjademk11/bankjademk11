@@ -11,7 +11,7 @@ const AllVotedMenusSummaryPopup = ({ dailyMenu, foodItems, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
+      <div className="bg-gray-100 bg-opacity-90 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 text-2xl font-bold"
@@ -27,7 +27,7 @@ const AllVotedMenusSummaryPopup = ({ dailyMenu, foodItems, onClose }) => {
                 <h3 className="text-xl font-semibold text-primary mb-2">{pack.name} ({pack.votes} ໂຫວດ)</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {foodsInPack.map(food => (
-                    <div key={food.id} className="flex flex-col items-center p-2 bg-white rounded-lg shadow-xs">
+                    <div key={food.id} className="flex flex-col items-center p-2 bg-gray-100 bg-opacity-90 rounded-lg shadow-xs">
                       <img
                         src={food.image}
                         alt={food.name}
