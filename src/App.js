@@ -230,13 +230,19 @@ const App = () => {
               <Route path="/line_login" element={<LineLoginHandler />} />
               <Route path="/" element={<Navigate to="/vote" replace />} />
               <Route path="/vote" element={
-                <VotePage
-                  userId={userId}
-                  onVoteFromApp={handleVote}
-                  handleReviewSubmit={handleReviewSubmit}
-                  foodItems={foodItems}
-                  onCancelVoteFromApp={handleCancelVote}
-                />
+                userId ? (
+                  <VotePage
+                    userId={userId}
+                    onVoteFromApp={handleVote}
+                    handleReviewSubmit={handleReviewSubmit}
+                    foodItems={foodItems}
+                    onCancelVoteFromApp={handleCancelVote}
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-screen text-primary text-xl font-bold text-center">
+                    ກະລຸນາເຂົ້າສູ່ລະບົບຜ່ານລິ້ງ LINE ທີ່ທ່ານໄດ້ຮັບ.
+                  </div>
+                )
               } />
               <Route path="/admin" element={
                 <AdminPage
