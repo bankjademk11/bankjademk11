@@ -143,8 +143,8 @@ const VotePage = ({
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-6">
           <div className="text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-bold text-neutral-800">ເມນູປະຈຳວັນ</h1>
-            <p className="mt-2 text-lg text-neutral-500">ເລືອກເມນູທີ່ທ່ານຕ້ອງການຮັບປະທານໃນມື້ນີ້</p>
+            <h1 className="text-4xl md:text-5xl font-bold text-white" style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>ເມນູປະຈຳວັນ</h1>
+            <p className="mt-2 text-lg text-neutral-200" style={{ textShadow: '1px 1px 3px rgba(0,0,0,0.5)' }}>ເລືອກເມນູທີ່ທ່ານຕ້ອງການຮັບປະທານໃນມື້ນີ້</p>
           </div>
           <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-subtle border border-neutral-200">
             <label htmlFor="vote-date-picker" className="font-semibold text-neutral-600 text-md pl-2">ວັນທີ:</label>
