@@ -11,6 +11,7 @@ import VotePage from './pages/VotePage';
 import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
+import LineLoginHandler from './pages/LineLoginHandler';
 
 const App = () => {
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -29,26 +30,14 @@ const App = () => {
     setShowThankYouPopup(false);
   };
 
-  const [hasUserIdError, setHasUserIdError] = useState(false);
-
   const [userId] = useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('userid'); // Try to get userId from URL
-
+    let id = localStorage.getItem('offlineUserId'); // Always get userId from localStorage
     if (!id) {
-      id = localStorage.getItem('offlineUserId'); // If not in URL, try localStorage
-      // If id is still null/undefined here, it means no userId found. We will not generate a new one.
+      id = crypto.randomUUID(); // If not in localStorage, generate new
+      localStorage.setItem('offlineUserId', id);
     }
     return id;
   });
-
-  // Effect to update URL with userId
-  useEffect(() => {
-    if (userId && !window.location.search.includes(`userid=${userId}`)) {
-      const newUrl = `${window.location.pathname}?userid=${userId}${window.location.hash}`;
-      window.history.replaceState({ path: newUrl }, '', newUrl);
-    }
-  }, [userId]);
 
   const [isAdmin, setIsAdmin] = useState(() => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
@@ -91,13 +80,11 @@ const App = () => {
         } catch (error) {
           console.error("Error registering user:", error);
         }
-      } else {
-        setHasUserIdError(true); // Set error if userId is null
       }
     };
 
     registerUser();
-  }, [userId, BACKEND_URL, setHasUserIdError]);
+  }, [userId, BACKEND_URL]);
 
   
 
@@ -203,62 +190,55 @@ const App = () => {
   return (
     <BrowserRouter>
       <div className="min-h-screen text-primary bg-background font-sans">
-        {hasUserIdError ? (
-          <div className="flex items-center justify-center h-screen text-red-500 text-xl font-bold text-center">
-            Error: ไม่มี UID. กรุณาเข้าใช้งานผ่านลิงก์ที่มี UID.
-          </div>
-        ) : (
-          <>
-            <Header userId={userId} />
-            <MessageDisplay message={message} />
-            <Navigation isAdmin={isAdmin} />
+        <Header userId={userId} />
+        <MessageDisplay message={message} />
+        <Navigation isAdmin={isAdmin} />
 
-            <ThankYouPopup
-              show={showThankYouPopup}
-              onClose={handleCloseThankYouPopup}
-              message="ขอบใจที่ท่านโหวต"
+        <ThankYouPopup
+          show={showThankYouPopup}
+          onClose={handleCloseThankYouPopup}
+          message="ขอบใจที่ท่านโหวต"
+        />
+
+        <Routes>
+          <Route path="/line_login" element={<LineLoginHandler />} />
+          <Route path="/" element={<Navigate to="/vote" replace />} />
+          <Route path="/vote" element={
+            <VotePage
+              userId={userId}
+              onVoteFromApp={handleVote}
+              handleReviewSubmit={handleReviewSubmit}
+              foodItems={foodItems}
+              onCancelVoteFromApp={handleCancelVote}
             />
-
-            <Routes>
-              <Route path="/" element={<Navigate to="/vote" replace />} />
-              <Route path="/vote" element={
-                <VotePage
-                  userId={userId}
-                  onVoteFromApp={handleVote}
-                  handleReviewSubmit={handleReviewSubmit}
-                  foodItems={foodItems}
-                  onCancelVoteFromApp={handleCancelVote}
-                />
-              } />
-              <Route path="/admin" element={
-                <AdminPage
-                  isAdmin={isAdmin}
-                  adminPasswordInput={adminPasswordInput}
-                  setAdminPasswordInput={setAdminPasswordInput}
-                  handleAdminLogin={handleAdminLogin}
-                  handleAdminLogout={handleAdminLogout}
-                  foodItems={foodItems}
-                  setFoodItems={setFoodItems}
-                  adminVoteSelections={adminVoteSelections}
-                  setAdminVoteSelections={setAdminVoteSelections}
-                  toggleAdminVoteSelection={toggleAdminVoteSelection}
-                  showMessage={showMessage}
-                  BACKEND_URL={BACKEND_URL}
-                />
-              } />
-              <Route path="/admin/my-foods" element={
-                <MyFoodsPage
-                  BACKEND_URL={BACKEND_URL}
-                  showMessage={showMessage}
-                  foodItems={foodItems}
-                  setFoodItems={setFoodItems}
-                />
-              } />
-              <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
-              <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
-            </Routes>
-          </>
-        )}
+          } />
+          <Route path="/admin" element={
+            <AdminPage
+              isAdmin={isAdmin}
+              adminPasswordInput={adminPasswordInput}
+              setAdminPasswordInput={setAdminPasswordInput}
+              handleAdminLogin={handleAdminLogin}
+              handleAdminLogout={handleAdminLogout}
+              foodItems={foodItems}
+              setFoodItems={setFoodItems}
+              adminVoteSelections={adminVoteSelections}
+              setAdminVoteSelections={setAdminVoteSelections}
+              toggleAdminVoteSelection={toggleAdminVoteSelection}
+              showMessage={showMessage}
+              BACKEND_URL={BACKEND_URL}
+            />
+          } />
+          <Route path="/admin/my-foods" element={
+            <MyFoodsPage
+              BACKEND_URL={BACKEND_URL}
+              showMessage={showMessage}
+              foodItems={foodItems}
+              setFoodItems={setFoodItems}
+            />
+          } />
+          <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
+          <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
+        </Routes>
       </div>
     </BrowserRouter>
   );
