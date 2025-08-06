@@ -10,8 +10,9 @@ const LineLoginHandler = () => {
     const userIdFromUrl = urlParams.get('userid');
 
     if (userIdFromUrl) {
-      // Store userId in localStorage
       localStorage.setItem('offlineUserId', userIdFromUrl);
+      // Dispatch a custom event to notify App.js that the user has logged in
+      window.dispatchEvent(new Event('userLoggedIn'));
       // Redirect to the main app page
       navigate('/', { replace: true });
     } else {

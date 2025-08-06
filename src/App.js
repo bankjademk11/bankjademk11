@@ -33,14 +33,27 @@ const App = () => {
     setShowThankYouPopup(false);
   };
 
-  const [userId] = useState(() => {
-    let id = localStorage.getItem('offlineUserId'); // Always get userId from localStorage
-    if (!id) {
-      id = crypto.randomUUID(); // If not in localStorage, generate new
-      localStorage.setItem('offlineUserId', id);
-    }
-    return id;
-  });
+  const [userId, setUserId] = useState(localStorage.getItem('offlineUserId'));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserId(localStorage.getItem('offlineUserId'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Listen for a custom event that LineLoginHandler can dispatch
+    const handleUserLoggedIn = () => {
+      setUserId(localStorage.getItem('offlineUserId'));
+    };
+    window.addEventListener('userLoggedIn', handleUserLoggedIn);
+
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userLoggedIn', handleUserLoggedIn);
+    };
+  }, []);
 
   const [isAdmin, setIsAdmin] = useState(() => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
