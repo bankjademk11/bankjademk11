@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import {
   Header,
   Navigation,
@@ -13,7 +13,7 @@ import VotePage from './pages/VotePage';
 import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
-import CheckUserIdHandler from './pages/CheckUserIdHandler';
+import AuthGate from './pages/AuthGate';
 import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
@@ -228,8 +228,7 @@ const App = () => {
           {/* Main content area that grows to push footer down */}
           <main className="flex-grow">
             <Routes>
-              <Route path="/check" element={<CheckUserIdHandler />} />
-              <Route path="/" element={<Navigate to="/vote" replace />} />
+              <Route path="/" element={<AuthGate />} />
               <Route path="/vote" element={
                 userId ? (
                   <VotePage
