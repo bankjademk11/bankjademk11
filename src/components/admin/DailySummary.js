@@ -152,7 +152,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                 setChartData(chartResult);
                 setLeastPopularFoods(leastPopularResult);
                 setMostPopularFoods(mostPopularResult); // Set most popular foods
-                setVoterTurnoutData(voterTurnoutResult.map(d => ({...d, date: new Date(d.date).toLocaleDateString('en-CA')}))); // Format date for display
+                setVoterTurnoutData(voterTurnoutResult.map(d => ({...d, date: new Date(d.date).toLocaleDateString('en-GB')}))); // Format date for display
             } catch (err) {
                 setDataError('Failed to load dashboard data');
                 console.error(err);
@@ -199,7 +199,7 @@ const DailySummary = ({ BACKEND_URL }) => {
                     {error && <div className="text-center py-4 text-red-500">ຂໍ້ຜິດພາດ: {error}</div>}
                     {!loading && !error && (
                         <div className="space-y-2">
-                            <p><strong className="text-primary">ວັນທີ:</strong> <span className="text-secondary">{selectedDate}</span></p>
+                            <p><strong className="text-primary">ວັນທີ:</strong> <span className="text-secondary">{new Date(selectedDate).toLocaleDateString('en-GB')}</span></p>
                             <p><strong className="text-primary">ສະຖານະ:</strong> <span className="font-bold">{getStatusText(dailyState)}</span></p>
                             <p><strong className="text-primary">ອາຫານທີ່ຊະນະ:</strong> <span className="text-secondary">{dailyResult?.winning_food_name || 'ບໍ່ມີ'}</span></p>
                             <p><strong className="text-primary">ຈຳນວນໂຫວດ:</strong> <span className="text-secondary">{dailyResult?.total_votes ?? 'ບໍ່ມີ'}</span></p>

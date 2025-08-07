@@ -103,7 +103,7 @@ const GMReport = ({ BACKEND_URL, showMessage }) => {
               className="bg-background p-6 rounded-xl shadow-md cursor-pointer hover:shadow-lg transition-shadow duration-300"
               onClick={() => navigate(`/report/${report.id}`)}
             >
-              <p className="text-xl font-semibold text-primary mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString()}</p>
+              <p className="text-xl font-semibold text-primary mb-2">ວັນທີ: {new Date(report.date).toLocaleDateString('en-GB')}</p>
               <p className="text-lg text-secondary mb-1">
                 ເມນູທີ່ຊະນະ: {typeof report.winning_food_name === 'object' && report.winning_food_name !== null ? report.winning_food_name.name : report.winning_food_name || 'ບໍ່ມີ'}
               </p>
