@@ -130,7 +130,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
 
       {!loading && !error && dailyMenu && (
         <div className="bg-background p-6 rounded-lg border border-gray-200">
-          <h4 className="mb-4 text-xl font-semibold text-primary">ສະຖານະເມນູສຳລັບວັນທີ {new Date(dailyMenu.date).toLocaleDateString()}:</h4>
+          <h4 className="mb-4 text-xl font-semibold text-primary">ສະຖານະເມນູສຳລັບວັນທີ {new Date(dailyMenu.date).toLocaleDateString('en-GB')}:</h4>
           <p className="mb-4 text-lg"><strong>ສະຖານະ:</strong> <span className={`font-bold ${dailyMenu.status === 'voting' ? 'text-blue-600' : dailyMenu.status === 'closed' ? 'text-red-600' : dailyMenu.status === 'admin_set' ? 'text-green-600' : 'text-secondary'}`}>{dailyMenu.status === 'idle' ? 'ບໍ່ມີກິດຈະກຳ' : dailyMenu.status === 'voting' ? 'ກຳລັງໂຫວດ' : dailyMenu.status === 'closed' ? 'ປິດໂຫວດແລ້ວ' : dailyMenu.status === 'admin_set' ? 'ແອັດມິນກຳນົດ' : dailyMenu.status}</span></p>
 
           {dailyMenu.status === 'idle' && (
@@ -216,7 +216,7 @@ const DailyMenuStatus = ({ BACKEND_URL, showMessage, foodItems, onCreateMenuAndN
           <div className="bg-gray-100 bg-opacity-90 p-8 rounded-lg max-w-sm w-full">
             <h4 className="text-2xl font-bold text-center text-gray-800 mb-4">ຢືນຢັນການລຶບ</h4>
             <p className="text-center text-gray-600 mb-8">
-              ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ {dailyMenu && new Date(dailyMenu.date).toLocaleDateString()} ແທ້ໆບໍ່?
+              ທ່ານຕ້ອງການລຶບເມນູສຳລັບວັນທີ {dailyMenu && new Date(dailyMenu.date).toLocaleDateString('en-GB')} ແທ້ໆບໍ່?
             </p>
             <div className="flex justify-around">
               <button
