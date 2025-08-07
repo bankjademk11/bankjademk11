@@ -14,6 +14,7 @@ import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
 import AuthGate from './pages/AuthGate';
+import useLocalStorageUserId from './hooks/useLocalStorageUserId';
 import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
@@ -34,27 +35,7 @@ const App = () => {
     setShowThankYouPopup(false);
   };
 
-  const [userId, setUserId] = useState(localStorage.getItem('offlineUserId'));
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setUserId(localStorage.getItem('offlineUserId'));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    // Listen for a custom event that LineLoginHandler can dispatch
-    const handleUserLoggedIn = () => {
-      setUserId(localStorage.getItem('offlineUserId'));
-    };
-    window.addEventListener('userLoggedIn', handleUserLoggedIn);
-
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLoggedIn', handleUserLoggedIn);
-    };
-  }, []);
+  const userId = useLocalStorageUserId();
 
   const [isAdmin, setIsAdmin] = useState(() => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
