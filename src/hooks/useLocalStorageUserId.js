@@ -1,15 +1,23 @@
 import { useState, useEffect } from 'react';
 
 const getUserIdFromLocalStorage = () => {
-  return localStorage.getItem('offlineUserId');
+  const id = localStorage.getItem('offlineUserId');
+  console.log('useLocalStorageUserId: Reading from localStorage', id);
+  return id;
 };
 
 const useLocalStorageUserId = () => {
-  const [userId, setUserId] = useState(getUserIdFromLocalStorage());
+  const [userId, setUserId] = useState(() => {
+    const initialId = getUserIdFromLocalStorage();
+    console.log('useLocalStorageUserId: Initial state', initialId);
+    return initialId;
+  });
 
   useEffect(() => {
     const handleStorageChange = () => {
-      setUserId(getUserIdFromLocalStorage());
+      const newId = getUserIdFromLocalStorage();
+      console.log('useLocalStorageUserId: Storage/Event change detected, new ID', newId);
+      setUserId(newId);
     };
 
     // Listen for changes in localStorage across tabs/windows
@@ -23,6 +31,7 @@ const useLocalStorageUserId = () => {
     };
   }, []);
 
+  console.log('useLocalStorageUserId: Current userId state', userId);
   return userId;
 };
 
