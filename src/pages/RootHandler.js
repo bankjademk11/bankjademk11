@@ -12,23 +12,32 @@ const RootHandler = () => {
 
     if (userIdFromUrl) {
       // If userId is in URL, use it and store it
-      localStorage.setItem('offlineUserId', userIdFromUrl);
-      window.dispatchEvent(new Event('userLoggedIn')); // Dispatch event
+      if (localStorage.getItem('offlineUserId') !== userIdFromUrl) {
+        localStorage.setItem('offlineUserId', userIdFromUrl);
+        window.dispatchEvent(new Event('userLoggedIn')); // Dispatch event
+        window.location.reload(); // Force reload to update UI
+      }
       currentUserId = userIdFromUrl;
     } else if (errorTypeFromUrl) {
       // If error is in URL, clear userId and store error
-      localStorage.removeItem('offlineUserId');
-      localStorage.setItem('authError', errorTypeFromUrl);
-      window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
+      if (localStorage.getItem('authError') !== errorTypeFromUrl) {
+        localStorage.removeItem('offlineUserId');
+        localStorage.setItem('authError', errorTypeFromUrl);
+        window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
+        window.location.reload(); // Force reload to update UI
+      }
     } else if (currentUserId) {
       // If userId is in localStorage, use it
       // No action needed, currentUserId is already set
     } else {
       // No userId in URL or localStorage, and no error in URL
       // This means it's a fresh visit without any auth info
-      localStorage.removeItem('offlineUserId');
-      localStorage.setItem('authError', 'no_userid');
-      window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
+      if (localStorage.getItem('authError') !== 'no_userid') {
+        localStorage.removeItem('offlineUserId');
+        localStorage.setItem('authError', 'no_userid');
+        window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
+        window.location.reload(); // Force reload to update UI
+      }
     }
 
     // After processing, decide where to navigate
