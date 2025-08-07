@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const AuthGate = () => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -38,13 +37,12 @@ const AuthGate = () => {
       if (!errorType) {
         errorType = 'no_userid';
       }
-      console.log('AuthGate: Navigating to error', errorType);
-      // Navigate to root with error parameter, if not already there
-      if (location.pathname !== '/' || urlParams.get('error') !== errorType) {
-        navigate(`/?error=${errorType}`, { replace: true });
-      }
+      // Set error in localStorage for App.js to pick up
+      localStorage.setItem('authError', errorType);
+      console.log('AuthGate: Setting authError in localStorage', errorType);
+      window.dispatchEvent(new Event('authErrorOccurred')); // Notify App.js
     }
-  }, [navigate, location]);
+  }, [location]);
 
   // This component doesn't render anything if it's redirecting
   // If it's displaying an error, App.js will handle it based on URL param
