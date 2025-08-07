@@ -12,7 +12,7 @@ import VotePage from './pages/VotePage';
 import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
-import LineLoginHandler from './pages/LineLoginHandler';
+import CheckUserIdHandler from './pages/CheckUserIdHandler';
 import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
@@ -227,7 +227,7 @@ const App = () => {
           {/* Main content area that grows to push footer down */}
           <main className="flex-grow">
             <Routes>
-              <Route path="/line_login" element={<LineLoginHandler />} />
+              <Route path="/check" element={<CheckUserIdHandler />} />
               <Route path="/" element={<Navigate to="/vote" replace />} />
               <Route path="/vote" element={
                 userId ? (
