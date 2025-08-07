@@ -1,43 +1,49 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import AuthGate from './AuthGate';
-import { AuthRequiredMessage } from '../components';
-import useLocalStorageUserId from '../hooks/useLocalStorageUserId';
+import getAuthStatusFromUrl from './AuthGate'; // AuthGate is now a utility function
 
 const RootHandler = () => {
-  const userId = useLocalStorageUserId();
   const navigate = useNavigate();
   const location = useLocation();
-  const urlParams = new URLSearchParams(location.search);
-  const errorType = urlParams.get('error');
 
   useEffect(() => {
-    if (userId) {
-      // If userId exists, navigate to /vote
-      if (location.pathname !== '/vote') {
-        navigate('/vote', { replace: true });
-      }
-      // Clear any authError from localStorage if userId is present
-      localStorage.removeItem('authError');
-    } else if (errorType) {
-      // If no userId but there's an error in URL, display AuthRequiredMessage
-      // No navigation needed here, as AuthRequiredMessage will be rendered
-    } else {
-      // If no userId and no error in URL, render AuthGate to process URL
-      // AuthGate will set userId or authError in localStorage
-    }
-  }, [userId, navigate, location, errorType]);
+    const { userId: userIdFromUrl, errorType: errorTypeFromUrl } = getAuthStatusFromUrl(location);
+    let currentUserId = localStorage.getItem('offlineUserId');
 
-  if (userId) {
-    // This case is handled by useEffect, which navigates to /vote
-    return null;
-  } else if (errorType) {
-    // If there's an error in the URL, display the message
-    return <AuthRequiredMessage />;
-  } else {
-    // Otherwise, render AuthGate to process the URL
-    return <AuthGate />;
-  }
+    if (userIdFromUrl) {
+      // If userId is in URL, use it and store it
+      localStorage.setItem('offlineUserId', userIdFromUrl);
+      currentUserId = userIdFromUrl;
+    } else if (errorTypeFromUrl) {
+      // If error is in URL, clear userId and store error
+      localStorage.removeItem('offlineUserId');
+      localStorage.setItem('authError', errorTypeFromUrl);
+    } else if (currentUserId) {
+      // If userId is in localStorage, use it
+      // No action needed, currentUserId is already set
+    } else {
+      // No userId in URL or localStorage, and no error in URL
+      // This means it's a fresh visit without any auth info
+      localStorage.removeItem('offlineUserId');
+      localStorage.setItem('authError', 'no_userid');
+    }
+
+    // After processing, decide where to navigate
+    if (currentUserId) {
+      navigate('/vote', { replace: true });
+    } else {
+      const finalErrorType = localStorage.getItem('authError');
+      if (finalErrorType) {
+        // Navigate to root with error parameter if not already there
+        if (location.pathname !== '/' || new URLSearchParams(location.search).get('error') !== finalErrorType) {
+          navigate(`/?error=${finalErrorType}`, { replace: true });
+        }
+      }
+    }
+  }, [navigate, location]);
+
+  // This component doesn't render anything, it just handles logic and redirects
+  return null;
 };
 
 export default RootHandler;
