@@ -13,11 +13,13 @@ const RootHandler = () => {
     if (userIdFromUrl) {
       // If userId is in URL, use it and store it
       localStorage.setItem('offlineUserId', userIdFromUrl);
+      window.dispatchEvent(new Event('userLoggedIn')); // Dispatch event
       currentUserId = userIdFromUrl;
     } else if (errorTypeFromUrl) {
       // If error is in URL, clear userId and store error
       localStorage.removeItem('offlineUserId');
       localStorage.setItem('authError', errorTypeFromUrl);
+      window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
     } else if (currentUserId) {
       // If userId is in localStorage, use it
       // No action needed, currentUserId is already set
@@ -26,6 +28,7 @@ const RootHandler = () => {
       // This means it's a fresh visit without any auth info
       localStorage.removeItem('offlineUserId');
       localStorage.setItem('authError', 'no_userid');
+      window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
     }
 
     // After processing, decide where to navigate

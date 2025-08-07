@@ -14,6 +14,7 @@ import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
 import RootHandler from './pages/RootHandler';
+import useLocalStorageUserId from './hooks/useLocalStorageUserId';
 import blackgroundImage from './assets/blackground.png';
 
 const App = () => {
@@ -34,21 +35,7 @@ const App = () => {
     setShowThankYouPopup(false);
   };
 
-  const [userId, setUserId] = useState(() => localStorage.getItem('offlineUserId'));
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setUserId(localStorage.getItem('offlineUserId'));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('userLoggedIn', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLoggedIn', handleStorageChange);
-    };
-  }, []);
+  const userId = useLocalStorageUserId();
 
   const [isAdmin, setIsAdmin] = useState(() => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
