@@ -26,7 +26,6 @@ const AuthGate = () => {
     if (finalUserId) {
       localStorage.setItem('offlineUserId', finalUserId);
       window.dispatchEvent(new Event('userLoggedIn')); // Notify App.js
-      navigate('/vote', { replace: true });
     } else {
       // If no userId from URL and no stored userId, or if userIdFromUrl was 'Emtry'
       if (!errorType) {

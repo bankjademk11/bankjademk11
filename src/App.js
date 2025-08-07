@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import {
   Header,
   Navigation,
@@ -209,7 +209,9 @@ const App = () => {
           {/* Main content area that grows to push footer down */}
           <main className="flex-grow">
             <Routes>
-              <Route path="/" element={<AuthGate />} />
+              <Route path="/" element={
+                userId ? <Navigate to="/vote" replace /> : <AuthGate />
+              } />
               <Route path="/vote" element={
                 userId ? (
                   <VotePage
