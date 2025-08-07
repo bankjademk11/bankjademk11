@@ -6,6 +6,7 @@ import {
   MessageDisplay,
   ThankYouPopup,
   Footer,
+  AuthRequiredMessage,
 } from './components';
 import MyFoodsPage from './pages/MyFoodsPage';
 import VotePage from './pages/VotePage';
@@ -239,9 +240,7 @@ const App = () => {
                     onCancelVoteFromApp={handleCancelVote}
                   />
                 ) : (
-                  <div className="flex items-center justify-center h-screen text-primary text-xl font-bold text-center">
-                    ກະລຸນາເຂົ້າສູ່ລະບົບຜ່ານລິ້ງ LINE ທີ່ທ່ານໄດ້ຮັບ.
-                  </div>
+                  <AuthRequiredMessage />
                 )
               } />
               <Route path="/admin" element={

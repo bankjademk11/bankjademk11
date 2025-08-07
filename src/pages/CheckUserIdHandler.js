@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const CheckUserIdHandler = () => {
   const navigate = useNavigate();
-  const [message, setMessage] = useState('กำลังตรวจสอบ User ID...');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -16,17 +15,16 @@ const CheckUserIdHandler = () => {
       window.dispatchEvent(new Event('userLoggedIn'));
       // Redirect to the main app page
       navigate('/vote', { replace: true });
-    } else {
-      // If no userId or it's 'Emtry', display error
-      setMessage("Error: ไม่มี User ID หรือ User ID ไม่ถูกต้อง. กรุณาเข้าใช้งานผ่านลิงก์ที่มี User ID ที่ถูกต้อง.");
+    } else if (!userIdFromUrl) {
+      // If no userId in URL, navigate with no_userid error
+      navigate('/vote?error=no_userid', { replace: true });
+    } else if (userIdFromUrl.toLowerCase() === 'emtry') {
+      // If userId is 'Emtry', navigate with invalid_userid error
+      navigate('/vote?error=invalid_userid', { replace: true });
     }
   }, [navigate]);
 
-  return (
-    <div className="flex items-center justify-center h-screen text-primary text-xl font-bold text-center">
-      {message}
-    </div>
-  );
+  return null; // This component doesn't render anything, it just redirects
 };
 
 export default CheckUserIdHandler;
