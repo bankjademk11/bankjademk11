@@ -3,9 +3,9 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { FaCalendarCheck, FaTrophy, FaUsers, FaChartLine, FaThumbsDown, FaUserCheck, FaThumbsUp } from 'react-icons/fa';
 
 // Reusable Stat Card Component
-const StatCard = ({ icon, title, value, bgColor, isLoading }) => (
-    <div className={`p-4 md:p-6 rounded-2xl flex items-center space-x-4 ${bgColor}`}>
-        <div className="text-3xl md:text-4xl">{icon}</div>
+const StatCard = ({ icon, title, value, iconColor, isLoading }) => (
+    <div className="p-4 md:p-6 rounded-2xl flex items-center space-x-4 bg-surface text-neutral-700 shadow-md">
+        <div className={`text-3xl md:text-4xl ${iconColor}`}>{icon}</div>
         <div>
             <p className="text-sm md:text-base font-semibold">{title}</p>
             {isLoading ? (
@@ -183,10 +183,10 @@ const DailySummary = ({ BACKEND_URL }) => {
             <h2 className="text-2xl md:text-3xl font-bold text-center text-primary">ພາບລວມ Dashboard</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(currentDailyState)} bgColor="bg-blue-100 text-blue-800" isLoading={currentDayLoading} />
-                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={currentDailyResult?.winning_food_name || '—'} bgColor="bg-yellow-100 text-yellow-800" isLoading={currentDayLoading} />
-                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={currentDailyResult?.total_votes ?? '—'} bgColor="bg-green-100 text-green-800" isLoading={currentDayLoading} />
-                <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} bgColor="bg-purple-100 text-purple-800" isLoading={overallLoading} />
+                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(currentDailyState)} iconColor="text-primary" isLoading={currentDayLoading} />
+                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={currentDailyResult?.winning_food_name || '—'} iconColor="text-accent" isLoading={currentDayLoading} />
+                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={currentDailyResult?.total_votes ?? '—'} iconColor="text-success" isLoading={currentDayLoading} />
+                <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} iconColor="text-secondary" isLoading={overallLoading} />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">

@@ -9,7 +9,7 @@ const DailyMenuControl = ({
   foodItems,
 }) => {
   return (
-    <div className="p-6 bg-gray-100 bg-opacity-90 rounded-2xl shadow-lg">
+    <div className="p-6 bg-surface rounded-2xl shadow-lg">
       <h2 className="mb-6 text-3xl font-bold text-center text-primary">ຄວບຄຸມເມນູປະຈຳວັນ</h2>
 
       {/* Close Voting */}
@@ -33,7 +33,7 @@ const DailyMenuControl = ({
             <div
               key={food.id}
               className={`p-3 border rounded-lg flex flex-col items-center shadow-sm cursor-pointer transition-all duration-200
-                ${adminDirectSelectFoodId === food.id ? 'bg-primary text-white border-primary' : 'bg-gray-100 bg-opacity-90 border-gray-200 hover:bg-gray-50'}
+                ${adminDirectSelectFoodId === food.id ? 'bg-primary text-white border-primary' : 'bg-surface border-gray-200 hover:bg-gray-50'}
               `}
               onClick={() => setAdminDirectSelectFoodId(food.id)}
             >
