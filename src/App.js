@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import {
   Header,
   Navigation,
@@ -14,11 +14,21 @@ import AdminPage from './pages/AdminPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import DailyReportDetail from './components/admin/DailyReportDetail';
 import RootHandler from './pages/RootHandler';
-import useLocalStorageUserId from './hooks/useLocalStorageUserId';
 import blackgroundImage from './assets/blackground.png';
 
-const App = () => {
-  
+// A new component to wrap the main application logic
+const AppContent = () => {
+  const location = useLocation();
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const userIdFromUrl = searchParams.get('userID');
+    if (userIdFromUrl) {
+      setUserId(userIdFromUrl);
+    }
+  }, [location.search]);
+
   const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -35,11 +45,9 @@ const App = () => {
     setShowThankYouPopup(false);
   };
 
-  const userId = useLocalStorageUserId();
-
   const [isAdmin, setIsAdmin] = useState(() => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
-    return storedAdminStatus === 'true'; // Convert string to boolean
+    return storedAdminStatus === 'true';
   });
   const [adminPasswordInput, setAdminPasswordInput] = useState('');
   const ADMIN_PASSWORD = 'admin';
@@ -84,12 +92,10 @@ const App = () => {
     registerUser();
   }, [userId, BACKEND_URL]);
 
-  
-
   const handleAdminLogin = () => {
     if (adminPasswordInput === ADMIN_PASSWORD) {
       setIsAdmin(true);
-      localStorage.setItem('isAdmin', 'true'); // Save admin status
+      localStorage.setItem('isAdmin', 'true');
       showMessage('ເຂົ້າສູ່ລະບົບແອັດມິນສຳເລັດແລ້ວ!', 'success');
     } else {
       showMessage('ລະຫັດຜ່ານແອັດມິນບໍ່ຖືກຕ້ອງ', 'error');
@@ -99,7 +105,7 @@ const App = () => {
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
-    localStorage.removeItem('isAdmin'); // Remove admin status
+    localStorage.removeItem('isAdmin');
     showMessage('ອອກຈາກລະບົບແອັດມິນແລ້ວ', 'info');
   };
 
@@ -115,8 +121,6 @@ const App = () => {
       }
     }
   };
-
-  
 
   const handleVote = async (foodPackIndex, date) => {
     try {
@@ -183,80 +187,74 @@ const App = () => {
     }
   }, [BACKEND_URL, userId, showMessage]);
 
-  
-
   return (
-    <BrowserRouter>
-      <div className="relative min-h-screen font-sans text-neutral-800">
-        {/* Background Image with Blur */}
-        <div 
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-fixed filter blur-sm"
-          style={{ backgroundImage: `url(${blackgroundImage})` }}
-        ></div>
-
-        {/* Content Wrapper */}
-        <div className="relative z-10 flex flex-col min-h-screen">
-          <Header userId={userId} />
-          <MessageDisplay message={message} />
-          <Navigation isAdmin={isAdmin} />
-
-          <ThankYouPopup
-            show={showThankYouPopup}
-            onClose={handleCloseThankYouPopup}
-            message="ຂອບໃຈທີ່ທ່ານໂຫວດ"
-          />
-
-          {/* Main content area that grows to push footer down */}
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<RootHandler />} />
-              <Route path="/vote" element={
-                userId ? (
-                  <VotePage
-                    userId={userId}
-                    onVoteFromApp={handleVote}
-                    handleReviewSubmit={handleReviewSubmit}
-                    foodItems={foodItems}
-                    onCancelVoteFromApp={handleCancelVote}
-                  />
-                ) : (
-                  <AuthRequiredMessage />
-                )
-              } />
-              <Route path="/admin" element={
-                <AdminPage
-                  isAdmin={isAdmin}
-                  adminPasswordInput={adminPasswordInput}
-                  setAdminPasswordInput={setAdminPasswordInput}
-                  handleAdminLogin={handleAdminLogin}
-                  handleAdminLogout={handleAdminLogout}
+    <div className="relative min-h-screen font-sans text-neutral-800">
+      <div 
+        className="absolute inset-0 w-full h-full bg-cover bg-center bg-fixed filter blur-sm"
+        style={{ backgroundImage: `url(${blackgroundImage})` }}
+      ></div>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header userId={userId} />
+        <MessageDisplay message={message} />
+        <Navigation isAdmin={isAdmin} />
+        <ThankYouPopup
+          show={showThankYouPopup}
+          onClose={handleCloseThankYouPopup}
+          message="ຂອບໃຈທີ່ທ່ານໂຫວດ"
+        />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<RootHandler setUserId={setUserId} />} />
+            <Route path="/vote" element={
+              userId ? (
+                <VotePage
+                  userId={userId}
+                  onVoteFromApp={handleVote}
+                  handleReviewSubmit={handleReviewSubmit}
                   foodItems={foodItems}
-                  setFoodItems={setFoodItems}
-                  adminVoteSelections={adminVoteSelections}
-                  setAdminVoteSelections={setAdminVoteSelections}
-                  toggleAdminVoteSelection={toggleAdminVoteSelection}
-                  showMessage={showMessage}
-                  BACKEND_URL={BACKEND_URL}
+                  onCancelVoteFromApp={handleCancelVote}
                 />
-              } />
-              <Route path="/admin/my-foods" element={
-                <MyFoodsPage
-                  BACKEND_URL={BACKEND_URL}
-                  showMessage={showMessage}
-                  foodItems={foodItems}
-                  setFoodItems={setFoodItems}
-                />
-              } />
-              <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
-              <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
-            </Routes>
-          </main>
-          
-          <Footer userId={userId} />
-        </div>
+              ) : (
+                <AuthRequiredMessage />
+              )
+            } />
+            <Route path="/admin" element={
+              <AdminPage
+                isAdmin={isAdmin}
+                adminPasswordInput={adminPasswordInput}
+                setAdminPasswordInput={setAdminPasswordInput}
+                handleAdminLogin={handleAdminLogin}
+                handleAdminLogout={handleAdminLogout}
+                foodItems={foodItems}
+                setFoodItems={setFoodItems}
+                adminVoteSelections={adminVoteSelections}
+                setAdminVoteSelections={setAdminVoteSelections}
+                showMessage={showMessage}
+                BACKEND_URL={BACKEND_URL}
+              />
+            } />
+            <Route path="/admin/my-foods" element={
+              <MyFoodsPage
+                BACKEND_URL={BACKEND_URL}
+                showMessage={showMessage}
+                foodItems={foodItems}
+                setFoodItems={setFoodItems}
+              />
+            } />
+            <Route path="/report/:id" element={<DailyReportDetail BACKEND_URL={BACKEND_URL} showMessage={showMessage} />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardPage BACKEND_URL={BACKEND_URL} />} />
+          </Routes>
+        </main>
+        <Footer userId={userId} />
       </div>
-    </BrowserRouter>
+    </div>
   );
 };
+
+const App = () => (
+  <BrowserRouter>
+    <AppContent />
+  </BrowserRouter>
+);
 
 export default App;
