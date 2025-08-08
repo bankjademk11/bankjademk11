@@ -17,10 +17,10 @@ const VotePage = ({
 
   useEffect(() => {
     const fetchMenuForDate = async () => {
-      if (!selectedDate) return;
+      if (!selectedDate || !userId) return;
       setDailyMenu({ status: 'loading' });
       try {
-        const response = await fetch(`${BACKEND_URL}/api/daily-menu/${selectedDate}`);
+        const response = await fetch(`${BACKEND_URL}/api/daily-menu/${selectedDate}?userId=${userId}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -34,7 +34,7 @@ const VotePage = ({
 
     fetchMenuForDate();
 
-  }, [BACKEND_URL, selectedDate]);
+  }, [BACKEND_URL, selectedDate, userId]);
 
   const handleVote = async (foodPackIndex) => {
     try {
