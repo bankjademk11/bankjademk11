@@ -109,18 +109,7 @@ const AppContent = () => {
     showMessage('ອອກຈາກລະບົບແອັດມິນແລ້ວ', 'info');
   };
 
-  const toggleAdminVoteSelection = (food) => {
-    const isSelected = adminVoteSelections.some(item => item.id === food.id);
-    if (isSelected) {
-      setAdminVoteSelections(adminVoteSelections.filter(item => item.id !== food.id));
-    } else {
-      if (adminVoteSelections.length < 5) {
-        setAdminVoteSelections([...adminVoteSelections, food]);
-      } else {
-        showMessage('ເລືອກໄດ້ສູງສຸດ 5 ເມນູສຳລັບໂຫວດເທົ່ານັ້ນ', 'info');
-      }
-    }
-  };
+  
 
   const handleVote = async (foodPackIndex, date) => {
     try {
