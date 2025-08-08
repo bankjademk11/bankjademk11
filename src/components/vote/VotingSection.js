@@ -79,7 +79,7 @@ const VotingSection = ({ dailyMenu, userId, handleVote, foodItems, onCancelVoteF
                 </div>
                 <button
                   onClick={() => onVote(index)}
-                  disabled={hasVoted && !isSelected}
+                  disabled={hasVoted}
                   className={`w-full p-3 font-bold text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg disabled:shadow-none
                     ${isSelected ? 'bg-success hover:bg-success/90' : 'bg-primary hover:bg-primary-dark'}
                     ${hasVoted && !isSelected ? 'bg-neutral-300 cursor-not-allowed' : ''}
