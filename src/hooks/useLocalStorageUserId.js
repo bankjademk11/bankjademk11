@@ -1,26 +1,12 @@
 import { useState, useEffect } from 'react';
 
-const getUserIdFromLocalStorage = () => {
-  return localStorage.getItem('offlineUserId');
-};
-
 const useLocalStorageUserId = () => {
-  const [userId, setUserId] = useState(getUserIdFromLocalStorage());
+  // This hook no longer interacts with localStorage.
+  // It will be updated later to receive the userId from the new auth system.
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setUserId(getUserIdFromLocalStorage());
-    };
-
-    // Listen for changes in localStorage across tabs/windows
-    window.addEventListener('storage', handleStorageChange);
-    // Listen for our custom event dispatched by AuthGate (now getAuthStatusFromUrl)
-    window.addEventListener('userLoggedIn', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('userLoggedIn', handleStorageChange);
-    };
+    // The logic for handling storage changes is removed for now.
   }, []);
 
   return userId;

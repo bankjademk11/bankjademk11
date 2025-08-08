@@ -11,14 +11,14 @@ import {
 } from 'react-icons/fi';
 
 const Sidebar = () => {
-  const baseLinkClasses = "flex items-center px-4 py-3 text-neutral-600 hover:bg-primary-light/20 hover:text-primary-dark transition-colors duration-200 rounded-lg";
-  const activeLinkClasses = "bg-primary-light/20 text-primary-dark font-bold";
+  const baseLinkClasses = "flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200 rounded-lg";
+  const activeLinkClasses = "bg-gray-700 text-white font-bold";
 
   return (
-    <div className="w-64 bg-surface shadow-lg h-full flex flex-col">
-      <div className="px-6 py-4 border-b border-neutral-200">
-        <h2 className="text-2xl font-bold text-primary-dark">Admin Panel</h2>
-        <p className="text-sm text-neutral-500">ODIEN COOKING</p>
+    <div className="w-64 bg-gray-800 shadow-lg h-full flex flex-col">
+      <div className="px-6 py-4 border-b border-gray-700">
+        <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
+        <p className="text-sm text-gray-400">ODIEN COOKING</p>
       </div>
       <nav className="flex-grow px-4 py-4">
         <NavLink 
@@ -37,7 +37,7 @@ const Sidebar = () => {
         </NavLink>
         {/* Add other links as needed */}
       </nav>
-      <div className="px-4 py-4 border-t border-neutral-200">
+      <div className="px-4 py-4 border-t border-gray-700">
         <button className={`${baseLinkClasses} w-full`}>
             <FiLogOut className="mr-3" />
             ออกจากระบบ

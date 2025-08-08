@@ -7,50 +7,15 @@ const RootHandler = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const { userId: userIdFromUrl, errorType: errorTypeFromUrl } = getAuthStatusFromUrl(location);
-    let currentUserId = localStorage.getItem('offlineUserId');
-
+    const { userId: userIdFromUrl } = getAuthStatusFromUrl(location);
+    
     if (userIdFromUrl) {
-      // If userId is in URL, use it and store it
-      if (localStorage.getItem('offlineUserId') !== userIdFromUrl) {
-        localStorage.setItem('offlineUserId', userIdFromUrl);
-        window.dispatchEvent(new Event('userLoggedIn')); // Dispatch event
-        window.location.reload(); // Force reload to update UI
-      }
-      currentUserId = userIdFromUrl;
-    } else if (errorTypeFromUrl) {
-      // If error is in URL, clear userId and store error
-      if (localStorage.getItem('authError') !== errorTypeFromUrl) {
-        localStorage.removeItem('offlineUserId');
-        localStorage.setItem('authError', errorTypeFromUrl);
-        window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
-        window.location.reload(); // Force reload to update UI
-      }
-    } else if (currentUserId) {
-      // If userId is in localStorage, use it
-      // No action needed, currentUserId is already set
-    } else {
-      // No userId in URL or localStorage, and no error in URL
-      // This means it's a fresh visit without any auth info
-      if (localStorage.getItem('authError') !== 'no_userid') {
-        localStorage.removeItem('offlineUserId');
-        localStorage.setItem('authError', 'no_userid');
-        window.dispatchEvent(new Event('authErrorOccurred')); // Dispatch event
-        window.location.reload(); // Force reload to update UI
-      }
-    }
-
-    // After processing, decide where to navigate
-    if (currentUserId) {
+      // If a new userId is provided in the URL, we can decide what to do.
+      // For now, we'll just navigate to the vote page.
       navigate('/vote', { replace: true });
     } else {
-      const finalErrorType = localStorage.getItem('authError');
-      if (finalErrorType) {
-        // Navigate to root with error parameter if not already there
-        if (location.pathname !== '/' || new URLSearchParams(location.search).get('error') !== finalErrorType) {
-          navigate(`/?error=${finalErrorType}`, { replace: true });
-        }
-      }
+      // If no userId is found in the URL, redirect to the external page.
+      window.location.href = 'https://www.odienmall.com/lineoa';
     }
   }, [navigate, location]);
 
