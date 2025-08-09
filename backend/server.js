@@ -587,10 +587,69 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     // Update the user's vote
     updatedVotedUsers[userId] = foodPackIndex;
 
-    // --- Start Transaction ---
     const client = await pool.connect();
     try {
       await client.query('BEGIN');
+
+      // Lock the row for the specific date to prevent race conditions
+      const { rows: menuRows } = await client.query('SELECT * FROM daily_menu_states WHERE date = $1 FOR UPDATE', [targetDate]);
+
+      if (menuRows.length === 0) {
+        throw new Error('Daily menu state for the selected date not found.');
+      }
+      const currentMenu = menuRows[0];
+
+      if (!currentMenu.is_visible) {
+        throw new Error('Daily menu is currently disabled.');
+      }
+
+      if (currentMenu.status !== 'voting') {
+        throw new Error('Voting is not active for the selected date.');
+      }
+
+      let voteOptions = currentMenu.vote_options;
+      if (!Array.isArray(voteOptions)) {
+          if (typeof voteOptions === 'string') {
+              try {
+                  voteOptions = JSON.parse(voteOptions);
+              } catch (e) {
+                  console.error('Error parsing vote_options string:', e);
+                  throw new Error('Internal Server Error: Invalid vote options data format.');
+              }
+          } else {
+              voteOptions = [];
+          }
+      }
+
+      const updatedVoteOptions = [...voteOptions];
+      const updatedVotedUsers = { ...currentMenu.voted_users };
+
+      const hasVoted = updatedVotedUsers[userId] !== undefined;
+      const previousFoodPackIndex = hasVoted ? updatedVotedUsers[userId] : null;
+
+      if (hasVoted && previousFoodPackIndex !== foodPackIndex) {
+        if (previousFoodPackIndex >= 0 && previousFoodPackIndex < updatedVoteOptions.length) {
+          if (updatedVoteOptions[previousFoodPackIndex] && updatedVoteOptions[previousFoodPackIndex].votes > 0) {
+            updatedVoteOptions[previousFoodPackIndex].votes -= 1;
+          }
+        }
+      }
+
+      if (foodPackIndex < 0 || foodPackIndex >= updatedVoteOptions.length) {
+        throw new Error('Invalid food pack index.');
+      }
+
+      if (!updatedVoteOptions[foodPackIndex] || typeof updatedVoteOptions[foodPackIndex].votes === 'undefined') {
+          console.error('Target vote option is malformed:', updatedVoteOptions[foodPackIndex]);
+          throw new Error('Internal Server Error: Malformed vote option data.');
+      }
+
+      // Only increment if it's a new vote
+      if (!hasVoted) {
+          updatedVoteOptions[foodPackIndex].votes += 1;
+      }
+
+      updatedVotedUsers[userId] = foodPackIndex;
 
       // 1. Update the daily_menu_states table
       const updatedMenu = await client.query(
@@ -613,15 +672,19 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     } catch (err) {
       await client.query('ROLLBACK');
       console.error('Error during vote transaction:', err.stack);
-      res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+      // Avoid sending detailed internal errors to the client
+      if (err.message.includes('not found') || err.message.includes('disabled') || err.message.includes('not active') || err.message.includes('Invalid')) {
+        res.status(400).json({ error: err.message });
+      } else {
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
     } finally {
       client.release();
     }
-    // --- End Transaction ---
-
   } catch (err) {
-    console.error('Error casting vote:', err.stack);
-    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+    // This outer catch is for errors before the transaction starts, like failing to connect.
+    console.error('Error casting vote (pre-transaction):', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
