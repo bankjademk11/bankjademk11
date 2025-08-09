@@ -123,6 +123,22 @@ pool.query('ALTER TABLE daily_menu_states ADD COLUMN IF NOT EXISTS is_visible BO
     console.error('Error ensuring is_visible column in daily_menu_states:', err.stack);
   });
 
+// Create user_daily_votes table for logging
+pool.query(`
+  CREATE TABLE IF NOT EXISTS user_daily_votes (
+    id SERIAL PRIMARY KEY,
+    user_id VARCHAR(255) NOT NULL,
+    daily_menu_date DATE NOT NULL,
+    voted_for_pack_index INTEGER NOT NULL,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, daily_menu_date)
+  );
+`).then(() => {
+  console.log('User daily votes table ensured.');
+}).catch(err => {
+  console.error('Error ensuring user_daily_votes table:', err.stack);
+});
+
 // Create users table if it doesn't exist
 pool.query(`
   DROP TABLE IF EXISTS users;
@@ -571,12 +587,38 @@ app.post('/api/daily-menu/vote', async (req, res) => {
     // Update the user's vote
     updatedVotedUsers[userId] = foodPackIndex;
 
-    const updatedMenu = await pool.query(
-      'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
-      , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), targetDate]
-    );
+    // --- Start Transaction ---
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
 
-    res.status(200).json(updatedMenu.rows[0]);
+      // 1. Update the daily_menu_states table
+      const updatedMenu = await client.query(
+        'UPDATE daily_menu_states SET vote_options = $1, voted_users = $2, timestamp = NOW() WHERE date = $3 RETURNING *'
+        , [JSON.stringify(updatedVoteOptions), JSON.stringify(updatedVotedUsers), targetDate]
+      );
+
+      // 2. Log the vote in the new user_daily_votes table
+      const voteLogQuery = `
+        INSERT INTO user_daily_votes (user_id, daily_menu_date, voted_for_pack_index, timestamp)
+        VALUES ($1, $2, $3, NOW())
+        ON CONFLICT (user_id, daily_menu_date)
+        DO UPDATE SET voted_for_pack_index = EXCLUDED.voted_for_pack_index, timestamp = NOW();
+      `;
+      await client.query(voteLogQuery, [userId, targetDate, foodPackIndex]);
+
+      await client.query('COMMIT');
+      res.status(200).json(updatedMenu.rows[0]);
+
+    } catch (err) {
+      await client.query('ROLLBACK');
+      console.error('Error during vote transaction:', err.stack);
+      res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+    } finally {
+      client.release();
+    }
+    // --- End Transaction ---
+
   } catch (err) {
     console.error('Error casting vote:', err.stack);
     res.status(500).json({ error: 'Internal Server Error: ' + err.message });
