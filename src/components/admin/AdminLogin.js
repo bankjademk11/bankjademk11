@@ -2,7 +2,7 @@ import React from 'react';
 
 const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogin }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">ແຜງຄວບຄຸມແອັດມິນ</h2>
         <p className="text-center text-gray-600 mb-6">ກະລຸນາເຂົ້າສູ່ລະບົບແອັດມິນ</p>
