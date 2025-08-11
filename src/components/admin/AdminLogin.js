@@ -2,21 +2,30 @@ import React from 'react';
 
 const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogin }) => {
   return (
-    <div className="text-center space-y-6 p-8 bg-surface rounded-2xl shadow-lg max-w-md mx-auto">
-      <p className="text-xl text-primary font-semibold">ກະລຸນາເຂົ້າສູ່ລະບົບແອັດມິນ</p>
-      <input
-        type="password"
-        value={adminPasswordInput}
-        onChange={(e) => setAdminPasswordInput(e.target.value)}
-        className="block w-full px-4 py-3 text-lg border border-gray-300 shadow-sm rounded-lg focus:ring-primary focus:border-transparent transition-colors"
-        placeholder="ລະຫັດຜ່ານແອັດມິນ"
-      />
-      <button
-        onClick={handleAdminLogin}
-        className="px-8 py-3 font-bold text-white transition duration-300 ease-in-out transform bg-primary shadow-md rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-      >
-        ເຂົ້າສູ່ລະບົບ
-      </button>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-2">ແຜງຄວບຄຸມແອັດມິນ</h2>
+        <p className="text-center text-gray-600 mb-6">ກະລຸນາເຂົ້າສູ່ລະບົບແອັດມິນ</p>
+        <div className="mb-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="admin-password">
+            ລະຫັດຜ່ານແອັດມິນ
+          </label>
+          <input
+            id="admin-password"
+            type="password"
+            value={adminPasswordInput}
+            onChange={(e) => setAdminPasswordInput(e.target.value)}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="******************"
+          />
+        </div>
+        <button
+          onClick={handleAdminLogin}
+          className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          ເຂົ້າສູ່ລະບົບ
+        </button>
+      </div>
     </div>
   );
 };
