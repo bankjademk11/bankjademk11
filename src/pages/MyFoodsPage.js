@@ -17,8 +17,8 @@ const MyFoodsPage = ({ BACKEND_URL, foodItems }) => {
   return (
     <div className="container mx-auto px-4 py-8 bg-background">
       <div className="mb-8 text-center">
-        <h1 className="text-4xl font-bold text-primary mb-2">ລາຍການເມນູທັງໝົດ</h1>
-        <p className="text-lg text-secondary">ຄົ້ນຫາ ແລະ ສຳຫຼວດເມນູທີ່ທ່ານມັກ</p>
+        <h1 className="text-4xl font-bold text-white mb-2">ລາຍການເມນູທັງໝົດ</h1>
+        <p className="text-lg text-gray-200">ຄົ້ນຫາ ແລະ ສຳຫຼວດເມນູທີ່ທ່ານມັກ</p>
       </div>
 
       <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-8">
