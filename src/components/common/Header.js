@@ -15,11 +15,7 @@ const Header = ({ userId }) => {
             </Link>
           </div>
           
-          {userId && (
-            <div className="text-sm">
-              ລະຫັດຜູ້ໃຊ້: <span className="font-semibold">{userId}</span>
-            </div>
-          )}
+          
         </div>
       </div>
     </header>
