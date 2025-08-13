@@ -21,7 +21,7 @@ const AdminDashboard = ({
   showMessage,
   BACKEND_URL,
 }) => {
-  const [adminView, setAdminView] = useState('status');
+  const [adminView, setAdminView] = useState('dashboard');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [dailyMenu, setDailyMenu] = useState({ status: 'loading' });
   const [adminDirectSelectFoodId, setAdminDirectSelectFoodId] = useState('');
@@ -178,138 +178,147 @@ const AdminDashboard = ({
     }
   };
 
-  return (
-    <section className="p-8 mb-10 bg-gray-100 bg-opacity-90 rounded-2xl border border-gray-200">
-      <h2 className="mb-6 text-3xl font-bold text-center text-primary">ແຜງຄວບຄຸມແອັດມິນ</h2>
+  // Navigation items with icons
+  const navItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'status', label: 'ສະຖານະເມນູ', icon: '📋' },
+    { id: 'voting', label: 'ຈັດການໂຫວດ', icon: '🗳️' },
+    { id: 'food-management', label: 'ຈັດການອາຫານ', icon: '🍽️' },
+    { id: 'report', label: 'ລາຍງານ', icon: '📈' },
+  ];
 
-      {!isAdmin ? (
-        <AdminLogin
-          adminPasswordInput={adminPasswordInput}
-          setAdminPasswordInput={setAdminPasswordInput}
-          handleAdminLogin={handleAdminLogin}
-        />
-      ) : (
-        <>
-          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-            <div className="flex flex-wrap gap-3">
+  // If user is not admin, don't render anything here - let the parent component handle it
+  if (!isAdmin) {
+    return null;
+  }
+
+  return (
+    <section className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800">ຜູ້ດູແລລະບົບ (Admin Panel)</h1>
+          <p className="text-gray-600 mt-2">ຈັດການລະບົບອາຫານປະຈຳວັນ</p>
+        </div>
+
+        {/* Navigation Bar - Responsive */}
+        <div className="bg-white rounded-xl shadow-lg p-4 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 md:pb-0">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => setAdminView(item.id)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap
+                    ${adminView === item.id 
+                      ? 'bg-teal-600 text-white shadow-md' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
+                  `}
+                >
+                  <span className="text-base">{item.icon}</span>
+                  <span>{item.label}</span>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label htmlFor="date-picker" className="text-gray-700 font-medium whitespace-nowrap">ເລືອກວັນທີ:</label>
+                <input
+                  type="date"
+                  id="date-picker"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
+                />
+              </div>
               <button
-                onClick={() => setAdminView('status')}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
-                  ${adminView === 'status' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
-                `}
+                onClick={handleAdminLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors whitespace-nowrap"
               >
-                ສະຖານະເມນູ
-              </button>
-              <button
-                onClick={() => setAdminView('voting')}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
-                  ${adminView === 'voting' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
-                `}
-              >
-                ຈັດການໂຫວດ
-              </button>
-              <button
-                onClick={() => setAdminView('food-management')}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
-                  ${adminView === 'food-management' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
-                `}
-              >
-                ຈັດການອາຫານ
-              </button>
-              <button
-                onClick={() => setAdminView('report')}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
-                  ${adminView === 'report' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
-                `}
-              >
-                ລາຍງານ
-              </button>
-              <button
-                onClick={() => setAdminView('dashboard')}
-                className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out
-                  ${adminView === 'dashboard' ? 'bg-primary text-white shadow-md' : 'bg-gray-100 text-secondary hover:bg-gray-200'}
-                `}
-              >
-                Dashboard
+                <span>ອອກຈາກລະບົບ</span>
               </button>
             </div>
-            <div className="flex items-center space-x-3">
-              <label htmlFor="date-picker" className="text-secondary font-semibold">ເລືອກວັນທີ:</label>
-              <input
-                type="date"
-                id="date-picker"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="p-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary transition-colors"
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {adminView === 'voting' && (
+            <div className="p-4 md:p-6">
+              <VoteSelection
+                foodItems={foodItems}
+                adminVoteSelections={adminVoteSelections}
+                setAdminVoteSelections={setAdminVoteSelections}
+                toggleAdminVoteSelection={toggleAdminVoteSelection}
+                handleStartVoting={handleStartVoting}
+                isStartingVote={isStartingVote}
+                showMessage={showMessage}
+                selectedAdminCategory={selectedAdminCategory}
+                setSelectedAdminCategory={setSelectedAdminCategory}
+                selectedDate={selectedDate}
+                editingVoteOptions={editingVoteOptions}
+                editingDate={editingDate}
+                adminFinalVotePacks={adminFinalVotePacks}
+                setAdminFinalVotePacks={setAdminFinalVotePacks}
+                adminSelectedFoodForPack={adminSelectedFoodForPack}
+                setAdminSelectedFoodForPack={setAdminSelectedFoodForPack}
               />
             </div>
-            <button
-              onClick={handleAdminLogout}
-              className="px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 ease-in-out bg-red-500 text-white shadow-md hover:bg-red-600"
-            >
-              ອອກຈາກລະບົບ
-            </button>
-          </div>
-
-          {adminView === 'voting' && (
-            <VoteSelection
-              foodItems={foodItems}
-              adminVoteSelections={adminVoteSelections}
-              setAdminVoteSelections={setAdminVoteSelections}
-              toggleAdminVoteSelection={toggleAdminVoteSelection}
-              handleStartVoting={handleStartVoting}
-              isStartingVote={isStartingVote} // Pass the new state
-              showMessage={showMessage}
-              selectedAdminCategory={selectedAdminCategory}
-              setSelectedAdminCategory={setSelectedAdminCategory}
-              selectedDate={selectedDate}
-              editingVoteOptions={editingVoteOptions}
-              editingDate={editingDate}
-              adminFinalVotePacks={adminFinalVotePacks}
-              setAdminFinalVotePacks={setAdminFinalVotePacks}
-              adminSelectedFoodForPack={adminSelectedFoodForPack}
-              setAdminSelectedFoodForPack={setAdminSelectedFoodForPack}
-            />
           )}
 
           {adminView === 'admin-set-menu' && (
-            <DailyMenuControl
-              dailyMenuStatus={dailyMenu.status}
-              handleCloseVoting={handleCloseVoting}
-              adminDirectSelectFoodId={adminDirectSelectFoodId}
-              setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
-              handleAdminSetFood={handleAdminSetFood}
-              foodItems={foodItems}
-              selectedDate={selectedDate}
-            />
+            <div className="p-4 md:p-6">
+              <DailyMenuControl
+                dailyMenuStatus={dailyMenu.status}
+                handleCloseVoting={handleCloseVoting}
+                adminDirectSelectFoodId={adminDirectSelectFoodId}
+                setAdminDirectSelectFoodId={setAdminDirectSelectFoodId}
+                handleAdminSetFood={handleAdminSetFood}
+                foodItems={foodItems}
+                selectedDate={selectedDate}
+              />
+            </div>
           )}
 
           {adminView === 'report' && (
-            <GMReport BACKEND_URL={BACKEND_URL} showMessage={showMessage} />
+            <div className="p-4 md:p-6">
+              <GMReport BACKEND_URL={BACKEND_URL} showMessage={showMessage} />
+            </div>
           )}
 
           {adminView === 'status' && (
-            <DailyMenuStatus
-              BACKEND_URL={BACKEND_URL}
-              showMessage={showMessage}
-              foodItems={foodItems}
-              onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting}
-              selectedDate={selectedDate}
-              setSelectedDate={setSelectedDate}
-              handleCloseVoting={handleCloseVoting}
-              handleEditMenuAndNavigateToVoting={handleEditMenuAndNavigateToVoting}
-            />
+            <div className="p-4 md:p-6">
+              <DailyMenuStatus
+                BACKEND_URL={BACKEND_URL}
+                showMessage={showMessage}
+                foodItems={foodItems}
+                onCreateMenuAndNavigate={handleCreateMenuAndNavigateToVoting}
+                selectedDate={selectedDate}
+                setSelectedDate={setSelectedDate}
+                handleCloseVoting={handleCloseVoting}
+                handleEditMenuAndNavigateToVoting={handleEditMenuAndNavigateToVoting}
+              />
+            </div>
           )}
 
           {adminView === 'food-management' && (
-            <FoodManagement BACKEND_URL={BACKEND_URL} showMessage={showMessage} foodItems={foodItems} setFoodItems={setFoodItems} />
+            <div className="p-4 md:p-6">
+              <FoodManagement 
+                BACKEND_URL={BACKEND_URL} 
+                showMessage={showMessage} 
+                foodItems={foodItems} 
+                setFoodItems={setFoodItems} 
+              />
+            </div>
           )}
 
           {adminView === 'dashboard' && (
-            <DailySummary BACKEND_URL={BACKEND_URL} />
+            <div className="p-0">
+              <DailySummary BACKEND_URL={BACKEND_URL} />
+            </div>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </section>
   );
 };

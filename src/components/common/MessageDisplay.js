@@ -7,8 +7,9 @@ const MessageDisplay = ({ message }) => {
     <div
       className={`fixed top-6 right-6 z-50 p-5 rounded-xl shadow-xl text-white font-semibold transition-all duration-500 ease-in-out transform
         ${message.type === 'success' ? 'bg-green-600' :
-        message.type === 'error' ? 'bg-red-600' : 'bg-primary'}
-      }`}
+        message.type === 'error' ? 'bg-red-600' : 
+        message.type === 'info' ? 'bg-blue-600' : 'bg-teal-600'}
+      `}
     >
       <div>
         <span>{message.text}</span>

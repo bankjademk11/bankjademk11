@@ -4,14 +4,14 @@ import { FaCalendarCheck, FaTrophy, FaUsers, FaChartLine, FaThumbsDown, FaUserCh
 
 // Reusable Stat Card Component
 const StatCard = ({ icon, title, value, iconColor, isLoading }) => (
-    <div className="p-4 md:p-6 rounded-2xl flex items-center space-x-4 bg-surface text-neutral-700 shadow-md">
+    <div className="p-5 md:p-6 rounded-2xl flex items-center space-x-4 bg-white shadow-md hover:shadow-lg transition-shadow duration-300">
         <div className={`text-3xl md:text-4xl ${iconColor}`}>{icon}</div>
         <div>
-            <p className="text-sm md:text-base font-semibold">{title}</p>
+            <p className="text-sm md:text-base font-semibold text-gray-600">{title}</p>
             {isLoading ? (
-                <div className="h-8 w-24 bg-gray-400 animate-pulse rounded-md"></div>
+                <div className="h-8 w-24 bg-gray-300 animate-pulse rounded-md mt-1"></div>
             ) : (
-                <p className="text-xl md:text-2xl font-bold truncate">{value}</p>
+                <p className="text-xl md:text-2xl font-bold text-gray-800 truncate">{value}</p>
             )}
         </div>
     </div>
@@ -21,10 +21,12 @@ const StatCard = ({ icon, title, value, iconColor, isLoading }) => (
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="p-3 bg-gray-100 bg-opacity-90 border border-gray-300 rounded-lg">
-                <p className="font-bold text-primary">{`${label}`}</p>
+            <div className="p-4 bg-white bg-opacity-90 border border-gray-300 rounded-xl shadow-lg">
+                <p className="font-bold text-teal-600 mb-2">{`${label}`}</p>
                 {payload.map((pld, index) => (
-                    <p key={index} style={{ color: pld.color }}>{`${pld.name}: ${pld.value}`}</p>
+                    <p key={index} className="text-gray-800" style={{ color: pld.color }}>
+                        <span className="font-medium">{pld.name}:</span> {pld.value}
+                    </p>
                 ))}
             </div>
         );
@@ -180,34 +182,59 @@ const DailySummary = ({ BACKEND_URL }) => {
 
     return (
         <div className="p-4 md:p-6 space-y-6 md:space-y-8">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-primary">ພາບລວມ Dashboard</h2>
-
+            {/* Stat Cards Section */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(currentDailyState)} iconColor="text-primary" isLoading={currentDayLoading} />
-                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={currentDailyResult?.winning_food_name || '—'} iconColor="text-accent" isLoading={currentDayLoading} />
-                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={currentDailyResult?.total_votes ?? '—'} iconColor="text-success" isLoading={currentDayLoading} />
-                <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} iconColor="text-secondary" isLoading={overallLoading} />
+                <StatCard icon={<FaCalendarCheck />} title="ສະຖານະມື້ນີ້" value={getStatusText(currentDailyState)} iconColor="text-teal-500" isLoading={currentDayLoading} />
+                <StatCard icon={<FaTrophy />} title="ຜູ້ຊະນະມື້ນີ້" value={currentDailyResult?.winning_food_name || '—'} iconColor="text-amber-500" isLoading={currentDayLoading} />
+                <StatCard icon={<FaUsers />} title="ຄົນໂຫວດມື້ນີ້" value={currentDailyResult?.total_votes ?? '—'} iconColor="text-blue-500" isLoading={currentDayLoading} />
+                <StatCard icon={<FaChartLine />} title="ເມນູຍອດນິຍົມ (ເດືອນນີ້)" value={overallSummary?.monthly?.winning_food_name || '—'} iconColor="text-purple-500" isLoading={overallLoading} />
             </div>
 
+            {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                <div className="lg:col-span-1 bg-gray-100 bg-opacity-90 p-4 md:p-6 rounded-2xl border border-gray-200 space-y-4 self-start">
+                {/* Date Selection Card */}
+                <div className="lg:col-span-1 bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-md space-y-4 self-start">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">ຂໍ້ມູນລະອຽດ</h3>
                     <div>
-                        <label htmlFor="summary-date-picker" className="block text-secondary text-sm font-semibold mb-2">ເລືອກວັນທີ:</label>
-                        <input type="date" id="summary-date-picker" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
+                        <label htmlFor="summary-date-picker" className="block text-gray-700 text-sm font-semibold mb-2">ເລືອກວັນທີ:</label>
+                        <input 
+                            type="date" 
+                            id="summary-date-picker" 
+                            value={selectedDate} 
+                            onChange={(e) => setSelectedDate(e.target.value)} 
+                            className="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors" 
+                        />
                     </div>
-                    {loading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
+                    {loading && <div className="text-center py-4 text-gray-600">ກຳລັງໂຫຼດ...</div>}
                     {error && <div className="text-center py-4 text-red-500">ຂໍ້ຜິດພາດ: {error}</div>}
                     {!loading && !error && (
-                        <div className="space-y-2">
-                            <p><strong className="text-primary">ວັນທີ:</strong> <span className="text-secondary">{new Date(selectedDate).toLocaleDateString('en-GB')}</span></p>
-                            <p><strong className="text-primary">ສະຖານະ:</strong> <span className="font-bold">{getStatusText(dailyState)}</span></p>
-                            <p><strong className="text-primary">ອາຫານທີ່ຊະນະ:</strong> <span className="text-secondary">{dailyResult?.winning_food_name || 'ບໍ່ມີ'}</span></p>
-                            <p><strong className="text-primary">ຈຳນວນໂຫວດ:</strong> <span className="text-secondary">{dailyResult?.total_votes ?? 'ບໍ່ມີ'}</span></p>
+                        <div className="space-y-3">
+                            <p className="flex justify-between">
+                                <span className="font-medium text-gray-700">ວັນທີ:</span>
+                                <span className="text-gray-600">{new Date(selectedDate).toLocaleDateString('en-GB')}</span>
+                            </p>
+                            <p className="flex justify-between">
+                                <span className="font-medium text-gray-700">ສະຖານະ:</span>
+                                <span className="font-bold text-teal-600">{getStatusText(dailyState)}</span>
+                            </p>
+                            <p className="flex justify-between">
+                                <span className="font-medium text-gray-700">ອາຫານທີ່ຊະນະ:</span>
+                                <span className="text-gray-600">{dailyResult?.winning_food_name || 'ບໍ່ມີ'}</span>
+                            </p>
+                            <p className="flex justify-between">
+                                <span className="font-medium text-gray-700">ຈຳນວນໂຫວດ:</span>
+                                <span className="text-gray-600">{dailyResult?.total_votes ?? 'ບໍ່ມີ'}</span>
+                            </p>
                             {dailyResult?.vote_details?.length > 0 && (
-                                <div className="pt-2">
-                                    <p className="font-semibold text-primary mb-1">ລາຍລະອຽດ:</p>
-                                    <ul className="list-disc list-inside ml-4 text-secondary text-sm">
-                                        {dailyResult.vote_details.map((pack, index) => <li key={index}>{pack.name}: {pack.votes} ໂຫວດ</li>)}
+                                <div className="pt-2 border-t border-gray-200">
+                                    <p className="font-semibold text-gray-800 mb-2">ລາຍລະອຽດ:</p>
+                                    <ul className="space-y-2">
+                                        {dailyResult.vote_details.map((pack, index) => (
+                                            <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                                <span className="text-gray-700">{pack.name}</span>
+                                                <span className="font-bold text-teal-600">{pack.votes} ໂຫວດ</span>
+                                            </li>
+                                        ))}
                                     </ul>
                                 </div>
                             )}
@@ -215,101 +242,165 @@ const DailySummary = ({ BACKEND_URL }) => {
                     )}
                 </div>
 
-                <div className="lg:col-span-2 bg-gray-100 bg-opacity-90 p-4 md:p-6 rounded-2xl border border-gray-200">
-                    <h3 className="text-xl font-bold text-primary mb-4">ສະຖິຕິການໂຫວດອາຫານ</h3>
-                    <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4">
-                        <div className="flex-grow flex flex-col sm:flex-row gap-2 md:gap-4">
-                            <div className="flex-1 min-w-[150px]">
-                                <label htmlFor="chart-start-date" className="block text-secondary text-sm font-semibold mb-1">ວັນທີເລີ່ມຕົ້ນ:</label>
-                                <input type="date" id="chart-start-date" value={chartStartDate} onChange={(e) => setChartStartDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
-                            </div>
-                            <div className="flex-1 min-w-[150px]">
-                                <label htmlFor="chart-end-date" className="block text-secondary text-sm font-semibold mb-1">ວັນທີສິ້ນສຸດ:</label>
-                                <input type="date" id="chart-end-date" value={chartEndDate} onChange={(e) => setChartEndDate(e.target.value)} className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-transparent transition-colors" />
-                            </div>
-                        </div>
-                        <div className="flex items-end gap-2 pt-5">
-                            <button onClick={() => handleSetDateRange('7days')} className="px-3 py-2 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">7 ມື້</button>
-                            <button onClick={() => handleSetDateRange('thisMonth')} className="px-3 py-2 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">ເດືອນນີ້</button>
-                            <button onClick={() => handleSetDateRange('lastMonth')} className="px-3 py-2 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">ເດືອນກ່ອນ</button>
+                {/* Chart Section */}
+                <div className="lg:col-span-2 bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <h3 className="text-xl font-bold text-gray-800">ສະຖິຕິການໂຫວດອາຫານ</h3>
+                        <div className="flex flex-wrap gap-2">
+                            <button 
+                                onClick={() => handleSetDateRange('7days')} 
+                                className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                7 ມື້
+                            </button>
+                            <button 
+                                onClick={() => handleSetDateRange('thisMonth')} 
+                                className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                ເດືອນນີ້
+                            </button>
+                            <button 
+                                onClick={() => handleSetDateRange('lastMonth')} 
+                                className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                ເດືອນກ່ອນ
+                            </button>
                         </div>
                     </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                        <div className="flex-1">
+                            <label htmlFor="chart-start-date" className="block text-gray-700 text-sm font-semibold mb-1">ວັນທີເລີ່ມຕົ້ນ:</label>
+                            <input 
+                                type="date" 
+                                id="chart-start-date" 
+                                value={chartStartDate} 
+                                onChange={(e) => setChartStartDate(e.target.value)} 
+                                className="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors" 
+                            />
+                        </div>
+                        <div className="flex-1">
+                            <label htmlFor="chart-end-date" className="block text-gray-700 text-sm font-semibold mb-1">ວັນທີສິ້ນສຸດ:</label>
+                            <input 
+                                type="date" 
+                                id="chart-end-date" 
+                                value={chartEndDate} 
+                                onChange={(e) => setChartEndDate(e.target.value)} 
+                                className="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors" 
+                            />
+                        </div>
+                    </div>
+                    
                     <div className="h-80">
-                        {dataLoading && <div className="text-center pt-16 text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
+                        {dataLoading && <div className="text-center pt-16 text-gray-600">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
                         {dataError && <div className="text-center pt-16 text-red-500">{dataError}</div>}
                         {!dataLoading && !dataError && chartData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 70 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="food_name" angle={-45} textAnchor="end" height={80} interval={0} tick={{ fontSize: 12 }} />
+                                    <XAxis 
+                                        dataKey="food_name" 
+                                        angle={-45} 
+                                        textAnchor="end" 
+                                        height={80} 
+                                        interval={0} 
+                                        tick={{ fontSize: 12 }} 
+                                    />
                                     <YAxis />
                                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(75, 192, 192, 0.2)' }} />
                                     <Legend wrapperStyle={{ bottom: 0, left: 20 }} />
-                                    <Bar dataKey="total_votes" fill="#4CAF50" name="ຈຳນວນໂຫວດ" barSize={20} cursor="pointer" />
+                                    <Bar 
+                                        dataKey="total_votes" 
+                                        fill="#0d9488" 
+                                        name="ຈຳນວນໂຫວດ" 
+                                        barSize={20} 
+                                        radius={[4, 4, 0, 0]}
+                                    />
                                 </BarChart>
                             </ResponsiveContainer>
                         ) : (
-                             !dataLoading && !dataError && <div className="text-center pt-16 text-secondary">ບໍ່ພົບຂໍ້ມູນການໂຫວດສຳລັບຊ່ວງວັນທີນີ້.</div>
+                             !dataLoading && !dataError && <div className="text-center pt-16 text-gray-600">ບໍ່ພົບຂໍ້ມູນການໂຫວດສຳລັບຊ່ວງວັນທີນີ້.</div>
                         )}
                     </div>
                 </div>
             </div>
 
+            {/* Bottom Section with Popular/Unpopular Foods and Voter Turnout */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                <div className="bg-gray-100 bg-opacity-90 p-4 md:p-6 rounded-2xl border border-gray-200">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaThumbsDown className="mr-2 text-red-500" /> 5 ເມນູທີ່ບໍ່ໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ</h3>
-                    {dataLoading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
+                {/* Least Popular Foods */}
+                <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-md">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <FaThumbsDown className="mr-2 text-red-500" /> 5 ເມນູທີ່ບໍ່ໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ
+                    </h3>
+                    {dataLoading && <div className="text-center py-4 text-gray-600">ກຳລັງໂຫຼດ...</div>}
                     {!dataLoading && leastPopularFoods.length > 0 && (
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                             {leastPopularFoods.map((food, index) => (
-                                <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                    <span className="text-secondary font-medium">{food.food_name}</span>
-                                    <span className="font-bold text-red-600">{food.total_votes} ໂຫວດ</span>
+                                <li key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                                    <span className="text-gray-700 font-medium">{food.food_name}</span>
+                                    <span className="font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full">{food.total_votes} ໂຫວດ</span>
                                 </li>
                             ))}
                         </ul>
                     )}
                     {!dataLoading && leastPopularFoods.length === 0 && (
-                        <div className="text-center py-4 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
+                        <div className="text-center py-4 text-gray-600">ບໍ່ພົບຂໍ້ມູນ.</div>
                     )}
                 </div>
 
-                <div className="bg-gray-100 bg-opacity-90 p-4 md:p-6 rounded-2xl border border-gray-200">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaThumbsUp className="mr-2 text-green-500" /> 5 ເມນູໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ</h3>
-                    {dataLoading && <div className="text-center py-4 text-secondary">ກຳລັງໂຫຼດ...</div>}
+                {/* Most Popular Foods */}
+                <div className="bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-md">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <FaThumbsUp className="mr-2 text-green-500" /> 5 ເມນູໄດ້ຮັບຄວາມນິຍົມທີ່ສຸດ
+                    </h3>
+                    {dataLoading && <div className="text-center py-4 text-gray-600">ກຳລັງໂຫຼດ...</div>}
                     {!dataLoading && mostPopularFoods.length > 0 && (
-                        <ul className="space-y-2">
+                        <ul className="space-y-3">
                             {mostPopularFoods.map((food, index) => (
-                                <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                    <span className="text-secondary font-medium">{food.food_name}</span>
-                                    <span className="font-bold text-green-600">{food.total_votes} ໂຫວດ</span>
+                                <li key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                                    <span className="text-gray-700 font-medium">{food.food_name}</span>
+                                    <span className="font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">{food.total_votes} ໂຫວດ</span>
                                 </li>
                             ))}
                         </ul>
                     )}
                     {!dataLoading && mostPopularFoods.length === 0 && (
-                        <div className="text-center py-4 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
+                        <div className="text-center py-4 text-gray-600">ບໍ່ພົບຂໍ້ມູນ.</div>
                     )}
                 </div>
 
-                <div className="bg-gray-100 bg-opacity-90 p-4 md:p-6 rounded-2xl border border-gray-200">
-                    <h3 className="text-xl font-bold text-primary mb-4 flex items-center"><FaUserCheck className="mr-2 text-blue-500" /> ສະຖິຕິການມີສ່ວນຮ່ວມຂອງຜູ້ໃຊ້</h3>
-                    <div className="h-60">
-                        {dataLoading && <div className="text-center pt-16 text-secondary">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
+                {/* Voter Turnout Chart */}
+                <div className="lg:col-span-2 bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-md">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                        <FaUserCheck className="mr-2 text-blue-500" /> ສະຖິຕິການມີສ່ວນຮ່ວມຂອງຜູ້ໃຊ້
+                    </h3>
+                    <div className="h-80">
+                        {dataLoading && <div className="text-center pt-16 text-gray-600">ກຳລັງໂຫຼດຂໍ້ມູນ...</div>}
                         {dataError && <div className="text-center pt-16 text-red-500">{dataError}</div>}
                         {!dataLoading && !dataError && voterTurnoutData.length > 0 ? (
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={voterTurnoutData} margin={{ top: 5, right: 20, left: -10, bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                                    <XAxis 
+                                        dataKey="date" 
+                                        tick={{ fontSize: 12 }} 
+                                    />
                                     <YAxis />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend wrapperStyle={{ bottom: -10, left: 20 }} />
-                                    <Line type="monotone" dataKey="voter_count" name="ຈຳນວນຜູ້ໂຫວດ" stroke="#3B82F6" strokeWidth={2} />
+                                    <Line 
+                                        type="monotone" 
+                                        dataKey="voter_count" 
+                                        name="ຈຳນວນຜູ້ໂຫວດ" 
+                                        stroke="#3b82f6" 
+                                        strokeWidth={3} 
+                                        dot={{ r: 5, fill: '#3b82f6' }}
+                                        activeDot={{ r: 8, fill: '#2563eb' }}
+                                    />
                                 </LineChart>
                             </ResponsiveContainer>
                         ) : (
-                            !dataLoading && !dataError && <div className="text-center pt-16 text-secondary">ບໍ່ພົບຂໍ້ມູນ.</div>
+                            !dataLoading && !dataError && <div className="text-center pt-16 text-gray-600">ບໍ່ພົບຂໍ້ມູນ.</div>
                         )}
                     </div>
                 </div>
