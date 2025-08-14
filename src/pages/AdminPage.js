@@ -4,8 +4,7 @@ import AdminLogin from '../components/admin/AdminLogin';
 
 const AdminPage = ({
   isAdmin,
-  adminPasswordInput,
-  setAdminPasswordInput,
+  adminName,
   handleAdminLogin,
   handleAdminLogout,
   foodItems,
@@ -22,8 +21,6 @@ const AdminPage = ({
   if (!isAdmin) {
     return (
       <AdminLogin
-        adminPasswordInput={adminPasswordInput}
-        setAdminPasswordInput={setAdminPasswordInput}
         handleAdminLogin={handleAdminLogin}
       />
     );
@@ -33,9 +30,7 @@ const AdminPage = ({
   return (
     <AdminDashboard
       isAdmin={isAdmin}
-      adminPasswordInput={adminPasswordInput}
-      setAdminPasswordInput={setAdminPasswordInput}
-      handleAdminLogin={handleAdminLogin}
+      adminName={adminName}
       handleAdminLogout={handleAdminLogout}
       foodItems={foodItems}
       setFoodItems={setFoodItems}

@@ -189,6 +189,37 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// Admin login
+app.post('/api/admin/login', async (req, res) => {
+  const { code, password } = req.body;
+
+  if (!code || !password) {
+    return res.status(400).json({ error: 'Code and password are required' });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT code, name_1, password FROM erp_user WHERE code = $1 AND password = $2",
+      [code, password]
+    );
+
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      // Do not send password back to client
+      res.json({
+        code: user.code,
+        name: user.name_1,
+        message: 'Login successful'
+      });
+    } else {
+      res.status(401).json({ error: 'Invalid credentials' });
+    }
+  } catch (err) {
+    console.error('Error during admin login:', err.stack);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // POST a new review for a food item
 app.post('/api/foods/:id/reviews', async (req, res) => {

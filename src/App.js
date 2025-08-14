@@ -49,8 +49,9 @@ const AppContent = () => {
     const storedAdminStatus = localStorage.getItem('isAdmin');
     return storedAdminStatus === 'true';
   });
-  const [adminPasswordInput, setAdminPasswordInput] = useState('');
-  const ADMIN_PASSWORD = 'admin';
+  const [adminName, setAdminName] = useState(() => {
+    return localStorage.getItem('adminName') || '';
+  });
 
   const [foodItems, setFoodItems] = useState([]);
 
@@ -92,20 +93,38 @@ const AppContent = () => {
     registerUser();
   }, [userId, BACKEND_URL]);
 
-  const handleAdminLogin = () => {
-    if (adminPasswordInput === ADMIN_PASSWORD) {
+  const handleAdminLogin = async (code, password) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to login');
+      }
+
+      const data = await response.json();
       setIsAdmin(true);
+      setAdminName(data.name);
       localStorage.setItem('isAdmin', 'true');
-      showMessage('ເຂົ້າສູ່ລະບົບແອັດມິນສຳເລັດແລ້ວ!', 'success');
-    } else {
-      showMessage('ລະຫັດຜ່ານແອັດມິນບໍ່ຖືກຕ້ອງ', 'error');
+      localStorage.setItem('adminName', data.name);
+      showMessage(`ສະບາຍດີ, ${data.name}!`, 'success');
+    } catch (error) {
+      console.error("Error logging in:", error);
+      showMessage(error.message, 'error');
     }
-    setAdminPasswordInput('');
   };
 
   const handleAdminLogout = () => {
     setIsAdmin(false);
+    setAdminName('');
     localStorage.removeItem('isAdmin');
+    localStorage.removeItem('adminName');
     showMessage('ອອກຈາກລະບົບແອັດມິນແລ້ວ', 'info');
   };
 
@@ -210,8 +229,7 @@ const AppContent = () => {
             <Route path="/admin" element={
               <AdminPage
                 isAdmin={isAdmin}
-                adminPasswordInput={adminPasswordInput}
-                setAdminPasswordInput={setAdminPasswordInput}
+                adminName={adminName}
                 handleAdminLogin={handleAdminLogin}
                 handleAdminLogout={handleAdminLogout}
                 foodItems={foodItems}

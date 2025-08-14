@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogin }) => {
+const AdminLogin = ({ handleAdminLogin }) => {
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onLoginClick = () => {
+    handleAdminLogin(code, password);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-500 to-teal-700 p-4">
       <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md">
@@ -16,6 +23,25 @@ const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogi
           </div>
           
           <div className="mb-6">
+            <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="admin-code">
+              <i className="fas fa-user mr-2"></i>ລະຫັດພະນັກງານ
+            </label>
+            <div className="relative">
+              <input
+                id="admin-code"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200 ease-in-out pl-10"
+                placeholder="Code"
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <i className="fas fa-user text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
             <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor="admin-password">
               <i className="fas fa-lock mr-2"></i>ລະຫັດຜ່ານ
             </label>
@@ -23,8 +49,8 @@ const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogi
               <input
                 id="admin-password"
                 type="password"
-                value={adminPasswordInput}
-                onChange={(e) => setAdminPasswordInput(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="appearance-none border border-gray-300 rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-200 ease-in-out pl-10"
                 placeholder="******************"
               />
@@ -35,7 +61,7 @@ const AdminLogin = ({ adminPasswordInput, setAdminPasswordInput, handleAdminLogi
           </div>
           
           <button
-            onClick={handleAdminLogin}
+            onClick={onLoginClick}
             className="w-full bg-gradient-to-r from-teal-600 to-teal-800 hover:from-teal-700 hover:to-teal-900 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 transition duration-200 ease-in-out transform hover:scale-105 shadow-lg flex items-center justify-center"
           >
             <i className="fas fa-sign-in-alt mr-2"></i> ເຂົ້າສູ່ລະບົບ

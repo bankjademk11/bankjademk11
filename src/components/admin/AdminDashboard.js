@@ -9,9 +9,7 @@ import DailySummary from './DailySummary';
 
 const AdminDashboard = ({
   isAdmin,
-  adminPasswordInput,
-  setAdminPasswordInput,
-  handleAdminLogin,
+  adminName,
   handleAdminLogout,
   foodItems,
   setFoodItems,
@@ -197,6 +195,7 @@ const AdminDashboard = ({
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800">ຜູ້ດູແລລະບົບ (Admin Panel)</h1>
+          <p className="text-gray-600 mt-2">ສະບາຍດີ, {adminName}!</p>
           <p className="text-gray-600 mt-2">ຈັດການລະບົບອາຫານປະຈຳວັນ</p>
         </div>
 
